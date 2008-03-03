@@ -1,5 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
+// Global Definitions : global_defs.h
 // Preprocessor Definitions common to solution
+//
 // Note: Do not put anything that depends on other files here
 // those go in the StdAfx.h files of the individual project
 /////////////////////////////////////////////////////////////////////////////
@@ -50,3 +52,6 @@
 #ifndef UNREFERENCED_PARAMETER
 #define UNREFERENCED_PARAMETER(P) (P)
 #endif
+
+// Disallow auto-constructors
+

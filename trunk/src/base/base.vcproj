@@ -32,7 +32,7 @@
 				ForceConformanceInForLoopScope="TRUE"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="2"
-				BrowseInformation="1"
+				BrowseInformation="0"
 				BrowseInformationFile="$(IntDir)"
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="TRUE"
@@ -101,6 +101,7 @@
 				BufferSecurityCheck="FALSE"
 				EnableEnhancedInstructionSet="2"
 				UsePrecompiledHeader="2"
+				BrowseInformation="0"
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="0"/>

@@ -1,25 +1,29 @@
-// rawray_gui.cpp : Defines the entry point for the application.
+/////////////////////////////////////////////////////////////////////////////
+// GUI Entry Point : rawray_gui.cpp
 //
-
-#include "stdafx.h"
+/////////////////////////////////////////////////////////////////////////////
 #include "rawray_gui.h"
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Globals
+/////////////////////////////////////////////////////////////////////////////
 #define MAX_LOADSTRING 100
 
-// Global Variables:
 HINSTANCE hInst;								// current instance
 TCHAR szTitle[MAX_LOADSTRING];					// The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
 
-// Forward declarations of functions included in this code module:
-ATOM				MyRegisterClass(HINSTANCE hInstance);
-BOOL				InitInstance(HINSTANCE, int);
-LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
-LRESULT CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
 
-int APIENTRY _tWinMain(HINSTANCE hInstance,
-                     HINSTANCE hPrevInstance,
-                     LPTSTR    lpCmdLine,
-                     int       nCmdShow)
+/////////////////////////////////////////////////////////////////////////////
+// Public Functions
+/////////////////////////////////////////////////////////////////////////////
+
+// GUI Entry point
+int APIENTRY _tWinMain( HINSTANCE hInstance,
+                        HINSTANCE hPrevInstance,
+                        LPTSTR    lpCmdLine,
+                        int       nCmdShow )
 {
     UNREFERENCED_PARAMETER( hInstance );
     UNREFERENCED_PARAMETER( hPrevInstance );

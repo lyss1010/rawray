@@ -42,6 +42,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				ShowProgress="0"
+				OutputFile="$(OutDir)/d_$(ProjectName).dll"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="$(SolutionDir)lib"

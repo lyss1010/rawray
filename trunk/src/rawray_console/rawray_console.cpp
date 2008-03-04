@@ -3,7 +3,7 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 #include "rawray_console.h"
-
+#include "rawray.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // Public Functions
@@ -14,6 +14,8 @@ int _tmain( int argc, _TCHAR* argv[] )
 {
     UNREFERENCED_PARAMETER(argc);
     UNREFERENCED_PARAMETER(argv);
+
+    rawray::RawRay rayTracer = rawray::RawRay();
 
 	return 0;
 }

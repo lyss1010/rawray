@@ -22,7 +22,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)inc&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)inc&quot;;&quot;$(SolutionDir)src\rawray&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CONSOLE"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -61,7 +61,13 @@
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				Description="Copy Debug DLLs to run directory"
+				CommandLine="copy &quot;$(SolutionDir)lib\d_base.dll&quot; &quot;$(OutDir)&quot;
+copy &quot;$(SolutionDir)lib\d_geometry.dll&quot; &quot;$(OutDir)&quot;
+copy &quot;$(SolutionDir)lib\d_math.dll&quot; &quot;$(OutDir)&quot;
+copy &quot;$(SolutionDir)lib\d_rawray.dll&quot; &quot;$(OutDir)&quot;
+copy &quot;$(SolutionDir)lib\d_tools.dll&quot; &quot;$(OutDir)&quot;"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -93,7 +99,7 @@
 				EnableFiberSafeOptimizations="TRUE"
 				OptimizeForProcessor="3"
 				OptimizeForWindowsApplication="TRUE"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)inc&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)inc&quot;;&quot;$(SolutionDir)src\rawray&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CONSOLE"
 				StringPooling="TRUE"
 				MinimalRebuild="FALSE"
@@ -126,7 +132,13 @@
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				Description="Copy DLLs to run directory"
+				CommandLine="copy &quot;$(SolutionDir)lib\base.dll&quot; &quot;$(OutDir)&quot;
+copy &quot;$(SolutionDir)lib\geometry.dll&quot; &quot;$(OutDir)&quot;
+copy &quot;$(SolutionDir)lib\math.dll&quot; &quot;$(OutDir)&quot;
+copy &quot;$(SolutionDir)lib\rawray.dll&quot; &quot;$(OutDir)&quot;
+copy &quot;$(SolutionDir)lib\tools.dll&quot; &quot;$(OutDir)&quot;"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool

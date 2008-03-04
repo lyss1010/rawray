@@ -13,7 +13,7 @@
 // Includes
 /////////////////////////////////////////////////////////////////////////////
 #include <math.h>
-
+#include <iostream>
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -24,13 +24,13 @@ struct DllExport Vector3
     float x, y, z;
 
     Vector3() : 
-        x(0.0f), y(0.0f), z(0.0f) {}
+        x(0.0f), y(0.0f), z(0.0f) { std::cout << "Vector3()" << std::endl; }
 
     Vector3(float f) : 
-        x(f), y(f), z(f) {}
+        x(f), y(f), z(f) { std::cout << "Vector3(f=" << f << ")" << std::endl; }
 
     Vector3(float x, float y, float z) :
-        x(x), y(y), z(z) {}
+        x(x), y(y), z(z) { std::cout << "Vector3(x=" << x << ", y=" << y << ", z=" << z << ")" << std::endl; }
 
     // Assignment operations
     const Vector3& operator=(const Vector3& v) { x=v.x; y=v.y; z=v.z; return *this; }
@@ -55,18 +55,18 @@ struct DllExport Vector3
     const Vector3& operator/=(float f) { float div = 1.0f/f; x*=div; y*=div; z*=div; return *this; }
     
     // Component wise operators (NOTE: Makes and returns new object every time)
-    Vector3 operator+(const Vector3& v) const { return Vector3(x+v.x, y+v.y, z+v.z); }
-    Vector3 operator-(const Vector3& v) const { return Vector3(x-v.x, y-v.y, z-v.z); }
-    Vector3 operator*(const Vector3& v) const { return Vector3(x*v.x, y*v.y, z*v.z); }
+    //Vector3 operator+(const Vector3& v) const { return Vector3(x+v.x, y+v.y, z+v.z); }
+    //Vector3 operator-(const Vector3& v) const { return Vector3(x-v.x, y-v.y, z-v.z); }
+    //Vector3 operator*(const Vector3& v) const { return Vector3(x*v.x, y*v.y, z*v.z); }
     Vector3 operator/(const Vector3& v) const { return Vector3(x/v.x, y/v.y, z/v.z); }
     
-    Vector3 operator+(const float f) const { return Vector3(x+f, y+f, z+f); }
-    Vector3 operator-(const float f) const { return Vector3(x-f, y-f, z-f); }
-    Vector3 operator*(const float f) const { return Vector3(x*f, y*f, z*f); }
+    //Vector3 operator+(const float f) const { return Vector3(x+f, y+f, z+f); }
+    //Vector3 operator-(const float f) const { return Vector3(x-f, y-f, z-f); }
+    //Vector3 operator*(const float f) const { return Vector3(x*f, y*f, z*f); }
     Vector3 operator/(const float f) const { float div = 1.0f/f; return Vector3(x*div, y*div, z*div); }
 
     // Negation operator
-    Vector3 operator-() const { return Vector3(-x,-y,-z); }
+    //Vector3 operator-() const { return Vector3(-x,-y,-z); }
     inline const Vector3& Negate() { x=-x; y=-y; z=-z; return *this; }
 
     // Equivalance operators

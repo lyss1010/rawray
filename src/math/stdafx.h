@@ -17,5 +17,12 @@
 // Includes
 /////////////////////////////////////////////////////////////////////////////
 
+// Standard C Runtime Libraries
+#include <math.h>
+#include <iostream>
+
+// Common project wide includes
+#include "basic_math.h"
+
 
 #endif // RAWRAY_MATH_STDAFX_H

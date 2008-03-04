@@ -149,10 +149,10 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath=".\math.cpp">
+				RelativePath=".\basic_math.cpp">
 			</File>
 			<File
-				RelativePath=".\placeholder.cpp">
+				RelativePath=".\matrix4x4.cpp">
 			</File>
 			<File
 				RelativePath=".\stdafx.cpp">
@@ -172,19 +172,28 @@
 			<File
 				RelativePath=".\vector3.cpp">
 			</File>
+			<File
+				RelativePath=".\vector4.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
-				RelativePath=".\math.h">
+				RelativePath=".\basic_math.h">
+			</File>
+			<File
+				RelativePath=".\matrix4x4.h">
 			</File>
 			<File
 				RelativePath=".\stdafx.h">
 			</File>
 			<File
 				RelativePath=".\vector3.h">
+			</File>
+			<File
+				RelativePath=".\vector4.h">
 			</File>
 		</Filter>
 		<Filter

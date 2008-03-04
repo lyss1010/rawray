@@ -3,7 +3,6 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 #include "vector3.h"
-#include "math.h"
 
 namespace math {
 
@@ -33,3 +32,7 @@ Vector3 Vector3::Rotated(float theta, const Vector3& v) const {
 }
 
 } // namespace math
+
+inline std::ostream& operator<<(std::ostream& out, const math::Vector3& v) {
+    return out << v.x << " " << v.y << " " << v.z;
+}

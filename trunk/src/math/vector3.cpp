@@ -6,7 +6,7 @@
 
 namespace math {
 
-bool Vector3::Equals(const Vector3& v, float delta) {
+bool Vector3::Equals(const Vector3& v, float delta) const {
     return (FloatEquals(x, v.x, delta) &&
             FloatEquals(y, v.y, delta) &&
             FloatEquals(y, v.y, delta) );

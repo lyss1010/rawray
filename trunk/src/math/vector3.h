@@ -22,6 +22,8 @@ public:
     Vector3(float x, float y, float z) : x(x), y(y), z(z) { }
     Vector3(const Vector3& v) : x(v.x), y(v.y), z(v.z) { }
 
+    ~Vector3() { }
+
     // Assignment operations
     const Vector3& operator=(const Vector3& v) { x=v.x; y=v.y; z=v.z; return *this; }
     const Vector3& operator=(float f) { x=y=z=f; return *this; }
@@ -33,7 +35,7 @@ public:
 
     // Array access (NOTE: no bounds check done)
     float& operator[](int i) { return (&x)[i]; }
-    const float & operator[](int i) const { return (&x)[i]; }
+    const float& operator[](int i) const { return (&x)[i]; }
 
     // Component wise assignemnt operators
     const Vector3& operator+=(const Vector3& v) { x+=v.x; y+=v.y; z+=v.z; return *this; }
@@ -65,7 +67,7 @@ public:
     bool operator==(const Vector3& v) const { return (x==v.x && y==v.y && z==v.z); }
     bool operator!=(const Vector3& v) const { return (x!=v.x || y!=v.y || z!=v.z); }
 
-    inline bool Equals(const Vector3& v, float delta);
+    inline bool Equals(const Vector3& v, float delta) const;
 
     // Length squared
     inline float Length2() const { return x*x + y*y + z*z; }
@@ -82,7 +84,7 @@ public:
     inline const Vector3& Rotate(float theta, const Vector3 & v) { return *this = Rotated(theta, v); }
     inline Vector3 Rotated(float theta, const Vector3 & v) const;
 
-    inline float Dot(const Vector3& v) { return x*v.x + y*v.y + z*v.z; }
+    inline float Dot(const Vector3& v) const { return x*v.x + y*v.y + z*v.z; }
 
     inline Vector3& Cross(const Vector3& v) { 
         Set( y*v.z - z*v.y,

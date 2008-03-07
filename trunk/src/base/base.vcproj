@@ -13,7 +13,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)lib\"
+			OutputDirectory="$(SolutionDir)lib"
 			IntermediateDirectory="Debug"
 			ConfigurationType="2"
 			CharacterSet="2"
@@ -80,7 +80,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)lib\"
+			OutputDirectory="$(SolutionDir)lib"
 			IntermediateDirectory="Release"
 			ConfigurationType="2"
 			CharacterSet="2"
@@ -148,6 +148,9 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
+			<File
+				RelativePath=".\placeholder.cpp">
+			</File>
 			<File
 				RelativePath=".\stdafx.cpp">
 				<FileConfiguration

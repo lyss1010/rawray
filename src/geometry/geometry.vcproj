@@ -4,6 +4,7 @@
 	Version="7.10"
 	Name="geometry"
 	ProjectGUID="{D804E79B-16E2-4420-B707-DD078B041F5C}"
+	RootNamespace="geometry"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -12,7 +13,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)lib\"
+			OutputDirectory="$(SolutionDir)lib"
 			IntermediateDirectory="Debug"
 			ConfigurationType="2"
 			CharacterSet="2"
@@ -21,7 +22,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)inc&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)inc&quot;;&quot;$(SolutionDir)src\math&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;GEOMETRY_EXPORTS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -79,7 +80,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)lib\"
+			OutputDirectory="$(SolutionDir)lib"
 			IntermediateDirectory="Release"
 			ConfigurationType="2"
 			CharacterSet="2"
@@ -149,9 +150,6 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath=".\placeholder.cpp">
-			</File>
-			<File
 				RelativePath=".\stdafx.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -166,6 +164,12 @@
 						UsePrecompiledHeader="1"/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath=".\triangle.cpp">
+			</File>
+			<File
+				RelativePath=".\triangle_mesh.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -173,6 +177,12 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
 				RelativePath=".\stdafx.h">
+			</File>
+			<File
+				RelativePath=".\triangle.h">
+			</File>
+			<File
+				RelativePath=".\triangle_mesh.h">
 			</File>
 		</Filter>
 		<Filter

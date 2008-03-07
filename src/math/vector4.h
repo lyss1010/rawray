@@ -30,6 +30,8 @@ public:
     Vector4(const Vector3& v) : x(v.x), y(v.y), z(v.z), w(1.0f) { }
     Vector4(const Vector3& v, float w) : x(v.x), y(v.y), z(v.z), w(w) { }
 
+    ~Vector4() { }
+
     // Assignment operations
     const Vector4& operator=(const Vector4& v) { x=v.x; y=v.y; z=v.z; w=v.w; return *this; }
     const Vector4& operator=(float f) { x=y=z=w=f; return *this; }
@@ -42,7 +44,7 @@ public:
 
     // Array access (NOTE: no bounds check done)
     float& operator[](int i) { return (&x)[i]; }
-    const float & operator[](int i) const { return (&x)[i]; }
+    const float& operator[](int i) const { return (&x)[i]; }
 
     // Component wise assignemnt operators
     const Vector4& operator+=(const Vector4& v) { x+=v.x; y+=v.y; z+=v.z; w+=v.w; return *this; }
@@ -74,7 +76,7 @@ public:
     bool operator==(const Vector4& v) const { return (x==v.x && y==v.y && z==v.z && w==v.w); }
     bool operator!=(const Vector4& v) const { return (x!=v.x || y!=v.y || z!=v.z || w!=v.w); }
 
-    inline bool Equals(const Vector4& v, float delta);
+    inline bool Equals(const Vector4& v, float delta) const;
 
     // Length squared
     inline float Length2() const { return x*x + y*y + z*z + w*w; }
@@ -85,9 +87,9 @@ public:
     
     // Creation of unit length vector
     inline const Vector4& Normalize() { return *this /= Length(); }
-    inline Vector4 Normalized() { return *this / Length(); }
+    inline Vector4 Normalized() const { return *this / Length(); }
 
-    inline float Dot(const Vector4& v) { return x*v.x + y*v.y + z*v.z + w*v.w; }
+    inline float Dot(const Vector4& v) const { return x*v.x + y*v.y + z*v.z + w*v.w; }
 
 }; // class Vector4
 

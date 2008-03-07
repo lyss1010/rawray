@@ -13,7 +13,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)bin\"
+			OutputDirectory="$(SolutionDir)bin"
 			IntermediateDirectory="Debug"
 			ConfigurationType="1"
 			CharacterSet="2"
@@ -67,7 +67,8 @@
 copy &quot;$(SolutionDir)lib\d_geometry.dll&quot; &quot;$(OutDir)&quot;
 copy &quot;$(SolutionDir)lib\d_math.dll&quot; &quot;$(OutDir)&quot;
 copy &quot;$(SolutionDir)lib\d_rawray.dll&quot; &quot;$(OutDir)&quot;
-copy &quot;$(SolutionDir)lib\d_tools.dll&quot; &quot;$(OutDir)&quot;"/>
+copy &quot;$(SolutionDir)lib\d_tools.dll&quot; &quot;$(OutDir)&quot;
+"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -87,7 +88,7 @@ copy &quot;$(SolutionDir)lib\d_tools.dll&quot; &quot;$(OutDir)&quot;"/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)bin\"
+			OutputDirectory="$(SolutionDir)bin"
 			IntermediateDirectory="Release"
 			ConfigurationType="1"
 			CharacterSet="2"
@@ -138,7 +139,8 @@ copy &quot;$(SolutionDir)lib\d_tools.dll&quot; &quot;$(OutDir)&quot;"/>
 copy &quot;$(SolutionDir)lib\geometry.dll&quot; &quot;$(OutDir)&quot;
 copy &quot;$(SolutionDir)lib\math.dll&quot; &quot;$(OutDir)&quot;
 copy &quot;$(SolutionDir)lib\rawray.dll&quot; &quot;$(OutDir)&quot;
-copy &quot;$(SolutionDir)lib\tools.dll&quot; &quot;$(OutDir)&quot;"/>
+copy &quot;$(SolutionDir)lib\tools.dll&quot; &quot;$(OutDir)&quot;
+"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool

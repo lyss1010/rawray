@@ -5,9 +5,16 @@
 #ifndef RAWRAY_GEOMETRY_TRIANGLE_MESH_H
 #define RAWRAY_GEOMETRY_TRIANGLE_MESH_H
 #include "stdafx.h"
-#include "tuple3.h"
-#include "vector2.h"
-#include "vector3.h"
+
+// Forward Declerations
+namespace math {
+    class Vector2;
+    class Vector3;
+
+    template <class T>
+    class Tuple3;
+}
+
 
 /////////////////////////////////////////////////////////////////////////////
 namespace geometry {
@@ -16,8 +23,12 @@ class DllExport TriangleMesh
 {
 public:
     TriangleMesh() 
-            : normals_(NULL), vertices_(NULL), texCoords_(NULL),
-            normalIndices_(NULL), vertexIndices_(NULL), texCoordIndices_(NULL) { }
+        : normals_(NULL), vertices_(NULL), texCoords_(NULL),
+        normalIndices_(NULL), vertexIndices_(NULL), texCoordIndices_(NULL) { }
+
+    TriangleMesh(TriangleMesh& m)
+        : normals_(m.normals_), vertices_(m.vertices_), texCoords_(m.texCoords_),
+        normalIndices_(m.normalIndices_), vertexIndices_(m.vertexIndices_), texCoordIndices_(m.texCoordIndices_) { }
 
     ~TriangleMesh();
 

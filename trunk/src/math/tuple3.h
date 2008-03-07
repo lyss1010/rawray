@@ -60,7 +60,7 @@ public:
     Tuple3<T> operator*(const T& t) const { return Tuple3<T>(x*t, y*t, z*t); }
     Tuple3<T> operator/(const T& t) const { return Tuple3<T>(x/t, y/t, z/t); }
 
-    //Negation operator
+    // Negation operator
     Tuple3<T> operator-() const { return Tuple3<T>(-x,-y,-z); }
     inline const Tuple3<T>& Negate() { x=-x; y=-y; z=-z; return *this; }
 

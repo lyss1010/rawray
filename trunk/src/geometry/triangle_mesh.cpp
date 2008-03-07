@@ -3,6 +3,9 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 #include "triangle_mesh.h"
+#include "vector2.h"
+#include "vector3.h"
+#include "tuple3.h"
 
 namespace geometry {
 

@@ -5,5 +5,7 @@
 #include "triangle.h"
 
 namespace geometry {
+    
+    Triangle::~Triangle() { }
 
 } // namespace geometry

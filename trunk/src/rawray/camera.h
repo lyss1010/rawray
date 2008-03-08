@@ -1,16 +1,25 @@
 /////////////////////////////////////////////////////////////////////////////
-// Precompiled Header : stdafx.h
+// Class : camera.h
 //
-// Common includes and definitions of base project
 /////////////////////////////////////////////////////////////////////////////
-#ifndef RAWRAY_BASE_STDAFX_H
-#define RAWRAY_BASE_STDAFX_H
-#include "global_defs.h"
+#ifndef RAWRAY_GEOMETRY_CAMERA_H
+#define RAWRAY_GEOMETRY_CAMERA_H
+#include "stdafx.h"
 
 /////////////////////////////////////////////////////////////////////////////
-// Includes
+namespace geometry {
+
+struct DllExport Camera
+{
+public:
+
+private:
+    DISALLOW_COPY_CONSTRUCTORS(Camera);
+
+}; // class Camera
+
+} // namespace geometry
 /////////////////////////////////////////////////////////////////////////////
-#include "limits.h"
 
 
-#endif // RAWRAY_BASE_STDAFX_H
+#endif // RAWRAY_GEOMETRY_CAMERA_H

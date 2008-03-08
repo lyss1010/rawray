@@ -10,12 +10,12 @@
 namespace geometry {
 
     TriangleMesh::~TriangleMesh() {
-        delete [] normals_;
-        delete [] vertices_;
-        delete [] texCoords_;
-        delete [] normalIndices_;
-        delete [] vertexIndices_;
-        delete [] texCoordIndices_;
+        SAFE_DELETE_ARRAY( normals_ );
+        SAFE_DELETE_ARRAY( vertices_ );
+        SAFE_DELETE_ARRAY( texCoords_ );
+        SAFE_DELETE_ARRAY( normalIndices_ );
+        SAFE_DELETE_ARRAY( vertexIndices_ );
+        SAFE_DELETE_ARRAY( texCoordIndices_ );
     }
 
 } // namespace geometry

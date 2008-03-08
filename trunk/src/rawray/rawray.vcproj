@@ -22,7 +22,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)inc&quot;;&quot;$(SolutionDir)src\math&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)inc&quot;;&quot;$(SolutionDir)src\base&quot;;&quot;$(SolutionDir)src\math&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;RAWRAY_EXPORTS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -150,7 +150,19 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
+				RelativePath=".\camera.cpp">
+			</File>
+			<File
+				RelativePath=".\image.cpp">
+			</File>
+			<File
+				RelativePath=".\light.cpp">
+			</File>
+			<File
 				RelativePath=".\rawray.cpp">
+			</File>
+			<File
+				RelativePath=".\scene.cpp">
 			</File>
 			<File
 				RelativePath=".\stdafx.cpp">
@@ -173,7 +185,19 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
+				RelativePath=".\camera.h">
+			</File>
+			<File
+				RelativePath=".\image.h">
+			</File>
+			<File
+				RelativePath=".\light.h">
+			</File>
+			<File
 				RelativePath=".\rawray.h">
+			</File>
+			<File
+				RelativePath=".\scene.h">
 			</File>
 			<File
 				RelativePath=".\stdafx.h">

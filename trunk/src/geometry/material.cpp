@@ -1,15 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
-// rawray.cpp
+// material.cpp
 //
 /////////////////////////////////////////////////////////////////////////////
-#include "rawray.h"
+#include "material.h"
 
-
-namespace rawray {
-
-RawRay::RawRay(int i) {
-    UNREFERENCED_PARAMETER(i);
-}
-
-
-} // namespace rawray
+namespace geometry {
+    
+} // namespace geometry

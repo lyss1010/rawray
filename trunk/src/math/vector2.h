@@ -18,7 +18,7 @@ public:
     float x, y;
 
     Vector2() : x(0.0f), y(0.0f) { }
-    Vector2(float f) : x(f), y(f) { }
+    explicit Vector2(float f) : x(f), y(f) { }
     Vector2(float x, float y) : x(x), y(y) { }
     Vector2(const Vector2& v) : x(v.x), y(v.y) { }
 

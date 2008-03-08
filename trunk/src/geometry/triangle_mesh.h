@@ -40,8 +40,7 @@ public:
     math::Tuple3<uint32>* GetTexCoordIndices() { return texCoordIndices_; }
     uint32 GetNumTriangles() const { return numTriangles; }
 
-
-private:
+protected:
     math::Vector3* normals_;
     math::Vector3* vertices_;
     math::Vector2* texCoords_;

@@ -20,7 +20,10 @@ namespace rawray {
 class DllExport RawRay
 {
 public:
-    RawRay();
+    explicit RawRay(int i);
+
+private:
+    DISALLOW_IMPLICIT_CONSTRUCTORS(RawRay);
 
 }; // class RawRay
 

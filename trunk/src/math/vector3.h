@@ -18,7 +18,7 @@ public:
     float x, y, z;
 
     Vector3() : x(0.0f), y(0.0f), z(0.0f) { }
-    Vector3(float f) : x(f), y(f), z(f) { }
+    explicit Vector3(float f) : x(f), y(f), z(f) { }
     Vector3(float x, float y, float z) : x(x), y(y), z(z) { }
     Vector3(const Vector3& v) : x(v.x), y(v.y), z(v.z) { }
 

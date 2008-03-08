@@ -5,9 +5,6 @@
 #include "rawray_console.h"
 #include "rawray.h"
 
-/////////////////////////////////////////////////////////////////////////////
-// Public Functions
-/////////////////////////////////////////////////////////////////////////////
 
 // Console Entry point
 int _tmain( int argc, _TCHAR* argv[] )
@@ -15,7 +12,7 @@ int _tmain( int argc, _TCHAR* argv[] )
     UNREFERENCED_PARAMETER(argc);
     UNREFERENCED_PARAMETER(argv);
 
-    rawray::RawRay rayTracer = rawray::RawRay();
+    rawray::RawRay rayTracer(argc);
 
 	return 0;
 }

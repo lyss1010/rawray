@@ -7,6 +7,8 @@
 #include "stdafx.h"
 #include "object.h"
 #include "triangle_mesh.h"
+#include "hit_info.h"
+#include "ray.h"
 
 /////////////////////////////////////////////////////////////////////////////
 namespace geometry {
@@ -14,12 +16,10 @@ namespace geometry {
 class DllExport Triangle : public Object
 {
 public:
-    Triangle(Triangle& t) : mesh_(t.mesh_), index_(t.index_) { }
-
     Triangle(TriangleMesh& mesh, uint32 index)
             : mesh_(mesh), index_(index) { }
 
-    virtual ~Triangle();
+    virtual ~Triangle() { }
 
     TriangleMesh& GetMesh() { return mesh_; }
     uint32 GetIndex() const { return index_; }
@@ -27,9 +27,14 @@ public:
     void SetMesh(TriangleMesh& mesh) { mesh_=mesh; }
     void SetIndex(uint32 index) { index_=index; }
 
+    virtual void RenderGL();
+    virtual bool Intersect(HitInfo& hit, const Ray& ray, float minDistance = 0.0f, float maxDistance = MAX_DISTANCE);
+
 private:
     TriangleMesh& mesh_;
     uint32 index_;
+
+    DISALLOW_COPY_CONSTRUCTORS(Triangle);
 
 }; // class Triangle
 

@@ -150,10 +150,10 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath=".\hit_info.cpp">
+				RelativePath=".\material.cpp">
 			</File>
 			<File
-				RelativePath=".\ray.cpp">
+				RelativePath=".\sphere.cpp">
 			</File>
 			<File
 				RelativePath=".\stdafx.cpp">
@@ -185,10 +185,16 @@
 				RelativePath=".\hit_info.h">
 			</File>
 			<File
+				RelativePath=".\material.h">
+			</File>
+			<File
 				RelativePath=".\object.h">
 			</File>
 			<File
 				RelativePath=".\ray.h">
+			</File>
+			<File
+				RelativePath=".\sphere.h">
 			</File>
 			<File
 				RelativePath=".\stdafx.h">

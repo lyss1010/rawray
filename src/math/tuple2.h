@@ -19,7 +19,7 @@ public:
     T x, y;
 
     Tuple2() : x(), y(), z() { }
-    Tuple2(const T& t) : x(t), y(t), z(t) { }
+    explicit Tuple2(const T& t) : x(t), y(t), z(t) { }
     Tuple2(const T& x, const T& y) : x(x), y(y) { }
     Tuple2(const Tuple2<T>& t) : x(t.x), y(t.y) { }
     

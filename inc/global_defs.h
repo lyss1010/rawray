@@ -57,10 +57,44 @@
 // Common Types
 /////////////////////////////////////////////////////////////////////////////
 typedef unsigned char       uint8;
-typedef unsigned short      uint16;
-typedef unsigned int        uint32;
-typedef unsigned long long  uint64;
 typedef signed char         int8;
+
+typedef unsigned short      uint16;
 typedef signed short        int16;
+
+typedef unsigned int        uint32;
 typedef signed int          int32;
+
+#ifdef WIN32
+typedef unsigned __int64    uint64;
+#else
+typedef unsigned long long  uint64;
+#endif // WIN32
+
+#ifdef WIN32
+typedef signed __int64      int64;
+#else
 typedef signed long long    int64;
+#endif // WIN32
+
+
+// Disallows the copy constructor and operator= function.
+// Should be used in the private: section.
+#define DISALLOW_COPY_CONSTRUCTORS(TypeName)    \
+    TypeName(const TypeName&);                  \
+    void operator=(const TypeName&)
+
+// Disallows the default constructor, copy constructor, and operator= function.
+// Should be used in the private: section.
+#define DISALLOW_IMPLICIT_CONSTRUCTORS(TypeName)    \
+    TypeName();                                     \
+    DISALLOW_COPY_CONSTRUCTORS(TypeName)            \
+
+
+// Some useful macros for deletion
+#ifndef SAFE_DELETE
+#define SAFE_DELETE(p)       { if(p) { delete (p);     (p)=0; } }
+#endif
+#ifndef SAFE_DELETE_ARRAY
+#define SAFE_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=0; } }
+#endif

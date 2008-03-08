@@ -19,7 +19,7 @@ public:
     T x, y, z;
 
     Tuple3() : x(), y(), z() { }
-    Tuple3(const T& t) : x(t), y(t), z(t) { }
+    explicit Tuple3(const T& t) : x(t), y(t), z(t) { }
     Tuple3(const T& x, const T& y, const T& z) : x(x), y(y), z(z) { }
     Tuple3(const Tuple3<T>& t) : x(t.x), y(t.y), z(t.z) { }
 

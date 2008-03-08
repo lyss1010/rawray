@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Class : matrix4x4.h
+// Struct : matrix4x4.h
 // 
 // 4 Element floating point vector
 // Based off of Miro code from UCSD.CSE168.SP08
@@ -19,7 +19,7 @@
 /////////////////////////////////////////////////////////////////////////////
 namespace math {
 
-class DllExport Matrix4x4
+struct DllExport Matrix4x4
 {
 public: 
     //      u    v    s    t
@@ -88,7 +88,7 @@ public:
     inline Matrix4x4& Invert();
     inline Matrix4x4& Transpose();
 
-}; // class Matrix4x4
+}; // struct Matrix4x4
 
 
 } // namespace math

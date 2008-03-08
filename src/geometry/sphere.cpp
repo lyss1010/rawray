@@ -1,12 +1,12 @@
 /////////////////////////////////////////////////////////////////////////////
-// triangle.cpp
+// sphere.cpp
 //
 /////////////////////////////////////////////////////////////////////////////
-#include "triangle.h"
+#include "sphere.h"
 
 namespace geometry {
 
-    void Triangle::RenderGL() {
+    void Sphere::RenderGL() {
         //TriangleMesh::TupleI3 ti3 = m_mesh->vIndices()[m_index];
         //const Vector3 & v0 = m_mesh->vertices()[ti3.x]; //vertex a of triangle
         //const Vector3 & v1 = m_mesh->vertices()[ti3.y]; //vertex b of triangle
@@ -19,7 +19,7 @@ namespace geometry {
         //glEnd();
     }
 
-    bool Triangle::Intersect(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance) {
+    bool Sphere::Intersect(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance) {
         UNREFERENCED_PARAMETER(hit);
         UNREFERENCED_PARAMETER(ray);
         UNREFERENCED_PARAMETER(minDistance);

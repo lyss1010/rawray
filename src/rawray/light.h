@@ -22,7 +22,7 @@ public:
     const math::Vector3& GetColor() const { return color_; }
     const math::Vector3& GetPosition() const { return position_; }
 
-    virtual PreCalc();
+    virtual void PreCalc();
 
 protected:
     math::Vector3 position_;

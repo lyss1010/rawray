@@ -5,9 +5,7 @@
 #ifndef RAWRAY_GEOMETRY_SPHERE_H
 #define RAWRAY_GEOMETRY_SPHERE_H
 #include "stdafx.h"
-#include "object.h"
-#include "hit_info.h"
-#include "ray.h"
+#include "vector3.h"
 
 /////////////////////////////////////////////////////////////////////////////
 namespace geometry {
@@ -21,7 +19,7 @@ public:
     virtual bool Intersect(HitInfo& hit, const Ray& ray, float minDistance = 0.0f, float maxDistance = MAX_DISTANCE);
 
 private:
-
+    
     DISALLOW_COPY_CONSTRUCTORS(Sphere);
 
 }; // class Sphere

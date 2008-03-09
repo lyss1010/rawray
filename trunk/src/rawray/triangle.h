@@ -2,8 +2,8 @@
 // Class : triangle.h
 // 
 /////////////////////////////////////////////////////////////////////////////
-#ifndef RAWRAY_GEOMETRY_TRIANGLE_H
-#define RAWRAY_GEOMETRY_TRIANGLE_H
+#ifndef RAWRAY_RAWRAY_TRIANGLE_H
+#define RAWRAY_RAWRAY_TRIANGLE_H
 #include "stdafx.h"
 #include "object.h"
 #include "triangle_mesh.h"
@@ -11,13 +11,13 @@
 #include "ray.h"
 
 /////////////////////////////////////////////////////////////////////////////
-namespace geometry {
+namespace rawray {
 
 class DllExport Triangle : public Object
 {
 public:
-    Triangle(TriangleMesh& mesh, uint32 index)
-            : mesh_(mesh), index_(index) { }
+    Triangle(TriangleMesh& mesh, uint32 index, const Material* material)
+            : Object(material), mesh_(mesh), index_(index) { }
 
     virtual ~Triangle() { }
 
@@ -31,15 +31,20 @@ public:
     virtual bool Intersect(HitInfo& hit, const Ray& ray, float minDistance = 0.0f, float maxDistance = MAX_DISTANCE);
 
 private:
+    // Supported intersection algorithms
+    bool Barycentric(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance);
+    bool Moller(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance);
+    bool Plucker(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance);
+
     TriangleMesh& mesh_;
     uint32 index_;
 
-    DISALLOW_COPY_CONSTRUCTORS(Triangle);
+    DISALLOW_IMPLICIT_CONSTRUCTORS(Triangle);
 
 }; // class Triangle
 
 
-} // namespace geometry
+} // namespace rawray
 /////////////////////////////////////////////////////////////////////////////
 
-#endif // RAWRAY_GEOMETRY_TRIANGLE_H
+#endif // RAWRAY_RAWRAY_TRIANGLE_H

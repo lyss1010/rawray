@@ -10,8 +10,9 @@
 #ifdef _USRDLL
 #define DllExport __declspec( dllexport )
 #else
-#define DllExport
+#define DllExport __declspec( dllimport )
 #endif
+
 
 // Tell code we're using Windows XP or later
 #define CORE_WINDOWS_VERSION 0x0501

@@ -3,11 +3,11 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 #include "triangle_mesh.h"
-#include "vector2.h"
-#include "vector3.h"
-#include "tuple3.h"
+#include "math/vector2.h"
+#include "math/vector3.h"
+#include "math/tuple3.h"
 
-namespace geometry {
+namespace rawray {
 
     TriangleMesh::~TriangleMesh() {
         SAFE_DELETE_ARRAY( normals_ );
@@ -18,4 +18,4 @@ namespace geometry {
         SAFE_DELETE_ARRAY( texCoordIndices_ );
     }
 
-} // namespace geometry
+} // namespace rawray

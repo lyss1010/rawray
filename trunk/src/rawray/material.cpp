@@ -4,6 +4,11 @@
 /////////////////////////////////////////////////////////////////////////////
 #include "material.h"
 
-namespace geometry {
+namespace rawray {
     
-} // namespace geometry
+    Vector3 Material::Shade(const Ray& ray, const HitInfo& hit, const Scene& scene) const {
+        return Vector3(1.0f, 1.0f, 1.0f);
+    }
+
+
+} // namespace rawray

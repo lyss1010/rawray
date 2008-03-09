@@ -1,0 +1,14 @@
+/////////////////////////////////////////////////////////////////////////////
+// Project Constants : constants.h
+//
+/////////////////////////////////////////////////////////////////////////////
+#ifndef RAWRAY_RAWRAY_CONSTANTS_H
+#define RAWRAY_RAWRAY_CONSTANTS_H
+
+namespace rawray {
+
+const float MAX_DISTANCE = 1e12f;
+
+} // namespace rawray
+
+#endif // RAWRAY_RAWRAY_CONSTANTS_H

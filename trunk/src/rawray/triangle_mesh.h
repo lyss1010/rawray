@@ -2,22 +2,13 @@
 // Class : triangle_mesh.h
 // 
 /////////////////////////////////////////////////////////////////////////////
-#ifndef RAWRAY_GEOMETRY_TRIANGLE_MESH_H
-#define RAWRAY_GEOMETRY_TRIANGLE_MESH_H
+#ifndef RAWRAY_RAWRAY_TRIANGLE_MESH_H
+#define RAWRAY_RAWRAY_TRIANGLE_MESH_H
 #include "stdafx.h"
-
-// Forward Declerations
-namespace math {
-    class Vector2;
-    class Vector3;
-
-    template <class T>
-    class Tuple3;
-}
 
 
 /////////////////////////////////////////////////////////////////////////////
-namespace geometry {
+namespace rawray {
 
 class DllExport TriangleMesh
 {
@@ -32,28 +23,28 @@ public:
 
     ~TriangleMesh();
 
-    math::Vector3* GetNormals() { return normals_; }
-    math::Vector3* GetVertices() { return vertices_; }
-    math::Vector2* GetTexCoords() { return texCoords_; }
-    math::Tuple3<uint32>* GetNormalIndices() { return normalIndices_; }
-    math::Tuple3<uint32>* GetVertexIndices() { return vertexIndices_; }
-    math::Tuple3<uint32>* GetTexCoordIndices() { return texCoordIndices_; }
+    Vector3* GetNormals() { return normals_; }
+    Vector3* GetVertices() { return vertices_; }
+    Vector2* GetTexCoords() { return texCoords_; }
+    Tuple3I* GetNormalIndices() { return normalIndices_; }
+    Tuple3I* GetVertexIndices() { return vertexIndices_; }
+    Tuple3I* GetTexCoordIndices() { return texCoordIndices_; }
     uint32 GetNumTriangles() const { return numTriangles; }
 
 protected:
-    math::Vector3* normals_;
-    math::Vector3* vertices_;
-    math::Vector2* texCoords_;
+    Vector3* normals_;
+    Vector3* vertices_;
+    Vector2* texCoords_;
 
-    math::Tuple3<uint32>* normalIndices_;
-    math::Tuple3<uint32>* vertexIndices_;
-    math::Tuple3<uint32>* texCoordIndices_;
+    Tuple3I* normalIndices_;
+    Tuple3I* vertexIndices_;
+    Tuple3I* texCoordIndices_;
     uint32 numTriangles;
 
 }; // class TriangleMesh
 
 
-} // namespace geometry
+} // namespace rawray
 /////////////////////////////////////////////////////////////////////////////
 
-#endif // RAWRAY_GEOMETRY_TRIANGLE_MESH_H
+#endif // RAWRAY_RAWRAY_TRIANGLE_MESH_H

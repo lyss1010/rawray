@@ -2,13 +2,15 @@
 // Class : material.h
 // 
 /////////////////////////////////////////////////////////////////////////////
-#ifndef RAWRAY_GEOMETRY_MATERIAL_H
-#define RAWRAY_GEOMETRY_MATERIAL_H
+#ifndef RAWRAY_RAWRAY_MATERIAL_H
+#define RAWRAY_RAWRAY_MATERIAL_H
 #include "stdafx.h"
-
+#include "ray.h"
+#include "hit_info.h"
+#include "scene.h"
 
 /////////////////////////////////////////////////////////////////////////////
-namespace geometry {
+namespace rawray {
 
 class DllExport Material
 {
@@ -17,12 +19,12 @@ public:
     virtual ~Material() { }
     virtual void PreCalc() { }
     
-    // TODO: Vector3 Material::shade(const Ray&, const HitInfo&, const Scene&) const
+    Vector3 Shade(const Ray&, const HitInfo& hit, const Scene&) const;
 
 }; // class Material
 
 
-} // namespace geometry
+} // namespace rawray
 /////////////////////////////////////////////////////////////////////////////
 
-#endif // RAWRAY_GEOMETRY_MATERIAL_H
+#endif // RAWRAY_RAWRAY_MATERIAL_H

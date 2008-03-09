@@ -3,15 +3,12 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 #include "rawray_console.h"
-#include "rawray.h"
+#include "rawray/rawray.h"
 
 
 // Console Entry point
 int _tmain( int argc, _TCHAR* argv[] )
 {
-    UNREFERENCED_PARAMETER(argc);
-    UNREFERENCED_PARAMETER(argv);
-
     rawray::RawRay rayTracer(argc);
 
 	return 0;

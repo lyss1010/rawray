@@ -2,30 +2,30 @@
 // Class : ray.h
 //
 /////////////////////////////////////////////////////////////////////////////
-#ifndef RAWRAY_GEOMETRY_RAY_H
-#define RAWRAY_GEOMETRY_RAY_H
+#ifndef RAWRAY_RAWRAY_RAY_H
+#define RAWRAY_RAWRAY_RAY_H
 #include "stdafx.h"
-#include "vector3.h"
+#include "math/vector3.h"
 
 /////////////////////////////////////////////////////////////////////////////
-namespace geometry {
+namespace rawray {
 
-struct DllExport Ray
+class DllExport Ray
 {
 public:
-    math::Vector3 origin;
-    math::Vector3 direction;
+    Vector3 origin;
+    Vector3 direction;
 
-    Ray() : origin(), direction( math::Vector3(0.0f, 0.0f, 1.0f) ) { }
-    Ray(const math::Vector3& origin, const math::Vector3& direction) : origin(origin), direction(direction) { }
+    Ray() : origin(), direction( Vector3(0.0f, 0.0f, 1.0f) ) { }
+    Ray(const Vector3& origin, const Vector3& direction) : origin(origin), direction(direction) { }
 
 private:
     DISALLOW_COPY_CONSTRUCTORS(Ray);
 
 }; // class Ray
 
-} // namespace geometry
+} // namespace rawray
 /////////////////////////////////////////////////////////////////////////////
 
 
-#endif // RAWRAY_GEOMETRY_RAY_H
+#endif // RAWRAY_RAWRAY_RAY_H

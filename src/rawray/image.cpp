@@ -3,7 +3,7 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 #include "image.h"
-#include "conversions.h"
+#include "base/conversions.h"
 
 namespace rawray {
 
@@ -40,7 +40,7 @@ namespace rawray {
         return numPixels;
     }
 
-    void Image::SetPixel(uint32 x, uint32 y, const math::Vector3& color) {
+    void Image::SetPixel(uint32 x, uint32 y, const Vector3& color) {
         if( x < width_ && y < height_ ) {
             Pixel* pixel = pixels_ + y*width_ + x;
             pixel->x = base::FloatToByte(color.x);
@@ -54,7 +54,7 @@ namespace rawray {
             pixels_[ y*width_ + x ] = color;
     }
 
-    void Image::Clear(const math::Vector3 &color) {
+    void Image::Clear(const Vector3 &color) {
         for(uint32 y=0; y<height_; y++)
             for(uint32 x=0; x<width_; x++)
                 SetPixel( x, y, color );

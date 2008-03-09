@@ -2,14 +2,14 @@
 // Class : camera.h
 //
 /////////////////////////////////////////////////////////////////////////////
-#ifndef RAWRAY_GEOMETRY_CAMERA_H
-#define RAWRAY_GEOMETRY_CAMERA_H
+#ifndef RAWRAY_RAWRAY_CAMERA_H
+#define RAWRAY_RAWRAY_CAMERA_H
 #include "stdafx.h"
 
 /////////////////////////////////////////////////////////////////////////////
-namespace geometry {
+namespace rawray {
 
-struct DllExport Camera
+class DllExport Camera
 {
 public:
 
@@ -18,8 +18,8 @@ private:
 
 }; // class Camera
 
-} // namespace geometry
+} // namespace rawray
 /////////////////////////////////////////////////////////////////////////////
 
 
-#endif // RAWRAY_GEOMETRY_CAMERA_H
+#endif // RAWRAY_RAWRAY_CAMERA_H

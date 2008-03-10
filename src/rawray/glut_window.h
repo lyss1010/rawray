@@ -40,7 +40,9 @@ private:
     Image img_;
 
     bool renderGL_;
-    float movementSpeed_;
+    float keySpeed_;
+    float mouseXSpeed_;
+    float mouseYSpeed_;
     int activeButton_;
     int mouseX_;
     int mouseY_;

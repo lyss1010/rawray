@@ -16,6 +16,7 @@
 
 #include "options.h"
 #include "constants.h"
+#include "math/constants.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // Forward Declarations

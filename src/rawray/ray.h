@@ -18,9 +18,9 @@ public:
 
     Ray() : origin(), direction( Vector3(0.0f, 0.0f, 1.0f) ) { }
     Ray(const Vector3& origin, const Vector3& direction) : origin(origin), direction(direction) { }
+    Ray(const Ray& r) : origin(r.origin), direction(r.direction) { }
 
 private:
-    DISALLOW_COPY_CONSTRUCTORS(Ray);
 
 }; // class Ray
 

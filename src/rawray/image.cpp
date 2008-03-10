@@ -7,78 +7,101 @@
 
 namespace rawray {
 
-    Image::Image() : pixels_(NULL), width_(0), height_(0) { }
+Image::Image() : pixels_(NULL), width_(0), height_(0) { }
 
-    Image::Image(const Image& i) {
-        register uint32 numPixels = Resize(i.width_, i.height_);
+Image::Image(const Image& i) {
+    register uint32 numPixels = Resize(i.width_, i.height_);
 
-        if( numPixels > 0 ) {
-            memcpy( static_cast<void*>(pixels_), 
-                    static_cast<void*>(i.pixels_), 
-                    numPixels*sizeof( *pixels_ ) );
-        } else {
-            pixels_ = NULL;
-            width_ = height_ = 0;
-        }
+    if( numPixels > 0 ) {
+        memcpy( static_cast<void*>(pixels_), 
+                static_cast<void*>(i.pixels_), 
+                numPixels*sizeof( *pixels_ ) );
+    } else {
+        pixels_ = NULL;
+        width_ = height_ = 0;
     }
+}
 
-    Image::~Image() {
-        SAFE_DELETE_ARRAY( pixels_ );
+Image::~Image() {
+    SAFE_DELETE_ARRAY( pixels_ );
+}
+
+int Image::Resize(uint32 width, uint32 height) {
+    if( width < 0 || height < 0 )
+        return 0;
+
+    SAFE_DELETE_ARRAY( pixels_ );
+    width_ = width;
+    height_ = height;
+
+    register uint32 numPixels = width_*height_;
+    pixels_ = new Pixel[ numPixels ];
+
+    return numPixels;
+}
+
+void Image::SetPixel(uint32 x, uint32 y, const Vector3& color) {
+    if( x < width_ && y < height_ ) {
+        Pixel* pixel = pixels_ + y*width_ + x;
+        pixel->x = base::FloatToByte(color.x);
+        pixel->y = base::FloatToByte(color.y);
+        pixel->z = base::FloatToByte(color.z);
     }
+}
 
-    int Image::Resize(uint32 width, uint32 height) {
-        if( width < 0 || height < 0 )
-            return 0;
+void Image::SetPixel(uint32 x, uint32 y, const Pixel& color) {
+    if( x < width_ && y < height_ )
+        pixels_[ y*width_ + x ] = color;
+}
 
-        SAFE_DELETE_ARRAY( pixels_ );
-        width_ = width;
-        height_ = height;
+void Image::Clear(const Vector3 &color) {
+    for(uint32 y=0; y<height_; y++)
+        for(uint32 x=0; x<width_; x++)
+            SetPixel( x, y, color );
+}
 
-        register uint32 numPixels = width_*height_;
-        pixels_ = new Pixel[ numPixels ];
+void Image::Clear(const Pixel &color) {
+    for(uint32 y=0; y<height_; y++)
+        for(uint32 x=0; x<width_; x++)
+            SetPixel( x, y, color );
+}
 
-        return numPixels;
+void Image::RenderGL() {
+    for(uint32 y=0; y<height_; ++y)
+        RenderScanlineGL(y);
+}
+
+void Image::RenderScanlineGL(uint32 y) {
+    register float divisor_height = 1.0f / height_;
+
+    for(uint32 x=0; x<width_; ++x)
+    {
+        glRasterPos2f(-1, -1 + 2*y * divisor_height);
+        glDrawPixels(width_, 1, GL_RGB, GL_UNSIGNED_BYTE, &pixels_[y*width_]);
     }
+}
 
-    void Image::SetPixel(uint32 x, uint32 y, const Vector3& color) {
-        if( x < width_ && y < height_ ) {
-            Pixel* pixel = pixels_ + y*width_ + x;
-            pixel->x = base::FloatToByte(color.x);
-            pixel->y = base::FloatToByte(color.y);
-            pixel->z = base::FloatToByte(color.z);
-        }
+void Image::WritePPM(const char* filename) {
+    WritePPM(filename, 
+             static_cast<uint8*>( &((*pixels_).x) ), 
+             width_, height_);
+}
+
+void Image::WritePPM(const char* filename, uint8* data, uint32 width, uint32 height) {
+    FILE* fp = NULL;
+    fopen_s( &fp, filename, "wb" );
+    if (fp) {
+        fprintf(fp, "P6\n");
+        fprintf(fp, "%d %d\n", width, height);
+        fprintf(fp, "255\n");
+
+        // Invert image
+        int stride = width*3;
+        for (int i = height-1; i >= 0; --i)
+            fwrite( data + stride*i, stride, 1, fp );
+
+        fclose(fp);
     }
-
-    void Image::SetPixel(uint32 x, uint32 y, const Pixel& color) {
-        if( x < width_ && y < height_ )
-            pixels_[ y*width_ + x ] = color;
-    }
-
-    void Image::Clear(const Vector3 &color) {
-        for(uint32 y=0; y<height_; y++)
-            for(uint32 x=0; x<width_; x++)
-                SetPixel( x, y, color );
-    }
-
-    void Image::Clear(const Pixel &color) {
-        for(uint32 y=0; y<height_; y++)
-            for(uint32 x=0; x<width_; x++)
-                SetPixel( x, y, color );
-    }
-
-    void Image::RenderGL() {
-        for(uint32 y=0; y<height_; ++y)
-            RenderScanlineGL(y);
-    }
-
-    void Image::RenderScanlineGL(uint32 y) {
-        register float divisor_height = 1.0f / height_;
-
-        for(uint32 x=0; x<width_; ++x)
-        {
-            //glRasterPos2f(-1, -1 + 2*y * divisor_height);
-            //glDrawPixels(width_, 1, GL_RGB, GL_UNSIGNED_BYTE, &pixels_[y*width_]);
-        }
-    }
+}
 
 } // namespace rawray

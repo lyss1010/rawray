@@ -107,8 +107,8 @@ inline Vector3 Cross(const Vector3& a, const Vector3& b) {
 } // namespace math
 /////////////////////////////////////////////////////////////////////////////
 
-inline math::Vector3 operator*(float f, const math::Vector3& v) { return math::Vector3(v.x*f, v.y*f, v.z*f); }
-inline std::ostream& operator<<(std::ostream& out, const math::Vector3& v);
+DllExport inline math::Vector3 operator*(float f, const math::Vector3& v) { return math::Vector3(v.x*f, v.y*f, v.z*f); }
+DllExport std::ostream& operator<<(std::ostream& out, const math::Vector3& v);
 
 
 #endif // RAWRAY_MATH_VECTOR3_H

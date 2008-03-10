@@ -17,8 +17,8 @@ class DllExport Material
 public:
     Material() { }
     virtual ~Material() { }
+
     virtual void PreCalc() { }
-    
     Vector3 Shade(const Ray&, const HitInfo& hit, const Scene&) const;
 
 }; // class Material

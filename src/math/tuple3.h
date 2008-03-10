@@ -74,7 +74,7 @@ public:
 /////////////////////////////////////////////////////////////////////////////
 
 template <class T>
-inline std::ostream& operator<<(std::ostream& out, const math::Tuple3<T>& t);
+DllExport inline std::ostream& operator<<(std::ostream& out, const math::Tuple3<T>& t);
 
 
 #endif // RAWRAY_MATH_TUPLE3_H

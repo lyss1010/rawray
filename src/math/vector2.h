@@ -85,8 +85,8 @@ public:
 } // namespace math
 /////////////////////////////////////////////////////////////////////////////
 
-inline math::Vector2 operator*(float f, const math::Vector2& v) { return math::Vector2(v.x*f, v.y*f); }
-inline std::ostream& operator<<(std::ostream& out, const math::Vector2& v);
+DllExport inline math::Vector2 operator*(float f, const math::Vector2& v) { return math::Vector2(v.x*f, v.y*f); }
+DllExport std::ostream& operator<<(std::ostream& out, const math::Vector2& v);
 
 
 #endif // RAWRAY_MATH_VECTOR2_H

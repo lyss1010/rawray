@@ -7,11 +7,12 @@
 #include "stdafx.h"
 #include "bvh.h"
 #include "object.h"
+#include "camera.h"
+#include "image.h"
 
 /////////////////////////////////////////////////////////////////////////////
 namespace rawray {
 
-class Image;
 class Light;
 
 class DllExport Scene : Object
@@ -31,7 +32,11 @@ public:
 
     virtual bool Intersect(HitInfo& hit, const Ray& ray, float minDistance = 0.0f, float maxDistance = MAX_DISTANCE);
 
-protected:
+    void Raytrace(const Camera& cam, Image& image);
+
+private:
+    void PostProcess(Image& image);
+
     std::vector<Object*> objects_;
     std::vector<Light*> lights_;
     BVH bvh_;

@@ -93,14 +93,14 @@ public:
 
 }; // class Vector4
 
-inline float Dot(const Vector4& a, const Vector4& b) { return a.x*b.x + a.y*b.y + a.z*b.z + a.w*b.w; }
+DllExport inline float Dot(const Vector4& a, const Vector4& b) { return a.x*b.x + a.y*b.y + a.z*b.z + a.w*b.w; }
 
 
 } // namespace math
 /////////////////////////////////////////////////////////////////////////////
 
-inline math::Vector4 operator*(float f, const math::Vector4& v) { return math::Vector4(v.x*f, v.y*f, v.z*f, v.w*f); }
-inline std::ostream& operator<<(std::ostream& out, const math::Vector4& v);
+DllExport inline math::Vector4 operator*(float f, const math::Vector4& v) { return math::Vector4(v.x*f, v.y*f, v.z*f, v.w*f); }
+DllExport std::ostream& operator<<(std::ostream& out, const math::Vector4& v);
 
 
 #endif // RAWRAY_MATH_VECTOR4_H

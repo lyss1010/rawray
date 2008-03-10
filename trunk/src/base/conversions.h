@@ -12,8 +12,8 @@ namespace base {
 
     const float DIVISOR_255 = 1.0f / float(UCHAR_MAX);
 
-    inline uint8 DllExport FloatToByte( float f );
-    inline float DllExport ByteToFloat( uint8 b );
+    uint8 DllExport FloatToByte( float f );
+    float DllExport ByteToFloat( uint8 b );
 
 } // namespace base
 /////////////////////////////////////////////////////////////////////////////

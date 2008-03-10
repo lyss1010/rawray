@@ -29,6 +29,8 @@ public:
     float GetRadius() const { return radius_; }
 
     virtual void RenderGL();
+    virtual void PreCalc() { }
+
     virtual bool Intersect(HitInfo& hit, const Ray& ray, float minDistance = 0.0f, float maxDistance = MAX_DISTANCE);
 
 private:

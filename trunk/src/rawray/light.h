@@ -14,15 +14,17 @@ namespace rawray {
 class DllExport Light
 {
 public:
+    Light(const Vector3& position, const Vector3& color, float wattage) : position_(position), color_(color), wattage_(wattage) { }
+
     void SetPosition(const Vector3& position) { position_=position; }
     void SetColor(const Vector3& color) { color_=color; }
     void SetWattage(float wattage) { wattage_=wattage; }
 
-    float GetWattage() { return wattage_; }
+    float GetWattage() const { return wattage_; }
     const Vector3& GetColor() const { return color_; }
     const Vector3& GetPosition() const { return position_; }
 
-    virtual void PreCalc();
+    virtual void PreCalc() { }
 
 protected:
     Vector3 position_;

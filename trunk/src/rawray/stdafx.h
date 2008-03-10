@@ -7,7 +7,13 @@
 #define RAWRAY_RAWRAY_STDAFX_H
 #include "global_defs.h"
 
+// STD Includes
 #include <vector>
+#include <iostream>
+
+// OpenGL Includes
+#include <GL/glut.h>
+
 #include "options.h"
 #include "constants.h"
 
@@ -26,6 +32,8 @@ class Tuple2;
 template <class T>
 class Tuple3;
 
+class Matrix4x4;
+
 } // namespace math
 
 
@@ -41,6 +49,9 @@ typedef math::Vector4 Vector4;
 typedef math::Tuple2<uint32> Tuple2I;
 typedef math::Tuple3<uint32> Tuple3I;
 
+typedef math::Matrix4x4 Matrix4x4;
+
 } // namesace rawray
+
 
 #endif // RAWRAY_RAWRAY_STDAFX_H

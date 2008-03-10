@@ -28,14 +28,16 @@ public:
     void Clear(const Pixel& color);
     
     void RenderGL();
+    void RenderScanlineGL(uint32 y);
+
+    void WritePPM(const char* filename);
+    void WritePPM(const char* filename, uint8* data, uint32 width, uint32 height);
 
     Pixel* GetPixels() { return pixels_; }
     uint32 GetWidth() const { return width_; }
     uint32 GetHeight() const { return height_; }
 
 private:
-    void RenderScanlineGL(uint32 y);
-
     Pixel* pixels_;
     uint32 width_;
     uint32 height_;

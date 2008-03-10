@@ -3,13 +3,21 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 #include "rawray_console.h"
-#include "rawray/rawray.h"
-
+#include "rawray/glut_window.h"
+#include "rawray/options.h"
 
 // Console Entry point
 int _tmain( int argc, _TCHAR* argv[] )
 {
-    rawray::RawRay rayTracer(argc);
+    // Initialize options defaults
+    rawray::options::init();
 
+    // TODO: Read in options
+
+    // Open GLUT window and begin rendering
+    rawray::GlutWindow window(&argc, argv);
+    window.MainLoop();
+
+    system("pause");
 	return 0;
 }

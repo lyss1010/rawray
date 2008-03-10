@@ -31,8 +31,8 @@ const uint8 MOUSE_RIGHT  = 2;
 const uint8 MOUSE_MIDDLE = 4;
 
 GlutWindow::GlutWindow(int* argc, char* argv[]) : cam_(), img_(), scene_(),
-    renderGL_(true), movementSpeed_(0.1f), activeButton_(0), 
-    mouseX_(0), mouseY_(0)
+    renderGL_(true), keySpeed_(0.1f), mouseXSpeed_(0.1f), mouseYSpeed_(0.03f),
+    activeButton_(0), mouseX_(0), mouseY_(0)
     
 {
     glutInit(argc, argv);
@@ -109,41 +109,45 @@ void GlutWindow::Keyboard(uint8 key, int x, int y) {
         break;
 
     case '+':
-        movementSpeed_ *= 1.5f;
+        keySpeed_ *= 1.5f;
+        mouseXSpeed_ *= 1.5f;
+        mouseYSpeed_ *= 1.5f;
         break;
 
     case '-':
-        movementSpeed_ /= 1.5f;
+        keySpeed_ /= 1.5f;
+        mouseXSpeed_ /= 1.5f;
+        mouseYSpeed_ /= 1.5f;
         break;
 
     case 'w':
     case 'W':
-        cam_.SetEye( cam_.GetEye() + movementSpeed_*cam_.GetViewDir() );
+        cam_.SetEye( cam_.GetEye() + keySpeed_*cam_.GetViewDir() );
         break;
 
     case 's':
     case 'S':
-        cam_.SetEye( cam_.GetEye() - movementSpeed_*cam_.GetViewDir() );
+        cam_.SetEye( cam_.GetEye() - keySpeed_*cam_.GetViewDir() );
         break;
 
     case 'q':
     case 'Q':
-        cam_.SetEye( cam_.GetEye() + movementSpeed_*cam_.GetUp() );
+        cam_.SetEye( cam_.GetEye() + keySpeed_*cam_.GetUp() );
         break;
 
     case 'z':
     case 'Z':
-        cam_.SetEye( cam_.GetEye() - movementSpeed_*cam_.GetUp() );
+        cam_.SetEye( cam_.GetEye() - keySpeed_*cam_.GetUp() );
         break;
 
     case 'a':
     case 'A':
-        cam_.SetEye( cam_.GetEye() - movementSpeed_*math::Cross( cam_.GetViewDir(), cam_.GetUp() ) );
+        cam_.SetEye( cam_.GetEye() - keySpeed_*math::Cross( cam_.GetViewDir(), cam_.GetUp() ) );
         break;
 
     case 'd':
     case 'D':
-        cam_.SetEye( cam_.GetEye() + movementSpeed_*math::Cross( cam_.GetViewDir(), cam_.GetUp() ) );
+        cam_.SetEye( cam_.GetEye() + keySpeed_*math::Cross( cam_.GetViewDir(), cam_.GetUp() ) );
         break;
 
     default:
@@ -191,8 +195,8 @@ void GlutWindow::Motion(int x, int y) {
         Vector3 viewDir = cam_.GetViewDir();
         Vector3 right = math::Cross(viewDir, cam_.GetUp());
 
-        viewDir.Rotate( -dx*math::DEG_TO_RAD, right );
-        viewDir.Rotate( -dy*math::DEG_TO_RAD, cam_.GetUp() );
+        viewDir.Rotate( -mouseYSpeed_*dy*math::DEG_TO_RAD, right );
+        viewDir.Rotate( -mouseXSpeed_*dx*math::DEG_TO_RAD, cam_.GetUp() );
         cam_.SetViewDir(viewDir);
 
         displayNeedsUpdate = true;

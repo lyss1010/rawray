@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "options.h"
 #include "float.h"
+#include "math/constants.h"
 
 namespace rawray {
 namespace options {

@@ -5,6 +5,7 @@
 #include "camera.h"
 #include "float.h"
 
+
 namespace rawray {
 
 Camera::Camera() : eye_(options::cam_eye), viewDir_(options::cam_view),

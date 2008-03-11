@@ -22,7 +22,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)inc&quot;;&quot;$(SolutionDir)src\base&quot;;&quot;$(SolutionDir)src\math&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)inc&quot;;&quot;$(SolutionDir)src&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;RAWRAY_EXPORTS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -36,7 +36,8 @@
 				BrowseInformationFile="$(IntDir)"
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="3"/>
+				DebugInformationFormat="3"
+				DisableSpecificWarnings="4251"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -46,6 +47,7 @@
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="$(SolutionDir)lib"
+				ForceSymbolReferences="__DllMainCRTStartup@12"
 				GenerateDebugInformation="TRUE"
 				AssemblyDebug="1"
 				GenerateMapFile="FALSE"
@@ -92,7 +94,7 @@
 				EnableFiberSafeOptimizations="TRUE"
 				OptimizeForProcessor="3"
 				OptimizeForWindowsApplication="TRUE"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)inc&quot;;&quot;$(SolutionDir)src\math&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)inc&quot;;&quot;$(SolutionDir)src&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;RAWRAY_EXPORTS"
 				StringPooling="TRUE"
 				MinimalRebuild="FALSE"
@@ -106,7 +108,8 @@
 				BrowseInformation="0"
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="0"/>
+				DebugInformationFormat="0"
+				DisableSpecificWarnings="4251"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -115,6 +118,7 @@
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="$(SolutionDir)lib"
+				ForceSymbolReferences="__DllMainCRTStartup@12"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				OptimizeForWindows98="1"
@@ -150,58 +154,150 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath=".\camera.cpp">
+				RelativePath=".\glut_window.cpp">
 			</File>
-			<File
-				RelativePath=".\image.cpp">
-			</File>
-			<File
-				RelativePath=".\light.cpp">
-			</File>
-			<File
-				RelativePath=".\rawray.cpp">
-			</File>
-			<File
-				RelativePath=".\scene.cpp">
-			</File>
-			<File
-				RelativePath=".\stdafx.cpp">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"/>
-				</FileConfiguration>
-			</File>
+			<Filter
+				Name="geometry"
+				Filter="">
+				<File
+					RelativePath=".\bl_patch.cpp">
+				</File>
+				<File
+					RelativePath=".\sphere.cpp">
+				</File>
+				<File
+					RelativePath=".\triangle.cpp">
+				</File>
+				<File
+					RelativePath=".\triangle_mesh.cpp">
+				</File>
+			</Filter>
+			<Filter
+				Name="scene"
+				Filter="">
+				<File
+					RelativePath=".\bvh.cpp">
+				</File>
+				<File
+					RelativePath=".\camera.cpp">
+				</File>
+				<File
+					RelativePath=".\image.cpp">
+				</File>
+				<File
+					RelativePath=".\light.cpp">
+				</File>
+				<File
+					RelativePath=".\scene.cpp">
+				</File>
+			</Filter>
+			<Filter
+				Name="material"
+				Filter="">
+				<File
+					RelativePath=".\lambert.cpp">
+				</File>
+				<File
+					RelativePath=".\material.cpp">
+				</File>
+			</Filter>
+			<Filter
+				Name="std"
+				Filter="">
+				<File
+					RelativePath=".\options.cpp">
+				</File>
+				<File
+					RelativePath=".\stdafx.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="1"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="1"/>
+					</FileConfiguration>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
-				RelativePath=".\camera.h">
+				RelativePath=".\glut_window.h">
 			</File>
-			<File
-				RelativePath=".\image.h">
-			</File>
-			<File
-				RelativePath=".\light.h">
-			</File>
-			<File
-				RelativePath=".\rawray.h">
-			</File>
-			<File
-				RelativePath=".\scene.h">
-			</File>
-			<File
-				RelativePath=".\stdafx.h">
-			</File>
+			<Filter
+				Name="geometry"
+				Filter="">
+				<File
+					RelativePath=".\bl_patch.h">
+				</File>
+				<File
+					RelativePath=".\hit_info.h">
+				</File>
+				<File
+					RelativePath=".\object.h">
+				</File>
+				<File
+					RelativePath=".\ray.h">
+				</File>
+				<File
+					RelativePath=".\sphere.h">
+				</File>
+				<File
+					RelativePath=".\triangle.h">
+				</File>
+				<File
+					RelativePath=".\triangle_mesh.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="scene"
+				Filter="">
+				<File
+					RelativePath=".\bvh.h">
+				</File>
+				<File
+					RelativePath=".\camera.h">
+				</File>
+				<File
+					RelativePath=".\image.h">
+				</File>
+				<File
+					RelativePath=".\light.h">
+				</File>
+				<File
+					RelativePath=".\scene.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="std"
+				Filter="">
+				<File
+					RelativePath=".\constants.h">
+				</File>
+				<File
+					RelativePath=".\options.h">
+				</File>
+				<File
+					RelativePath=".\stdafx.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="material"
+				Filter="">
+				<File
+					RelativePath=".\lambert.h">
+				</File>
+				<File
+					RelativePath=".\material.h">
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Resource Files"

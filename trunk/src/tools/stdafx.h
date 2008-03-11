@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 #ifndef RAWRAY_TOOLS_STDAFX_H
 #define RAWRAY_TOOLS_STDAFX_H
-#include "global_defs.h"
+#include "base/global_defs.h"
 
 
 #endif // RAWRAY_TOOLS_STDAFX_H

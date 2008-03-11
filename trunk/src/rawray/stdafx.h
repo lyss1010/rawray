@@ -5,10 +5,14 @@
 /////////////////////////////////////////////////////////////////////////////
 #ifndef RAWRAY_RAWRAY_STDAFX_H
 #define RAWRAY_RAWRAY_STDAFX_H
-#include "global_defs.h"
+#include "base/global_defs.h"
 
 // STD Includes
+#pragma warning(push)
+#pragma warning(disable:4702) // Unreachable code warning in <vector>
 #include <vector>
+#pragma warning(pop)
+
 #include <iostream>
 
 // OpenGL Includes

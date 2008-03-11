@@ -20,7 +20,7 @@ TriangleMesh::~TriangleMesh() {
 
 bool TriangleMesh::LoadOBJ(const char* filename, const Matrix4x4& ctm) {
     FILE* fp = NULL;
-    fopen_s( &fp, filename, "rb" );
+    fp = fopen( filename, "rb" );
 
     if( !fp ) {
         return false;
@@ -78,7 +78,7 @@ void TriangleMesh::LoadOBJFile(FILE* fp, const Matrix4x4& ctm) {
             if (line[1] == 'n')
             {
                 float x, y, z;
-                sscanf_s(&line[2], "%f %f %f\n", &x, &y, &z);
+                sscanf(&line[2], "%f %f %f\n", &x, &y, &z);
                 Vector3 n(x, y, z);
                 normals_[nnormals] = nctm*n;
                 normals_[nnormals].Normalize();
@@ -87,7 +87,7 @@ void TriangleMesh::LoadOBJFile(FILE* fp, const Matrix4x4& ctm) {
             else if (line[1] == 't')
             {
                 float x, y;
-                sscanf_s(&line[2], "%f %f\n", &x, &y);
+                sscanf(&line[2], "%f %f\n", &x, &y);
                 texCoords_[ntextures].x = x;
                 texCoords_[ntextures].y = y;
                 ntextures++;
@@ -95,7 +95,7 @@ void TriangleMesh::LoadOBJFile(FILE* fp, const Matrix4x4& ctm) {
             else
             {
                 float x, y, z;
-                sscanf_s(&line[1], "%f %f %f\n", &x, &y, &z);
+                sscanf(&line[1], "%f %f %f\n", &x, &y, &z);
                 Vector3 v(x, y, z);
                 vertices_[nvertices] = ctm*v;
                 nvertices++;

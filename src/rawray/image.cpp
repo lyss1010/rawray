@@ -89,7 +89,7 @@ void Image::WritePPM(const char* filename) {
 
 void Image::WritePPM(const char* filename, uint8* data, uint32 width, uint32 height) {
     FILE* fp = NULL;
-    fopen_s( &fp, filename, "wb" );
+    fp = fopen( filename, "wb" );
     if (fp) {
         fprintf(fp, "P6\n");
         fprintf(fp, "%d %d\n", width, height);

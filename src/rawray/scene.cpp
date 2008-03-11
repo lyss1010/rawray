@@ -52,8 +52,8 @@ void Scene::Raytrace(const Camera& cam, Image& image) {
     PostProcess(image);
 }
 
-void Scene::PostProcess(Image& image) {
-
+void Scene::PostProcess(Image& img) {
+	UNREFERENCED_PARAMETER(img);
 }
 
 } // namespace rawray

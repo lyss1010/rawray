@@ -56,8 +56,10 @@ void GlutWindow::Display() {
 
         glutSwapBuffers();
     } else {
-        if( cam_.RenderImage(img_) )
+		if( cam_.RenderImage(img_) ) {
             scene_.Raytrace(cam_, img_);
+			img_.WritePPM("autosave.ppm");
+		}
         
         img_.RenderGL();
     }
@@ -222,7 +224,7 @@ void GlutWindow::InitGL() {
     glDisable( GL_TEXTURE_2D );
 
     glShadeModel( GL_SMOOTH );
-    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+	glPolygonMode( GL_FRONT_AND_BACK, GL_LINES );
 
     glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
 }
@@ -294,7 +296,7 @@ void GlutWindow::MakeBunnyScene() {
     Material* mat = new Lambert( Vector3(1,1,1) );
 
     TriangleMesh* bunny = new TriangleMesh;
-    bunny->LoadOBJ( "D:\\Documents\\Documents\\Visual Studio 2008\\Projects\\rawray\\res\\bunny.obj" );
+    bunny->LoadOBJ( "./../res/sphere.obj" );
     
     // create all the triangles in the bunny mesh and add to the scene
     for (uint32 i = 0; i < bunny->GetNumTriangles(); ++i)

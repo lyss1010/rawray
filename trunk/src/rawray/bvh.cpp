@@ -19,7 +19,6 @@ void BVH::RenderGL() {
 
 bool BVH::Intersect(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance) {
     // TODO: Actual Bounding Volume Hierarchy, not test of all objects
-    
     uint32 numHits = 0;
     HitInfo tempHit;
 

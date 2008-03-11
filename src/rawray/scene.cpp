@@ -38,14 +38,17 @@ void Scene::Raytrace(const Camera& cam, Image& image) {
 
     // For all pixels in the image
     for (uint32 y=0; y<height; ++y) {
+		std::cout << "Raytracing scanline " << y+1 << "/" << height << std::endl;
+
         for (uint32 x=0; x<width; ++x) {
             eyeRay = cam.EyeRay(x, y, 0.5f, 0.5f, width, height);
 
-            if (Intersect( hit, eyeRay )) {
-                shadedColor = hit.material == NULL ? 
-                    options::bg_color : 
-                    hit.material->Shade(eyeRay, hit, *this);
-            }
+			if ( Intersect( hit, eyeRay ) && hit.material != NULL )
+                shadedColor = hit.material->Shade(eyeRay, hit, *this);
+			else
+				shadedColor = options::bg_color;
+
+			image.SetPixel( x, y, shadedColor );
         }
     }
 

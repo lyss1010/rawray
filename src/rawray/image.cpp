@@ -72,13 +72,8 @@ void Image::RenderGL() {
 }
 
 void Image::RenderScanlineGL(uint32 y) {
-    register float divisor_height = 1.0f / height_;
-
-    for(uint32 x=0; x<width_; ++x)
-    {
-        glRasterPos2f(-1, -1 + 2*y * divisor_height);
-        glDrawPixels(width_, 1, GL_RGB, GL_UNSIGNED_BYTE, &pixels_[y*width_]);
-    }
+    glRasterPos2f(-1, -1 + 2*y / float(height_));
+    glDrawPixels(width_, 1, GL_RGB, GL_UNSIGNED_BYTE, &pixels_[y*width_]);
 }
 
 void Image::WritePPM(const char* filename) {

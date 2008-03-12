@@ -35,6 +35,7 @@ public:
 private:
     // Supported intersection algorithms
     bool Barycentric(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance);
+    bool BarycentricProjection(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance);
     bool Moller(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance);
     bool Plucker(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance);
 

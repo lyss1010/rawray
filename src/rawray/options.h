@@ -11,6 +11,7 @@ namespace options {
 
     enum TriangleIntersection {
         BARYCENTRIC,
+        BARYCENTRIC_PROJECTION,
         PLUCKER,
         MOLLER,
     };

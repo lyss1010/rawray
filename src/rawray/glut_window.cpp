@@ -156,6 +156,8 @@ void GlutWindow::Keyboard(uint8 key, int x, int y) {
         displayNeedsUpdate = false;
     }
 
+    std::cout << "Camera Pos: " << cam_.GetEye() << std::endl;
+
     if (displayNeedsUpdate)
         glutPostRedisplay();
 }
@@ -224,7 +226,11 @@ void GlutWindow::InitGL() {
     glDisable( GL_TEXTURE_2D );
 
     glShadeModel( GL_SMOOTH );
-	glPolygonMode( GL_FRONT_AND_BACK, GL_LINES );
+    glFrontFace( GL_FRONT );
+    //glEnable( GL_CULL_FACE );
+
+	glPolygonMode( GL_FRONT, GL_FILL );
+    glPolygonMode( GL_BACK, GL_POINT );
 
     glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
 }
@@ -249,9 +255,9 @@ void GlutWindow::CreateWindow() {
 void GlutWindow::MakeSpiralScene() {
     img_.Resize(512, 512);
 
-    cam_.SetEye( Vector3(-5, 2, 3) );
+    cam_.SetEye( Vector3(0, 0.7f, 0) );
     cam_.SetLookAt( Vector3(0, 0, 0) );
-    cam_.SetUp( Vector3(0, 1, 0) );
+    cam_.SetUp( Vector3(0, 0, 1) );
     cam_.SetFOV( 45 );
 
     Light* light = new Light( Vector3(-3,15,3),
@@ -283,9 +289,9 @@ void GlutWindow::MakeBunnyScene() {
     // set up the camera
     options::bg_color = Vector3(0.0f, 0.0f, 0.2f);
 
-    cam_.SetEye( Vector3(-2, 3, 5) );
-    cam_.SetLookAt( Vector3(-0.5f, 1, 0) );
-    cam_.SetUp( Vector3(0, 1, 0) );
+    cam_.SetEye( Vector3(0, 0.75f, 0) );
+    cam_.SetLookAt( Vector3(0, 0, 0) );
+    cam_.SetUp( Vector3(0, 0, 1) );
     cam_.SetFOV( 45 );
 
     Light* light = new Light( Vector3(-3, 15, 3),
@@ -296,7 +302,7 @@ void GlutWindow::MakeBunnyScene() {
     Material* mat = new Lambert( Vector3(1,1,1) );
 
     TriangleMesh* bunny = new TriangleMesh;
-    bunny->LoadOBJ( "./../res/sphere.obj" );
+    bunny->LoadOBJ( "./../res/triangle.obj" );
     
     // create all the triangles in the bunny mesh and add to the scene
     for (uint32 i = 0; i < bunny->GetNumTriangles(); ++i)

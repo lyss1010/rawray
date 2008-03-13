@@ -23,7 +23,7 @@ uint32 win_posY;
 
 // A DLL can't initialize non-primitive static data
 void init() {
-    triangle_intersection_algorithm = BARYCENTRIC_PROJECTION;
+    triangle_intersection_algorithm = BARYCENTRIC;
 
     bg_color = Vector3(0.0f, 0.0f, 0.0f);
     cam_eye = Vector3(0.0f, 0.0f, 0.0f);

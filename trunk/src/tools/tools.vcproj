@@ -4,6 +4,7 @@
 	Version="7.10"
 	Name="tools"
 	ProjectGUID="{FEE8AC25-54B5-4559-BC90-2D116DB3546B}"
+	RootNamespace="tools"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -170,6 +171,22 @@
 						UsePrecompiledHeader="1"/>
 				</FileConfiguration>
 			</File>
+			<Filter
+				Name="generated"
+				Filter="">
+				<File
+					RelativePath=".\lexer.yy.c">
+				</File>
+				<File
+					RelativePath=".\parser.yy.c">
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="TRUE">
+						<Tool
+							Name="VCCLCompilerTool"/>
+					</FileConfiguration>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -178,11 +195,61 @@
 			<File
 				RelativePath=".\stdafx.h">
 			</File>
+			<Filter
+				Name="generated"
+				Filter="">
+				<File
+					RelativePath=".\parser.yy.h">
+				</File>
+				<File
+					RelativePath=".\unistd.h">
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Resource Files"
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
+			<File
+				RelativePath=".\lexer.lex">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Creating Lexer with FLEX"
+						CommandLine="&quot;$(InputDir)flex.exe&quot; -i -+ -olexer.yy.c $(InputFileName)"
+						Outputs="lexer.yy.c"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Creating Lexer with FLEX"
+						CommandLine="&quot;$(InputDir)flex.exe&quot; -i -+ -olexer.yy.c $(InputFileName)"
+						Outputs="lexer.yy.c"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\parser.y">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Creating Parser with BISON"
+						CommandLine="&quot;$(InputDir)bison.exe&quot; -d -oparser.yy.c $(InputFileName)"
+						Outputs="parser.yy.c"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Creating Parser with BISON"
+						CommandLine="&quot;$(InputDir)bison.exe&quot; -d -oparser.yy.c $(InputFileName)"
+						Outputs="parser.yy.c"/>
+				</FileConfiguration>
+			</File>
 		</Filter>
 		<File
 			RelativePath=".\ReadMe.txt">

@@ -302,7 +302,7 @@ void GlutWindow::MakeBunnyScene() {
     Material* mat = new Lambert( Vector3(1,1,1) );
 
     TriangleMesh* bunny = new TriangleMesh;
-    bunny->LoadOBJ( "./../res/triangle.obj" );
+    bunny->LoadOBJ( "./../res/sphere.obj" );
     
     // create all the triangles in the bunny mesh and add to the scene
     for (uint32 i = 0; i < bunny->GetNumTriangles(); ++i)

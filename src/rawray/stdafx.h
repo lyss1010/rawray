@@ -16,7 +16,9 @@
 #include <iostream>
 
 // OpenGL Includes
+#define GLUT_DISABLE_ATEXIT_HACK
 #include <GL/glut.h>
+#undef GLUT_DISABLE_ATEXIT_HACK
 
 #include "options.h"
 #include "constants.h"

@@ -174,18 +174,6 @@
 			<Filter
 				Name="generated"
 				Filter="">
-				<File
-					RelativePath=".\lexer.yy.c">
-				</File>
-				<File
-					RelativePath=".\parser.yy.c">
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCLCompilerTool"/>
-					</FileConfiguration>
-				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -218,7 +206,8 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Creating Lexer with FLEX"
-						CommandLine="&quot;$(InputDir)flex.exe&quot; -i -+ -olexer.yy.c $(InputFileName)"
+						CommandLine="&quot;$(InputDir)flex.exe&quot; -i -+ -olexer.yy.c $(InputFileName)
+"
 						Outputs="lexer.yy.c"/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -226,7 +215,8 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Creating Lexer with FLEX"
-						CommandLine="&quot;$(InputDir)flex.exe&quot; -i -+ -olexer.yy.c $(InputFileName)"
+						CommandLine="&quot;$(InputDir)flex.exe&quot; -i -+ -olexer.yy.c $(InputFileName)
+"
 						Outputs="lexer.yy.c"/>
 				</FileConfiguration>
 			</File>
@@ -238,7 +228,8 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Creating Parser with BISON"
-						CommandLine="&quot;$(InputDir)bison.exe&quot; -d -oparser.yy.c $(InputFileName)"
+						CommandLine="&quot;$(InputDir)bison.exe&quot; -d -oparser.yy.c $(InputFileName)
+"
 						Outputs="parser.yy.c"/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -246,7 +237,8 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Creating Parser with BISON"
-						CommandLine="&quot;$(InputDir)bison.exe&quot; -d -oparser.yy.c $(InputFileName)"
+						CommandLine="&quot;$(InputDir)bison.exe&quot; -d -oparser.yy.c $(InputFileName)
+"
 						Outputs="parser.yy.c"/>
 				</FileConfiguration>
 			</File>

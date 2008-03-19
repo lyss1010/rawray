@@ -6,7 +6,7 @@
 
 namespace math {
 
-bool FloatEquals(float a, float b, float delta) {
+inline bool FloatEquals(float a, float b, float delta) {
     if( a > b ) {
         a -= b;
         return a <= delta;
@@ -15,6 +15,10 @@ bool FloatEquals(float a, float b, float delta) {
         b -= a;
         return b <= delta;
     }
+}
+
+inline bool FloatZero(float f, float epsilon) {
+    return f < epsilon && f > -epsilon;
 }
 
 }  // namespace math

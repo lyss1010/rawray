@@ -6,9 +6,15 @@
 namespace rawray {
 namespace options {
 
+float epsilon;
+
 TriangleIntersection triangle_intersection_algorithm;
 Vector3 bg_color;
-Vector3 cam_eye, cam_view, cam_up, cam_lookat;
+
+Vector3 cam_eye;
+Vector3 cam_view;
+Vector3 cam_up;
+Vector3 cam_lookat;
 
 float cam_fov;
 float cam_aspect;
@@ -23,6 +29,8 @@ uint32 win_posY;
 
 // A DLL can't initialize non-primitive static data
 void init() {
+    epsilon = 0.00001f;
+
     triangle_intersection_algorithm = BARYCENTRIC;
 
     bg_color = Vector3(0.0f, 0.0f, 0.0f);

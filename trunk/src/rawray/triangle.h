@@ -28,7 +28,7 @@ public:
     void SetIndex(uint32 index) { index_=index; }
 
     virtual void RenderGL();
-    virtual void PreCalc() { }
+    virtual void PreCalc();
 
     virtual bool Intersect(HitInfo& hit, const Ray& ray, float minDistance = 0.0f, float maxDistance = MAX_DISTANCE);
 
@@ -39,8 +39,14 @@ private:
     bool Moller(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance);
     bool Plucker(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance);
 
+    void Interpolate(HitInfo& hit, float alpha, float beta);
+
     TriangleMesh& mesh_;
     uint32 index_;
+
+    // Precomputed data
+    Vector3 n_;         // Normal of the plane this triangle lines on
+    
 
     DISALLOW_IMPLICIT_CONSTRUCTORS(Triangle);
 

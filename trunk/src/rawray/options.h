@@ -16,6 +16,8 @@ namespace options {
         MOLLER,
     };
 
+    extern float epsilon;
+
     extern TriangleIntersection triangle_intersection_algorithm;
     extern math::Vector3 bg_color;
 

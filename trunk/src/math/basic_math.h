@@ -13,6 +13,7 @@ namespace math {
 
     // Checks if two floats are within delta of each other (NOTE: Assumes positive delta)
     DllExport bool FloatEquals(float a, float b, float delta);
+    DllExport bool FloatZero(float f, float epsilon);
 
 } // namespace math
 

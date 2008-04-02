@@ -261,6 +261,7 @@ void GlutWindow::ToggleRenderGL() {
 
     } else {
         img_.ScreenShot();
+        img_.GaussianBlur(1.0f);
 
         // Create a Job to render the scene with RawRay
     }

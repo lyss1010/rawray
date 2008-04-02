@@ -29,19 +29,23 @@ bool Scene::Intersect(HitInfo& hit, const Ray& ray, float minDistance, float max
     return bvh_.Intersect(hit, ray, minDistance, maxDistance );
 }
 
-void Scene::Raytrace(const Camera& cam, Image& image) {
+void Scene::Raytrace(const Camera& cam, Image& image, uint32 xStart, uint32 yStart, uint32 width, uint32 height)
+{
     Ray eyeRay;
     HitInfo hit;
     Vector3 shadedColor;
-    uint32 width = image.GetWidth();
-    uint32 height = image.GetHeight();
+    
+    const uint32 imgWidth = image.GetWidth();
+    const uint32 imgHeight = image.GetHeight();
 
-    // For all pixels in the image
-    for (uint32 y=0; y<height; ++y) {
-		std::cout << "Raytracing scanline " << y+1 << "/" << height << std::endl;
+    // clip to the image so we don't go out of bounds
+    width = std::min( xStart+width, imgWidth );
+    height = std::min( yStart+height, imgHeight );
 
-        for (uint32 x=0; x<width; ++x) {
-            eyeRay = cam.EyeRay(x, y, 0.5f, 0.5f, width, height);
+    // For all pixels in rectangle defined
+    for (uint32 y=yStart; y<height; ++y) {
+        for (uint32 x=xStart; x<width; ++x) {
+            eyeRay = cam.EyeRay(x, y, 0.5f, 0.5f, imgWidth, imgHeight);
 
 			if ( Intersect( hit, eyeRay ) && hit.material != NULL )
                 shadedColor = hit.material->Shade(eyeRay, hit, *this);
@@ -51,6 +55,12 @@ void Scene::Raytrace(const Camera& cam, Image& image) {
 			image.SetPixel( x, y, shadedColor );
         }
     }
+
+    PostProcess(image);
+}
+
+void Scene::Raytrace(const Camera& cam, Image& image) {
+    Raytrace(cam, image, 0, 0, image.GetWidth(), image.GetHeight());
 
     PostProcess(image);
 }

@@ -11,6 +11,7 @@
 #pragma warning(push)
 #pragma warning(disable:4702) // Unreachable code warning in <vector>
 #include <vector>
+#include <list>
 #pragma warning(pop)
 
 #include <iostream>

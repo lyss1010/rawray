@@ -31,6 +31,7 @@ private:
     void InitGL();
     void InitCallbacks();
     void CreateWindow();
+    void ToggleRenderGL();
 
     void MakeSpiralScene();
     void MakeBunnyScene();

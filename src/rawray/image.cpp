@@ -66,6 +66,11 @@ void Image::Clear(const Pixel &color) {
             SetPixel( x, y, color );
 }
 
+void Image::ScreenShot() {
+    glReadPixels( 0, 0, width_, height_, 
+                  GL_RGB, GL_RGB, pixels_ );
+}
+
 void Image::RenderGL() {
     for(uint32 y=0; y<height_; ++y)
         RenderScanlineGL(y);

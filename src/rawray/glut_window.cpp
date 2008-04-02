@@ -41,8 +41,8 @@ GlutWindow::GlutWindow(int* argc, char* argv[]) : cam_(), img_(), scene_(),
     InitGL();
     InitCallbacks();
 
-    //MakeSpiralScene();
-    MakeBunnyScene();
+    MakeSpiralScene();
+    //MakeBunnyScene();
 }
 
 void GlutWindow::MainLoop() {
@@ -56,11 +56,11 @@ void GlutWindow::Display() {
 
         glutSwapBuffers();
     } else {
-		if( cam_.RenderImage(img_) ) {
-            scene_.Raytrace(cam_, img_);
-			img_.WritePPM("autosave.ppm");
-		}
-        
+		//if( cam_.RenderImage(img_) ) {
+  //          scene_.Raytrace(cam_, img_);
+		//	img_.WritePPM("autosave.ppm");
+		//}
+  //      
         img_.RenderGL();
     }
     
@@ -107,7 +107,7 @@ void GlutWindow::Keyboard(uint8 key, int x, int y) {
 
     case 'r':
     case 'R':
-        renderGL_ = !renderGL_;
+        ToggleRenderGL();
         break;
 
     case '+':
@@ -195,7 +195,7 @@ void GlutWindow::Motion(int x, int y) {
     int dx = x - mouseX_;
     int dy = y - mouseY_;
 
-    if (activeButton_ & MOUSE_LEFT) {
+    if (renderGL_ && activeButton_ & MOUSE_LEFT) {
         Vector3 viewDir = cam_.GetViewDir();
         Vector3 right = math::Cross(viewDir, cam_.GetUp());
 
@@ -252,16 +252,30 @@ void GlutWindow::CreateWindow() {
     glutCreateWindow( options::win_name.c_str() );
 }
 
+void GlutWindow::ToggleRenderGL() {
+    renderGL_ = !renderGL_;
+
+    if( renderGL_ ) {
+        // Clean up a ray trace job if we are aborting
+        
+
+    } else {
+        img_.ScreenShot();
+
+        // Create a Job to render the scene with RawRay
+    }
+}
+
 void GlutWindow::MakeSpiralScene() {
     img_.Resize(512, 512);
 
-    cam_.SetEye( Vector3(0, 0.7f, 0) );
+    cam_.SetEye( Vector3(-5.0f, 2.0f, 3.0f) );
     cam_.SetLookAt( Vector3(0, 0, 0) );
-    cam_.SetUp( Vector3(0, 0, 1) );
+    cam_.SetUp( Vector3(0, 1, 0) );
     cam_.SetFOV( 45 );
 
-    Light* light = new Light( Vector3(-3,15,3),
-                              Vector3(1,1,1),
+    Light* light = new Light( Vector3(-3, 15, 3),
+                              Vector3(1, 1, 1),
                               1000 );
     scene_.AddLight(light);
 
@@ -289,17 +303,17 @@ void GlutWindow::MakeBunnyScene() {
     // set up the camera
     options::bg_color = Vector3(0.0f, 0.0f, 0.2f);
 
-    cam_.SetEye( Vector3(0, 0.75f, 0) );
-    cam_.SetLookAt( Vector3(0, 0, 0) );
-    cam_.SetUp( Vector3(0, 0, 1) );
+    cam_.SetEye( Vector3(-2.0f, 3.0f, 5.0f) );
+    cam_.SetLookAt( Vector3(-0.5f, 1.0f, 0.0f) );
+    cam_.SetUp( Vector3(0, 1, 0) );
     cam_.SetFOV( 45 );
 
     Light* light = new Light( Vector3(-3, 15, 3),
-                          Vector3(1,1,1),
-                          500 );
+							  Vector3(1, 1, 1),
+							  500 );
     scene_.AddLight(light);
 
-    Material* mat = new Lambert( Vector3(1,1,1) );
+    Material* mat = new Lambert( Vector3(1, 1, 1) );
 
     TriangleMesh* bunny = new TriangleMesh;
     bunny->LoadOBJ( "./../res/sphere.obj" );

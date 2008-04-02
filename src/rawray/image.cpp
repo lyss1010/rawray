@@ -71,6 +71,25 @@ void Image::ScreenShot() {
                   GL_RGB, GL_RGB, pixels_ );
 }
 
+bool GaussianBlur(float sigma) {
+    if( sigma < 0.0f ) return false;
+    // See: http://en.wikipedia.org/wiki/Gaussian_blur
+
+    // Clamp the gaussian distribution off at a fixed distance (rounding up)
+    int weightMatrixSize = static_cast<int>(0.5f + 6*sigma);
+
+    // Precompute matrix with weight multipliers
+    float weights[] = new float[weightMatrixSize * weightMatrixSize];
+    float two_sigma_sqared = 2 * sigma * sigma;
+
+    for( int y=0; y<weightMatrixSize; ++y ) {
+        for( int x=0; x<weightMatrixSize; ++x ) {
+
+
+        }
+    }
+}
+
 void Image::RenderGL() {
     for(uint32 y=0; y<height_; ++y)
         RenderScanlineGL(y);

@@ -26,6 +26,7 @@ public:
 
     void Clear(const Vector3& color);
     void Clear(const Pixel& color);
+    void ScreenShot();
     
     void RenderGL();
     void RenderScanlineGL(uint32 y);

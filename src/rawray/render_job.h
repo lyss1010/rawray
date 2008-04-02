@@ -32,17 +32,21 @@ class DllExport RenderThread
 {
 public:
     RenderThread(Scene& scene, const Camera& cam, Image& img) :
-            scene_(scene), cam_(cam), img_(img) { }
+            scene_(scene), cam_(cam), img_(img), currentTask_(NULL) { }
 
-    ~RenderThread() : currentTask_(NULL) { }
+    ~RenderThread() { }
 
-    bool IsDone() { return currentTask==NULL; }
+    bool Run();
+    bool IsDone() { return currentTask_==NULL; }
+    void SetSelfDeletion(bool deleteSelf) { deleteSelf_ = deleteSelf; }
 
 private:
     Scene& scene_;
     const Camera& cam_;
     Image& img_;
     RenderTask* currentTask_;
+    bool deleteSelf_;
+    uint32 threadID_;
 
     DISALLOW_IMPLICIT_CONSTRUCTORS(RenderThread);
 };
@@ -53,7 +57,7 @@ class DllExport RenderJob
 {
 public:
     RenderJob(uint32 numThreads, Scene& scene, const Camera& cam, Image& img) :
-            numThread_(numThread), scene_(scene), cam_(cam), img_(img) { }
+            numThreads_(numThreads), scene_(scene), cam_(cam), img_(img) { }
 
     ~RenderJob();
 
@@ -67,6 +71,8 @@ private:
     Scene& scene_;
     const Camera& cam_;
     Image& img_;
+    bool isRunning_;
+    uint32 threadID_;
     
     std::list<RenderTask*> tasks_;
     std::list<RenderThread*> threads_;

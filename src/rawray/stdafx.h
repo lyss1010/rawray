@@ -7,6 +7,9 @@
 #define RAWRAY_RAWRAY_STDAFX_H
 #include "base/global_defs.h"
 
+// Windows Includes
+//#include <Windows.h>
+
 // STD Includes
 #pragma warning(push)
 #pragma warning(disable:4702) // Unreachable code warning in <vector>

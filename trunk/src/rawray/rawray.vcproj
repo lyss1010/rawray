@@ -156,6 +156,9 @@
 			<File
 				RelativePath=".\glut_window.cpp">
 			</File>
+			<File
+				RelativePath=".\render_job.cpp">
+			</File>
 			<Filter
 				Name="geometry"
 				Filter="">
@@ -230,6 +233,9 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
 				RelativePath=".\glut_window.h">
+			</File>
+			<File
+				RelativePath=".\render_job.h">
 			</File>
 			<Filter
 				Name="geometry"

@@ -101,24 +101,24 @@ bool RenderJob::Run() {
 
 
 
-/////////////////////////////////////////////////////////////////////////////
-DWORD WINAPI RawRay_RenderJob_Handler_Thread(LPVOID lpParameter)
-{
-	assert(lpParameter);
-	RenderJob* job = static_cast<RenderJob*>(lpParameter);
-
-    while( !job->IsDone() ) {
-        
-    }
-}
-
-/////////////////////////////////////////////////////////////////////////////
-DWORD WINAPI RawRay_RenderThread_Handler_Thread(LPVOID lpParameter)
-{
-	assert(lpParameter);
-	RenderThread* thread = static_cast<RenderThread*>(lpParameter);
-
-    while( true )  {
-        
-    }
-}
+///////////////////////////////////////////////////////////////////////////////
+//DWORD WINAPI RawRay_RenderJob_Handler_Thread(LPVOID lpParameter)
+//{
+//	assert(lpParameter);
+//	RenderJob* job = static_cast<RenderJob*>(lpParameter);
+//
+//    while( !job->IsDone() ) {
+//        
+//    }
+//}
+//
+///////////////////////////////////////////////////////////////////////////////
+//DWORD WINAPI RawRay_RenderThread_Handler_Thread(LPVOID lpParameter)
+//{
+//	assert(lpParameter);
+//	RenderThread* thread = static_cast<RenderThread*>(lpParameter);
+//
+//    while( true )  {
+//        
+//    }
+//}

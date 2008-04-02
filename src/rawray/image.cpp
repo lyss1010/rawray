@@ -71,23 +71,61 @@ void Image::ScreenShot() {
                   GL_RGB, GL_RGB, pixels_ );
 }
 
-bool GaussianBlur(float sigma) {
+bool Image::GaussianBlur(float sigma) {
     if( sigma < 0.0f ) return false;
     // See: http://en.wikipedia.org/wiki/Gaussian_blur
 
-    // Clamp the gaussian distribution off at a fixed distance (rounding up)
-    int weightMatrixSize = static_cast<int>(0.5f + 6*sigma);
+    // Clamp the gaussian distribution off at a fixed distance (3sigma pixels in each direction)
+    int half_matrix_size = static_cast<int>(3*sigma);
+    int matrix_size = 1 + 2*half_matrix_size;
 
     // Precompute matrix with weight multipliers
-    float weights[] = new float[weightMatrixSize * weightMatrixSize];
-    float two_sigma_sqared = 2 * sigma * sigma;
-
-    for( int y=0; y<weightMatrixSize; ++y ) {
-        for( int x=0; x<weightMatrixSize; ++x ) {
-
-
+    float two_sigma_squared = 2 * sigma * sigma;
+    float scale = 1.0f / ( math::PI * two_sigma_squared );
+    float exponent_scale = -1.0f / two_sigma_squared;
+    
+    float* weights = new float[matrix_size * matrix_size];
+    for( int y=0; y<matrix_size; ++y ) {
+        float dY = y - half_matrix_size;
+        float yy = dY*dY;
+        for( int x=0; x<matrix_size; ++x ) {
+            float dX = x - half_matrix_size;
+            weights[ x + y*matrix_size ] = scale * exp( exponent_scale * (dX*dX + yy) );
         }
     }
+
+    // Loop over all pixels
+    for( int y=0; y<height_; ++y ) {
+        for( int x=0; x<width_; ++x ) {
+            Pixel sum = Pixel(0,0,0);
+            int left = x - half_matrix_size;
+            int top = y - half_matrix_size;
+
+            // Loop over our weight matrix and add up values of pixels*weight
+            // Ensure we are not trying to compute values of out of bounds pixels
+            for( int j=0; j<matrix_size; ++j ) {
+                int posY = top + j;
+                if( posY < 0 || posY >= height_ )
+                    continue;
+
+                for( int i=0; i<matrix_size; ++i ) {
+                    int posX = left + i;
+                    if( posX < 0 || posX >= width_ )
+                        continue;
+
+                    Pixel* pixel = pixels_ + y*width_ + x;
+                    float weight = weights[ i + matrix_size*j ];
+
+                    sum.x += pixel->x * weight;
+                    sum.y += pixel->y * weight;
+                    sum.z += pixel->z * weight;
+                }
+            }
+        }
+    }
+
+    delete [] weights;
+    return true;
 }
 
 void Image::RenderGL() {

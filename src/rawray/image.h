@@ -32,6 +32,7 @@ public:
     void RenderGL();
     void RenderScanlineGL(uint32 y);
 
+    void WritePPM();
     void WritePPM(const char* filename);
     void WritePPM(const char* filename, uint8* data, uint32 width, uint32 height);
 

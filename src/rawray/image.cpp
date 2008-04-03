@@ -4,6 +4,8 @@
 /////////////////////////////////////////////////////////////////////////////
 #include "image.h"
 #include "base/conversions.h"
+#include <sstream>
+#include "time.h"
 
 namespace rawray {
 
@@ -138,6 +140,12 @@ void Image::RenderGL() {
 void Image::RenderScanlineGL(uint32 y) {
     glRasterPos2f(-1, -1 + 2*y / float(height_));
     glDrawPixels(width_, 1, GL_RGB, GL_UNSIGNED_BYTE, &pixels_[y*width_]);
+}
+
+void Image::WritePPM() {
+    std::ostringstream filename;
+    filename << "rawray_" << time(0) << ".ppm";
+    WritePPM( filename.str().c_str() );
 }
 
 void Image::WritePPM(const char* filename) {

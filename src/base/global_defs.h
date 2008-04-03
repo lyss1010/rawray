@@ -33,6 +33,9 @@
 #define WIN32_LEAN_AND_MEAN	
 #endif
 
+// Do not use windows min/max macros 
+#define NOMINMAX 1
+
 // Null pointer
 #ifndef NULL
 #define NULL 0

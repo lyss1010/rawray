@@ -44,8 +44,6 @@ void Camera::RenderImage() {
     glLoadIdentity();
     glMatrixMode( GL_MODELVIEW );
     glLoadIdentity();
-
-    glDrawBuffer(GL_FRONT);
 }
 
 void Camera::CalcLookAt() {

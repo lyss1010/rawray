@@ -8,16 +8,19 @@
 #include "base/global_defs.h"
 
 // Windows Includes
-//#include <Windows.h>
+#include <Windows.h>
 
 // STD Includes
 #pragma warning(push)
 #pragma warning(disable:4702) // Unreachable code warning in <vector>
 #include <vector>
-#include <list>
 #pragma warning(pop)
 
+#include <list>
+#include <stack>
+#include <algorithm>
 #include <iostream>
+#include <assert.h>
 
 // OpenGL Includes
 #define GLUT_DISABLE_ATEXIT_HACK

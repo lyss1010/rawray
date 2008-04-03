@@ -34,6 +34,7 @@ private:
     void ToggleRenderGL();
 
     void MakeSpiralScene();
+    void MakeLorenzScene();
     void MakeBunnyScene();
     
     Scene scene_;

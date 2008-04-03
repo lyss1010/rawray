@@ -31,22 +31,21 @@ private:
 class DllExport RenderThread
 {
 public:
-    RenderThread(Scene& scene, const Camera& cam, Image& img) :
-            scene_(scene), cam_(cam), img_(img), currentTask_(NULL) { }
+    RenderThread(Scene& scene, const Camera& cam, Image& img);
+    ~RenderThread();
 
-    ~RenderThread() { }
-
-    bool Run();
     bool IsDone() { return currentTask_==NULL; }
-    void SetSelfDeletion(bool deleteSelf) { deleteSelf_ = deleteSelf; }
+    void SetCurrentTask(RenderTask* task) { currentTask_ = task; }
+    DWORD ThreadRoutine();
 
 private:
     Scene& scene_;
     const Camera& cam_;
     Image& img_;
     RenderTask* currentTask_;
-    bool deleteSelf_;
-    uint32 threadID_;
+    HANDLE threadHandle_;
+    DWORD threadID_;
+    bool abort_;
 
     DISALLOW_IMPLICIT_CONSTRUCTORS(RenderThread);
 };
@@ -57,12 +56,14 @@ class DllExport RenderJob
 {
 public:
     RenderJob(uint32 numThreads, Scene& scene, const Camera& cam, Image& img) :
-            numThreads_(numThreads), scene_(scene), cam_(cam), img_(img) { }
+            numThreads_(numThreads), scene_(scene), cam_(cam), img_(img),
+            threadID_(NULL), threadHandle_(NULL), abort_(false) { }
 
     ~RenderJob();
 
     bool Run();
     bool IsDone();
+    DWORD ThreadRoutine();
 
 private:
     void Cleanup();
@@ -71,15 +72,20 @@ private:
     Scene& scene_;
     const Camera& cam_;
     Image& img_;
-    bool isRunning_;
-    uint32 threadID_;
+    HANDLE threadHandle_;
+    DWORD threadID_;
+    bool abort_;
     
-    std::list<RenderTask*> tasks_;
+    std::stack<RenderTask*> tasks_;
     std::list<RenderThread*> threads_;
 
     DISALLOW_IMPLICIT_CONSTRUCTORS(RenderJob);
 };
 
 } // namespace rawray
+
+// Public Global functions for CreateThread
+DWORD WINAPI RawRay_RenderJob_Handler(LPVOID lpParameter);
+DWORD WINAPI RawRay_RenderThread_Handler(LPVOID lpParameter);
 
 #endif // RAWRAY_RAWRAY_RENDER_JOB_H

@@ -35,7 +35,6 @@ void Scene::Raytrace(const Camera& cam, Image& image, uint32 xStart, uint32 ySta
     HitInfo hit;
     Vector3 shadedColor;
     
-    std::cout << std::endl;
     const uint32 imgWidth = image.GetWidth();
     const uint32 imgHeight = image.GetHeight();
 
@@ -55,12 +54,7 @@ void Scene::Raytrace(const Camera& cam, Image& image, uint32 xStart, uint32 ySta
 
 			image.SetPixel( x, y, shadedColor );
         }
-
-        std::cout << "Scanline " << y << "/" << imgHeight << "\r" << std::flush;
     }
-
-    std::cout << std::endl;
-    PostProcess(image);
 }
 
 void Scene::Raytrace(const Camera& cam, Image& image) {

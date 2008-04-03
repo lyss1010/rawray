@@ -8,7 +8,7 @@
 #include "sphere.h"
 #include "triangle_mesh.h"
 #include "triangle.h"
-#include "time.h"
+#include "render_job.h"
 
 namespace {
 
@@ -32,12 +32,12 @@ const uint8 MOUSE_MIDDLE = 4;
 
 GlutWindow::GlutWindow(int* argc, char* argv[]) : cam_(), img_(), scene_(),
     renderGL_(true), keySpeed_(0.1f), mouseXSpeed_(0.1f), mouseYSpeed_(0.03f),
-    activeButton_(0), mouseX_(0), mouseY_(0)
+    activeButton_(0), mouseX_(0), mouseY_(0), render_(NULL)
     
 {
     glutInit(argc, argv);
 
-    CreateWindow();
+    CreateGlutWindow();
     InitGL();
     InitCallbacks();
 
@@ -64,6 +64,9 @@ void GlutWindow::Display() {
 }
 
 void GlutWindow::Reshape(int x, int y) {
+    if( !renderGL_ )
+        ToggleRenderGL();
+
     if( x < 0 ) x = -x;
     else if( x == 0 ) x = 1;
 
@@ -72,33 +75,28 @@ void GlutWindow::Reshape(int x, int y) {
 
     img_.Resize( (uint32)x, (uint32)y );
     glViewport( 0, 0, x, y );
-
-    renderGL_ = true;
-    glutPostRedisplay();
 }
 
 void GlutWindow::Keyboard(uint8 key, int x, int y) {
     UNREFERENCED_PARAMETER(x);
     UNREFERENCED_PARAMETER(y);
 
-    bool displayNeedsUpdate = true;
-
     switch (key) {
     case 27:
         exit(0);
         break;
 
+    case 'c':
+    case 'C':
+        std::cout << "Camera Pos: " << cam_.GetEye() << std::endl;
+        break;
+
     case 'i':
     case 'I':
-        char str[1024];
-        sprintf(str, "miro_%d.ppm", time(0));
-        if (renderGL_) {
-            uint8* buf = new uint8[ img_.GetWidth()*img_.GetHeight()*3 ];
-            glReadPixels( 0, 0, img_.GetWidth(), img_.GetHeight(), GL_RGB, GL_UNSIGNED_BYTE, buf );
-            img_.WritePPM( str, buf, img_.GetWidth(), img_.GetHeight() );
-        } else {
-            img_.WritePPM( str );
-        }
+        if (renderGL_)
+            img_.ScreenShot();
+
+        img_.WritePPM();
         break;
 
     case 'r':
@@ -147,15 +145,7 @@ void GlutWindow::Keyboard(uint8 key, int x, int y) {
     case 'D':
         cam_.SetEye( cam_.GetEye() + keySpeed_*math::Cross( cam_.GetViewDir(), cam_.GetUp() ) );
         break;
-
-    default:
-        displayNeedsUpdate = false;
     }
-
-    std::cout << "Camera Pos: " << cam_.GetEye() << "\r" << std::flush;
-
-    if (displayNeedsUpdate)
-        glutPostRedisplay();
 }
 
 void GlutWindow::Mouse(int btn, int state, int x, int y) {
@@ -187,7 +177,6 @@ void GlutWindow::Mouse(int btn, int state, int x, int y) {
 }
 
 void GlutWindow::Motion(int x, int y) {
-    bool displayNeedsUpdate = false;
     int dx = x - mouseX_;
     int dy = y - mouseY_;
 
@@ -198,18 +187,14 @@ void GlutWindow::Motion(int x, int y) {
         viewDir.Rotate( -mouseYSpeed_*dy*math::DEG_TO_RAD, right );
         viewDir.Rotate( -mouseXSpeed_*dx*math::DEG_TO_RAD, cam_.GetUp() );
         cam_.SetViewDir(viewDir);
-
-        displayNeedsUpdate = true;
     }
 
     mouseX_ = x;
     mouseY_ = y;
-
-    if (displayNeedsUpdate)
-        glutPostRedisplay();
 }
 
 void GlutWindow::Idle() {
+    ::Display();
 }
 
 void GlutWindow::InitGL() {
@@ -241,7 +226,7 @@ void GlutWindow::InitCallbacks() {
     glutIdleFunc( ::Idle );
 }
 
-void GlutWindow::CreateWindow() {
+void GlutWindow::CreateGlutWindow() {
     glutInitWindowSize( options::win_width, options::win_height );
     glutInitDisplayMode( GLUT_RGB | GLUT_DOUBLE );
     glutInitWindowPosition( options::win_posX, options::win_posY );
@@ -253,22 +238,27 @@ void GlutWindow::ToggleRenderGL() {
 
     if( renderGL_ ) {
         // Clean up a ray trace job if we are aborting
-        
+        if( render_ ) {
+            delete render_;
+            render_ = NULL;
+        }
 
     } else {
         // We set the un-raytraced pixels to be the a blurred opengl render
         img_.ScreenShot();
         //img_.GaussianBlur(1.0f);
 
-        // TODO: Create a Job to render the scene with RawRay
-        
-        scene_.Raytrace(cam_, img_);
+        if( render_ )
+            delete render_;
+
+        render_ = new RenderJob(4, scene_, cam_, img_);
+        render_->Run();
     }
 }
 
 void GlutWindow::MakeSpiralScene() {
-    // TODO: Delete stuff
-    cam_.SetEye( Vector3(-5.0f, 2.0f, 3.0f) );
+    //cam_.SetEye( Vector3(-5.0f, 2.0f, 3.0f) );
+    cam_.SetEye( Vector3(1.73f, -1.23f, -4.04f) );
     cam_.SetLookAt( Vector3(0, 0, 0) );
     cam_.SetUp( Vector3(0, 1, 0) );
     cam_.SetFOV( 45 );
@@ -320,12 +310,6 @@ void GlutWindow::MakeLorenzScene() {
         float t = i/float(maxI);
         float theta = 4 * math::PI * t;
         float r = a*theta;
-
-        
-        // NOTE: Memory leak!
-        Material* mat = new Lambert( Vector3(1,0,0) );
-        rawray::Sphere * sphere = new Sphere( Vector3(x,y,z), r/10, mat );
-        scene_.AddObject(sphere);
     }
 
     scene_.PreCalc();

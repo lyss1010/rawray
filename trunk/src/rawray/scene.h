@@ -35,9 +35,9 @@ public:
     void Raytrace(const Camera& cam, Image& image, uint32 xStart, uint32 yStart, uint32 width, uint32 height);
     void Raytrace(const Camera& cam, Image& image);
 
-private:
     void PostProcess(Image& img);
 
+private:
     std::vector<Object*> objects_;
     std::vector<Light*> lights_;
     BVH bvh_;

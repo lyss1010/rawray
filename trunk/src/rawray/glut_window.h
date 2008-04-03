@@ -12,6 +12,8 @@
 /////////////////////////////////////////////////////////////////////////////
 namespace rawray {
 
+class RenderJob;
+
 class DllExport GlutWindow
 {
 public:
@@ -30,7 +32,7 @@ public:
 private:
     void InitGL();
     void InitCallbacks();
-    void CreateWindow();
+    void CreateGlutWindow();
     void ToggleRenderGL();
 
     void MakeSpiralScene();
@@ -40,6 +42,7 @@ private:
     Scene scene_;
     Camera cam_;
     Image img_;
+    RenderJob* render_;
 
     bool renderGL_;
     float keySpeed_;

@@ -198,7 +198,7 @@ void GlutWindow::Idle() {
 }
 
 void GlutWindow::InitGL() {
-    glClearColor( options::bg_color.x, options::bg_color.y, options::bg_color.z, 1.0f );
+    glClearColor( options::gl_bg_color.x, options::gl_bg_color.y, options::gl_bg_color.z, 1.0f );
     glClearDepth( 1.0f );
     glDepthFunc( GL_LEQUAL );
     glEnable( GL_DEPTH_TEST );
@@ -251,8 +251,7 @@ void GlutWindow::ToggleRenderGL() {
         if( render_ )
             delete render_;
 
-        // TODO: num threads from config file
-        render_ = new RenderJob(4, scene_, cam_, img_);
+        render_ = new RenderJob(options::num_threads, scene_, cam_, img_);
         render_->Run();
     }
 }
@@ -294,7 +293,6 @@ void GlutWindow::MakeSpiralScene() {
 }
 
 void GlutWindow::MakeLorenzScene() {
-    // TODO: Delete stuff
     cam_.SetEye( Vector3(-5.0f, 2.0f, 3.0f) );
     cam_.SetLookAt( Vector3(0, 0, 0) );
     cam_.SetUp( Vector3(0, 1, 0) );

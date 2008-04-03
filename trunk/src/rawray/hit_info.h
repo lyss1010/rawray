@@ -21,7 +21,7 @@ public:
     Vector3 normal;
     Vector2 texCoord;
 
-    const Material* material; // TODO: Make this a reference and create a "blank" material to assign to it
+    const Material* material;
 
     HitInfo(const HitInfo& hit) : distance(hit.distance), point(hit.point), normal(hit.normal), material(hit.material) { }
     explicit HitInfo(float distance = 0.0f, 

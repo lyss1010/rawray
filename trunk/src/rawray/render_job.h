@@ -79,6 +79,7 @@ private:
     DWORD threadID_;
     bool abort_;
     
+    std::stack<RenderTask*> assignedTasks_;
     std::stack<RenderTask*> tasks_;
     std::list<RenderThread*> threads_;
 

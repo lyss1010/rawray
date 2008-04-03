@@ -29,22 +29,25 @@ RenderThread::RenderThread(Scene& scene, const Camera& cam, Image& img) :
 }
 
 RenderThread::~RenderThread() {
-    // Block here waiting for controller thread to finish
+    const uint32 sleepDuration = options::render_spin_lock_sleep;
     abort_ = true;
+
+    // Block here waiting for controller thread to finish
     while( !IsDone() )
-        Sleep( 0 );
+        Sleep( sleepDuration );
 
     if( threadHandle_ != NULL )
         CloseHandle(threadHandle_);
 }
 
 DWORD RenderThread::ThreadRoutine() {
+    const uint32 sleepDuration = options::render_thread_sleep;
+
     while( !abort_ ) {
-        if( currentTask_ == NULL )
-            Sleep( 0 );
-        else {
+        Sleep( sleepDuration );
+
+        if( currentTask_ != NULL ) {
             currentTask_->Run( scene_, cam_, img_ );
-            delete currentTask_;
             currentTask_ = NULL;
         }
     }
@@ -54,28 +57,36 @@ DWORD RenderThread::ThreadRoutine() {
 
 /////////////////////////////////////////////////////////////////////////////
 RenderJob::~RenderJob() {
-    // Block here waiting for controller thread to finish
+    const uint32 sleepDuration = options::render_spin_lock_sleep;
     abort_ = true;
+
+    // Block here waiting for controller thread to finish
     while( !IsDone() )
-        Sleep( 0 );
+        Sleep( sleepDuration );
 
     Cleanup();
 }
 
 void RenderJob::Cleanup() {
+    assert( threads_.empty() );
+ 
     // Clean up any unprocessed tasks
-    while( !tasks_.empty() )
-    {
+    while( !tasks_.empty() ) {
         RenderTask* task = tasks_.top();
         tasks_.pop();
-        delete task;
+        //delete task;
     }
 
-    assert( threads_.empty() );
+    // Clean up processed tasks
+    while( !assignedTasks_.empty() ) {
+        RenderTask* task = assignedTasks_.top();
+        assignedTasks_.pop();
+        //delete task;
+    }
 }
 
 bool RenderJob::IsDone() {
-    return tasks_.empty() && threads_.empty();
+    return threads_.empty();
 }
 
 bool RenderJob::Run() {
@@ -86,9 +97,8 @@ bool RenderJob::Run() {
     const uint32 imgHeight = img_.GetHeight();
     const uint32 imgWidth = img_.GetWidth();
 
-    // TODO: Get these from a config file
-    const uint32 xChunk = 50;
-    const uint32 yChunk = 50;
+    const uint32 xChunk = options::render_x_block;
+    const uint32 yChunk = options::render_y_block;
     
     for( uint32 y=0; y<imgHeight; y+=yChunk ) {
         for( uint32 x=0; x<imgWidth; x+=xChunk ) {
@@ -116,9 +126,10 @@ bool RenderJob::Run() {
 DWORD RenderJob::ThreadRoutine() {
     std::list<RenderThread*>::iterator threadIter;
     std::list<RenderThread*>::iterator toDelete;
+    const uint32 sleepDuration = options::render_handler_sleep;
 
     while( !IsDone() ) {
-        Sleep( 100 );
+        Sleep( sleepDuration );
 
         // Loop through all running threads 
         threadIter = threads_.begin();
@@ -129,14 +140,15 @@ DWORD RenderJob::ThreadRoutine() {
             if( thread->IsDone() ) {
                 if( tasks_.empty() || abort_ ) {
                     // Delete this thread if there is no work to give it
-                    toDelete = threadIter;
-                    threadIter++;
+                    toDelete = threadIter++;
                     threads_.erase( toDelete );
-
-                    delete thread;
+                    //delete thread;
                 } else {
-                    thread->SetCurrentTask( tasks_.top() );
+                    RenderTask* task = tasks_.top();
                     tasks_.pop();
+                    assignedTasks_.push( task );
+
+                    thread->SetCurrentTask( task );
                     threadIter++;
                 }
             } else

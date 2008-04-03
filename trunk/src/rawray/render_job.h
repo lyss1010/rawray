@@ -15,13 +15,16 @@ namespace rawray {
 class DllExport RenderTask
 {
 public:
-    RenderTask(uint32 scanline) : scanline_(scanline) { }
+    RenderTask(uint32 x, uint32 y, uint32 width, uint32 height) :
+        x_(x), y_(y), width_(width), height_(height) { }
+
     ~RenderTask() { }
 
     bool Run( Scene& scene, const Camera& cam, Image& img );
 
 private:
-    uint32 scanline_;
+    uint32 x_, y_;
+    uint32 width_, height_;
 
     DISALLOW_IMPLICIT_CONSTRUCTORS(RenderTask);
 };

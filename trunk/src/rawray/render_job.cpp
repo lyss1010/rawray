@@ -8,7 +8,7 @@ namespace rawray {
 
 /////////////////////////////////////////////////////////////////////////////
 bool RenderTask::Run(Scene& scene, const Camera& cam, Image& img) {
-    scene.Raytrace(cam, img, 0, scanline_, img.GetWidth(), 1);
+    scene.Raytrace(cam, img, x_, y_, width_, height_);
     return true;
 }
 
@@ -25,6 +25,7 @@ RenderThread::RenderThread(Scene& scene, const Camera& cam, Image& img) :
                     this,                           // Start routine param
                     0,                              // No extra options (start immediately)
                     &threadID_ );                   // Save threadID_
+    SetThreadPriority( threadHandle_, THREAD_PRIORITY_LOWEST );
 }
 
 RenderThread::~RenderThread() {
@@ -83,8 +84,17 @@ bool RenderJob::Run() {
 
     // Create a list of tasks we need done
     const uint32 imgHeight = img_.GetHeight();
-    for( uint32 y=0; y<imgHeight; ++y )
-        tasks_.push( new RenderTask(y) );
+    const uint32 imgWidth = img_.GetWidth();
+
+    // TODO: Get these from a config file
+    const uint32 xChunk = 50;
+    const uint32 yChunk = 50;
+    
+    for( uint32 y=0; y<imgHeight; y+=yChunk ) {
+        for( uint32 x=0; x<imgWidth; x+=xChunk ) {
+            tasks_.push( new RenderTask(x, y, xChunk, yChunk) );
+        }
+    }
 
     // Create the user specified number of threads
     for( uint32 thread=0; thread<numThreads_; ++thread )
@@ -98,6 +108,7 @@ bool RenderJob::Run() {
                     this,                       // Start routine param
                     0,                          // No extra options, start immediately
                     &threadID_ );               // Save threadID_
+    SetThreadPriority( threadHandle_, THREAD_PRIORITY_BELOW_NORMAL );
 
     return true;
 }
@@ -107,6 +118,8 @@ DWORD RenderJob::ThreadRoutine() {
     std::list<RenderThread*>::iterator toDelete;
 
     while( !IsDone() ) {
+        Sleep( 100 );
+
         // Loop through all running threads 
         threadIter = threads_.begin();
         while( threadIter != threads_.end() ) {

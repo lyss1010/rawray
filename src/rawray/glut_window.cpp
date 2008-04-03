@@ -246,11 +246,12 @@ void GlutWindow::ToggleRenderGL() {
     } else {
         // We set the un-raytraced pixels to be the a blurred opengl render
         img_.ScreenShot();
-        //img_.GaussianBlur(1.0f);
+        img_.GaussianBlur(0.75f);
 
         if( render_ )
             delete render_;
 
+        // TODO: num threads from config file
         render_ = new RenderJob(4, scene_, cam_, img_);
         render_->Run();
     }

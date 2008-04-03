@@ -17,7 +17,6 @@ Camera::Camera() : eye_(options::cam_eye), viewDir_(options::cam_view),
 }
 
 void Camera::RenderGL() {
-    redrawImage_ = true;
     CalcLookAt();
     
     glDrawBuffer( GL_BACK );
@@ -37,21 +36,16 @@ void Camera::RenderGL() {
               up_.x, up_.y, up_.z);
 }
 
-bool Camera::RenderImage(Image& img) {
+void Camera::RenderImage() {
+    CalcLookAt(); // NOTE: Shouldn't need to recalc this when rendering an image, camera is fixed
+
     glDrawBuffer( GL_FRONT );
     glMatrixMode( GL_PROJECTION );
     glLoadIdentity();
     glMatrixMode( GL_MODELVIEW );
     glLoadIdentity();
-    
-    if( redrawImage_ ) {
-        CalcLookAt();
-        img.Clear( options::bg_color );
-        redrawImage_ = false;
-        return true;
-    }
 
-    return false;
+    glDrawBuffer(GL_FRONT);
 }
 
 void Camera::CalcLookAt() {

@@ -19,7 +19,7 @@ public:
     virtual ~Material() { }
 
     virtual void PreCalc() { }
-    Vector3 Shade(const Ray&, const HitInfo& hit, const Scene&) const;
+    virtual Vector3 Shade(const Ray&, const HitInfo& hit, const Scene&) const;
 
 }; // class Material
 

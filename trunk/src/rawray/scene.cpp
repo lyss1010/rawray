@@ -35,6 +35,7 @@ void Scene::Raytrace(const Camera& cam, Image& image, uint32 xStart, uint32 ySta
     HitInfo hit;
     Vector3 shadedColor;
     
+    std::cout << std::endl;
     const uint32 imgWidth = image.GetWidth();
     const uint32 imgHeight = image.GetHeight();
 
@@ -42,7 +43,7 @@ void Scene::Raytrace(const Camera& cam, Image& image, uint32 xStart, uint32 ySta
     width = std::min( xStart+width, imgWidth );
     height = std::min( yStart+height, imgHeight );
 
-    // For all pixels in rectangle defined
+    // For all defined pixels in rectangle
     for (uint32 y=yStart; y<height; ++y) {
         for (uint32 x=xStart; x<width; ++x) {
             eyeRay = cam.EyeRay(x, y, 0.5f, 0.5f, imgWidth, imgHeight);
@@ -54,8 +55,11 @@ void Scene::Raytrace(const Camera& cam, Image& image, uint32 xStart, uint32 ySta
 
 			image.SetPixel( x, y, shadedColor );
         }
+
+        std::cout << "Scanline " << y << "/" << imgHeight << "\r" << std::flush;
     }
 
+    std::cout << std::endl;
     PostProcess(image);
 }
 

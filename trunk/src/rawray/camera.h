@@ -40,7 +40,7 @@ public:
     Ray EyeRay(uint32 x, uint32 y, float xOffset, float yOffset, uint32 width, uint32 height) const;
 
     void RenderGL();
-    bool RenderImage(Image& img);
+    void RenderImage();
 
 private:
     void CalcLookAt();

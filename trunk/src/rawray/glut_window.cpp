@@ -56,11 +56,7 @@ void GlutWindow::Display() {
 
         glutSwapBuffers();
     } else {
-		//if( cam_.RenderImage(img_) ) {
-  //          scene_.Raytrace(cam_, img_);
-		//	img_.WritePPM("autosave.ppm");
-		//}
-  //      
+        cam_.RenderImage();
         img_.RenderGL();
     }
     
@@ -156,7 +152,7 @@ void GlutWindow::Keyboard(uint8 key, int x, int y) {
         displayNeedsUpdate = false;
     }
 
-    std::cout << "Camera Pos: " << cam_.GetEye() << std::endl;
+    std::cout << "Camera Pos: " << cam_.GetEye() << "\r" << std::flush;
 
     if (displayNeedsUpdate)
         glutPostRedisplay();
@@ -260,10 +256,13 @@ void GlutWindow::ToggleRenderGL() {
         
 
     } else {
+        // We set the un-raytraced pixels to be the a blurred opengl render
         img_.ScreenShot();
         img_.GaussianBlur(1.0f);
 
-        // Create a Job to render the scene with RawRay
+        // TODO: Create a Job to render the scene with RawRay
+        
+        scene_.Raytrace(cam_, img_);
     }
 }
 

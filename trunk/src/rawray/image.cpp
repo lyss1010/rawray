@@ -68,7 +68,7 @@ void Image::Clear(const Pixel &color) {
 
 void Image::ScreenShot() {
     glReadPixels( 0, 0, width_, height_, 
-                  GL_RGB, GL_RGB, pixels_ );
+                    GL_RGB, GL_UNSIGNED_BYTE, pixels_ );
 }
 
 bool Image::GaussianBlur(float sigma) {
@@ -113,7 +113,7 @@ bool Image::GaussianBlur(float sigma) {
                     if( posX < 0 || posX >= width_ )
                         continue;
 
-                    Pixel* pixel = pixels_ + y*width_ + x;
+                    Pixel* pixel = pixels_ + posY*width_ + posX;
                     float weight = weights[ i + matrix_size*j ];
 
                     sum.x += pixel->x * weight;
@@ -121,6 +121,8 @@ bool Image::GaussianBlur(float sigma) {
                     sum.z += pixel->z * weight;
                 }
             }
+
+            SetPixel( x, y, sum );
         }
     }
 

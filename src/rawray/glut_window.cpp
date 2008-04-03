@@ -258,7 +258,7 @@ void GlutWindow::ToggleRenderGL() {
     } else {
         // We set the un-raytraced pixels to be the a blurred opengl render
         img_.ScreenShot();
-        img_.GaussianBlur(1.0f);
+        //img_.GaussianBlur(1.0f);
 
         // TODO: Create a Job to render the scene with RawRay
         
@@ -267,8 +267,7 @@ void GlutWindow::ToggleRenderGL() {
 }
 
 void GlutWindow::MakeSpiralScene() {
-    img_.Resize(512, 512);
-
+    // TODO: Delete stuff
     cam_.SetEye( Vector3(-5.0f, 2.0f, 3.0f) );
     cam_.SetLookAt( Vector3(0, 0, 0) );
     cam_.SetUp( Vector3(0, 1, 0) );
@@ -278,18 +277,53 @@ void GlutWindow::MakeSpiralScene() {
                               Vector3(1, 1, 1),
                               1000 );
     scene_.AddLight(light);
-
-    Material* mat = new Lambert( Vector3(1,0,0) );
+    
     const int maxI = 200;
     const float a = 0.15f;
     for (int i=0; i<maxI; ++i ) {
         float t = i/float(maxI);
         float theta = 4 * math::PI * t;
         float r = a*theta;
+
         float x = r*cos(theta);
         float y = r*sin(theta);
         float z = 2 * ( 2 * math::PI * a - r);
 
+        //float red = 0.5f * ( 1.0f + sin(x+y*y-z) );
+        //float green = 0.5f * ( 1.0f + sin(theta-z) );
+        //float blue = 0.5f * ( 1.0f + tan(r) );
+
+        // NOTE: Memory leak!
+        Material* mat = new Lambert( Vector3(1,0,0) );
+        rawray::Sphere * sphere = new Sphere( Vector3(x,y,z), r/10, mat );
+        scene_.AddObject(sphere);
+    }
+
+    scene_.PreCalc();
+}
+
+void GlutWindow::MakeLorenzScene() {
+    // TODO: Delete stuff
+    cam_.SetEye( Vector3(-5.0f, 2.0f, 3.0f) );
+    cam_.SetLookAt( Vector3(0, 0, 0) );
+    cam_.SetUp( Vector3(0, 1, 0) );
+    cam_.SetFOV( 45 );
+
+    Light* light = new Light( Vector3(-3, 15, 3),
+                              Vector3(1, 1, 1),
+                              1000 );
+    scene_.AddLight(light);
+    
+    const int maxI = 200;
+    const float a = 0.15f;
+    for (int i=0; i<maxI; ++i ) {
+        float t = i/float(maxI);
+        float theta = 4 * math::PI * t;
+        float r = a*theta;
+
+        
+        // NOTE: Memory leak!
+        Material* mat = new Lambert( Vector3(1,0,0) );
         rawray::Sphere * sphere = new Sphere( Vector3(x,y,z), r/10, mat );
         scene_.AddObject(sphere);
     }
@@ -298,8 +332,6 @@ void GlutWindow::MakeSpiralScene() {
 }
 
 void GlutWindow::MakeBunnyScene() {
-    img_.Resize(128, 128);
-    
     // set up the camera
     options::bg_color = Vector3(0.0f, 0.0f, 0.2f);
 

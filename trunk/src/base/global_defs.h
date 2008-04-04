@@ -43,13 +43,13 @@
 
 // Some useful macros for safer deletion
 #ifndef SAFE_DELETE
-#define SAFE_DELETE(p)       { if(p) { delete (p);     (p)=NULL; } }
+#define SAFE_DELETE(p)       delete (p); (p)=NULL
 #endif
 #ifndef SAFE_DELETE_ARRAY
-#define SAFE_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=NULL; } }
+#define SAFE_DELETE_ARRAY(p) delete[] (p); (p)=NULL
 #endif    
 #ifndef SAFE_RELEASE
-#define SAFE_RELEASE(p)      { if(p) { (p)->Release(); (p)=NULL; } }
+#define SAFE_RELEASE(p)      if(p) (p)->Release(); (p)=NULL
 #endif
 
 // Tell the compiler we are not using a variable and don't give us a warning about it
@@ -92,13 +92,4 @@ typedef signed long long    int64;
 // Should be used in the private: section.
 #define DISALLOW_IMPLICIT_CONSTRUCTORS(TypeName)    \
     TypeName();                                     \
-    DISALLOW_COPY_CONSTRUCTORS(TypeName)            \
-
-
-// Some useful macros for deletion
-#ifndef SAFE_DELETE
-#define SAFE_DELETE(p)       { if(p) { delete (p);     (p)=0; } }
-#endif
-#ifndef SAFE_DELETE_ARRAY
-#define SAFE_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=0; } }
-#endif
+    DISALLOW_COPY_CONSTRUCTORS(TypeName)

@@ -60,7 +60,7 @@ void init() {
     win_posX = 100;
     win_posY = 100;
 
-    num_threads = 4;
+    num_threads = 2;
     render_x_block = 64;
     render_y_block = 64;
     render_handler_sleep = 50;

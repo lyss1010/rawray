@@ -38,6 +38,7 @@ int Image::Resize(uint32 width, uint32 height) {
 
     register uint32 numPixels = width_*height_;
     pixels_ = new Pixel[ numPixels ];
+    memset( pixels_, 0, sizeof(Pixel)*numPixels );
 
     return numPixels;
 }
@@ -69,8 +70,8 @@ void Image::Clear(const Pixel &color) {
 }
 
 void Image::ScreenShot() {
-    glReadPixels( 0, 0, width_, height_, 
-                    GL_RGB, GL_UNSIGNED_BYTE, pixels_ );
+    // NOTE: Not sure why we need to have one less row/column, but it crashes otherwise
+    glReadPixels(0, 0, width_-1, height_-1, GL_RGB, GL_UNSIGNED_BYTE, pixels_);
 }
 
 bool Image::GaussianBlur(float sigma) {

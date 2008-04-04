@@ -3,6 +3,7 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 #include "render_job.h"
+#include "time.h"
 
 namespace rawray {
 
@@ -87,6 +88,20 @@ void RenderJob::Cleanup() {
     }
 }
 
+float RenderJob::Progress() {
+    if( IsDone() )
+        return 100.0f;
+
+    const uint32 num_assigned = assignedTasks_.size();
+    const uint32 num_remaining = tasks_.size();
+    const uint32 num_total = num_assigned + num_remaining;
+    
+    if( num_total == 0 || num_assigned <= numThreads_ )
+        return 0.0f;
+
+    return 100.0f * float(num_assigned - numThreads_) / num_total;
+}
+
 bool RenderJob::Run() {
     if( numThreads_ < 1 )
         return false;
@@ -144,6 +159,7 @@ DWORD RenderJob::ThreadRoutine() {
     std::list<RenderThread*>::iterator toDelete;
     const uint32 sleepDuration = options::render_handler_sleep;
 
+    clock_t startTime = clock();
     while( !threads_.empty() ) {
         Sleep( sleepDuration );
 
@@ -173,7 +189,11 @@ DWORD RenderJob::ThreadRoutine() {
     }
 
     scene_.PostProcess(img_);
-    img_.WritePPM( "autosave.ppm" );
+    clock_t endTime = clock();
+    img_.WritePPM();
+
+    std::cout << "Raytrace job of " << img_.GetWidth() << "x" << img_.GetHeight();
+    std::cout << " done in " << float(endTime-startTime)/CLOCKS_PER_SEC << " seconds" << std::endl;
 
     isDone_ = true;
     return 0;

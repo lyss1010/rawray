@@ -68,6 +68,7 @@ public:
 
     ~RenderJob();
 
+    float Progress();
     bool Run();
     bool IsDone() { return isDone_; }
     void Abort();

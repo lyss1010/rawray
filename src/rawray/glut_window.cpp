@@ -64,6 +64,7 @@ void GlutWindow::Display() {
 }
 
 void GlutWindow::Reshape(int x, int y) {
+    // Come out of raytrace mode if needed
     if( !renderGL_ )
         ToggleRenderGL();
 
@@ -75,6 +76,8 @@ void GlutWindow::Reshape(int x, int y) {
 
     img_.Resize( (uint32)x, (uint32)y );
     glViewport( 0, 0, x, y );
+
+    img_.ScreenShot();
 }
 
 void GlutWindow::Keyboard(uint8 key, int x, int y) {
@@ -236,20 +239,13 @@ void GlutWindow::CreateGlutWindow() {
 void GlutWindow::ToggleRenderGL() {
     renderGL_ = !renderGL_;
 
-    if( renderGL_ ) {
-        // Clean up a ray trace job if we are aborting
-        if( render_ ) {
-            delete render_;
-            render_ = NULL;
-        }
+    // Clean up any old ray trace jobs
+    SAFE_DELETE( render_ );
 
-    } else {
+    if( !renderGL_ ) {
         // We set the un-raytraced pixels to be the a blurred opengl render
         img_.ScreenShot();
         img_.GaussianBlur(0.75f);
-
-        if( render_ )
-            delete render_;
 
         render_ = new RenderJob(options::num_threads, scene_, cam_, img_);
         render_->Run();

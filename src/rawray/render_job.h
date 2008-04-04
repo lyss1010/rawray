@@ -37,8 +37,11 @@ public:
     RenderThread(Scene& scene, const Camera& cam, Image& img);
     ~RenderThread();
 
-    bool IsDone() { return currentTask_==NULL; }
-    void SetCurrentTask(RenderTask* task) { currentTask_ = task; }
+    bool IsIdle() { return currentTask_==NULL; }
+    bool IsDone() { return isDone_; }
+    void SetCurrentTask(RenderTask* task) { if( !abort_ ) currentTask_ = task; }
+    void Abort();
+
     DWORD ThreadRoutine();
 
 private:
@@ -49,6 +52,7 @@ private:
     HANDLE threadHandle_;
     DWORD threadID_;
     bool abort_;
+    bool isDone_;
 
     DISALLOW_IMPLICIT_CONSTRUCTORS(RenderThread);
 };
@@ -60,12 +64,14 @@ class DllExport RenderJob
 public:
     RenderJob(uint32 numThreads, Scene& scene, const Camera& cam, Image& img) :
             numThreads_(numThreads), scene_(scene), cam_(cam), img_(img),
-            threadID_(NULL), threadHandle_(NULL), abort_(false) { }
+            threadID_(NULL), threadHandle_(NULL), abort_(false), isDone_(false) { }
 
     ~RenderJob();
 
     bool Run();
-    bool IsDone();
+    bool IsDone() { return isDone_; }
+    void Abort();
+
     DWORD ThreadRoutine();
 
 private:
@@ -78,6 +84,7 @@ private:
     HANDLE threadHandle_;
     DWORD threadID_;
     bool abort_;
+    bool isDone_;
     
     std::stack<RenderTask*> assignedTasks_;
     std::stack<RenderTask*> tasks_;

@@ -84,6 +84,8 @@ void GlutWindow::Keyboard(uint8 key, int x, int y) {
     UNREFERENCED_PARAMETER(x);
     UNREFERENCED_PARAMETER(y);
 
+    bool need_display_update = true;
+
     switch (key) {
     case 27:
         exit(0);
@@ -148,7 +150,13 @@ void GlutWindow::Keyboard(uint8 key, int x, int y) {
     case 'D':
         cam_.SetEye( cam_.GetEye() + keySpeed_*math::Cross( cam_.GetViewDir(), cam_.GetUp() ) );
         break;
+
+    default:
+        need_display_update = false;
     }
+
+    if( need_display_update )
+        glutPostRedisplay();
 }
 
 void GlutWindow::Mouse(int btn, int state, int x, int y) {
@@ -190,6 +198,8 @@ void GlutWindow::Motion(int x, int y) {
         viewDir.Rotate( -mouseYSpeed_*dy*math::DEG_TO_RAD, right );
         viewDir.Rotate( -mouseXSpeed_*dx*math::DEG_TO_RAD, cam_.GetUp() );
         cam_.SetViewDir(viewDir);
+
+        glutPostRedisplay();
     }
 
     mouseX_ = x;
@@ -197,7 +207,12 @@ void GlutWindow::Motion(int x, int y) {
 }
 
 void GlutWindow::Idle() {
-    ::Display();
+    if( !renderGL_ ) {
+        glutPostRedisplay();
+
+        if( render_ && !render_->IsDone() )
+            std::cout << "Raytrace Progress: " << (int)render_->Progress() << "%\r" << std::flush;
+    }
 }
 
 void GlutWindow::InitGL() {
@@ -250,6 +265,8 @@ void GlutWindow::ToggleRenderGL() {
         render_ = new RenderJob(options::num_threads, scene_, cam_, img_);
         render_->Run();
     }
+
+    glutPostRedisplay();
 }
 
 void GlutWindow::MakeSpiralScene() {

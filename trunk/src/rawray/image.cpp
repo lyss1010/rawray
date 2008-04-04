@@ -70,8 +70,16 @@ void Image::Clear(const Pixel &color) {
 }
 
 void Image::ScreenShot() {
-    // NOTE: Not sure why we need to have one less row/column, but it crashes otherwise
-    glReadPixels(0, 0, width_-1, height_-1, GL_RGB, GL_UNSIGNED_BYTE, pixels_);
+    glReadBuffer(GL_FRONT);
+
+    // Disable packing so we don't buffer overrun
+    glPushClientAttrib( GL_CLIENT_PIXEL_STORE_BIT );
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
+    
+    glReadPixels( 0, 0, width_, height_, GL_RGB, GL_UNSIGNED_BYTE, pixels_ );
+
+    // Enable the default packing
+    glPopClientAttrib();
 }
 
 bool Image::GaussianBlur(float sigma) {

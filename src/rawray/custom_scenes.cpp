@@ -30,7 +30,7 @@ void GlutWindow::MakeSpiralScene() {
     
 	const float dt = 1.0f / options::spiral_num_sphere;
 	const float a = options::spiral_radius;
-    for (int i=0; i<options::spiral_radius; ++i ) {
+    for (int i=0; i<options::spiral_num_sphere; ++i ) {
         const float t = i * dt;
         const float theta = 4 * math::PI * t;
         const float r = a*theta;
@@ -41,7 +41,7 @@ void GlutWindow::MakeSpiralScene() {
 
         const float red = 0.20f*(exp(r-x*x+abs(y)));
         const float green = 0.12f*( abs(tan(z)) + abs(tan(-z) ) ) ;
-        const float blue = -2.25f;
+        const float blue = 0.55f;
 
 		Material* mat = scene_.AddMaterial( new Lambert( Vector3(red,green,blue) ) );
         rawray::Sphere* sphere = new Sphere( Vector3(x,y,z), r/10, mat );
@@ -59,11 +59,39 @@ void GlutWindow::MakeLorenzScene() {
 
     cam_.SetUp( Vector3(0, 1, 0) );
     cam_.SetFOV( 45 );
+    
+    options::sphere_sections = 5;
 
-    Light* light = new Light( Vector3(-3, 15, 3),
-                              Vector3(1, 1, 1),
-                              1000 );
-    scene_.AddLight(light);
+    scene_.AddLight( new Light( 
+						Vector3(3, 5, -6),
+						Vector3(1),
+						900 ) );
+
+    scene_.AddLight( new Light( 
+						Vector3(0, 1, 50),
+						Vector3(1),
+						900 ) );
+
+    scene_.AddLight( new Light( 
+					    Vector3(-5, 9, 28),
+					    Vector3(1),
+					    900 ) );
+
+    scene_.AddLight( new Light( 
+					    Vector3(15, 11, 31),
+					    Vector3(1),
+					    900 ) );
+
+
+    scene_.AddLight( new Light( 
+			            Vector3(0, -10, 29),
+			            Vector3(1),
+			            900 ) );
+
+    scene_.AddLight( new Light( 
+			            Vector3(-10, -5, 32),
+			            Vector3(1),
+			            900 ) );
 
 	float base_dt = options::lorenz_dt;
 	float min_dist = options::lorenz_min_distance;
@@ -108,7 +136,7 @@ void GlutWindow::MakeLorenzScene() {
         const float green = 0.3f + (l.Dot( Vector3(1,1,1) )) / 300;
 		const float blue = 0.4f + (l.Dot( Vector3(1,1,0) )) / 100;
 
-		Material* mat = scene_.AddMaterial( new Lambert( Vector3(red,green,blue) ) );
+		Material* mat = scene_.AddMaterial( new Lambert( Vector3(red,green,blue), 0.4*Vector3(red,green,blue) ) );
         rawray::Sphere* sphere = new Sphere( l, r, mat );
         scene_.AddObject(sphere);
     }

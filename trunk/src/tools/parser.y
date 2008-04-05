@@ -3,6 +3,7 @@
 #pragma warning(disable:4786)
 #endif
 
+#include <malloc.h>
 #include <stdlib.h>
 #include <math.h>
 #include <stack>
@@ -13,12 +14,13 @@
 //#include "rawray/light.h"
 //#include "rawray/camera.h"
 //#include "math/vector3.h"
+#include "math/constants.h"
 
 #ifdef _DEBUG
 #define YYDEBUG 1
 #endif
 
-#define yyerror(x) Fatal( "Parser error on line %d: %s\n", yyline, x ); 
+#define yyerror(x) printf( "Parser error on line %d: %s\n", yyline, x ); 
 
 extern int yylex();
 extern int yyline;
@@ -190,7 +192,7 @@ cameraOptions: /* empty */
 ;
 
 rExp:     YY_SYM_REAL          { $$ = $1; }
-        | iExp                 { $$ = $1; }
+        | iExp                 { $$ = (float)$1; }
         | fExp                 { $$ = $1; }
         
         | rExp '+' rExp        { $$ = $1 + $3; }
@@ -231,8 +233,8 @@ fExp:      YY_MATH_SIN '(' rExp ')'     {$$ = sin($3); }
 ;
 
 constantExp:
-           YY_MATH_E { $$ = 2.718281828459; }
-        |  YY_MATH_PI { $$ = PI; }
+           YY_MATH_E { $$ = 2.718281828459f; }
+        |  YY_MATH_PI { $$ = math::PI; }
 ;
 
 iExp:     YY_SYM_INT            { $$ = $1; }

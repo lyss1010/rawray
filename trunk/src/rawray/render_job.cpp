@@ -116,11 +116,16 @@ bool RenderJob::Run() {
     const uint32 xChunk = options::render_x_block;
     const uint32 yChunk = options::render_y_block;
     
-    for( uint32 y=0; y<imgHeight; y+=yChunk ) {
-        for( uint32 x=0; x<imgWidth; x+=xChunk ) {
-            tasks_.push( new RenderTask(x, y, xChunk, yChunk) );
-        }
-    }
+	// Create the rendering tasks in a temporary vector
+	std::vector<RenderTask*> unshuffled_tasks;
+    for( uint32 y=0; y<imgHeight; y+=yChunk )
+        for( uint32 x=0; x<imgWidth; x+=xChunk )
+            unshuffled_tasks.push_back( new RenderTask(x, y, xChunk, yChunk) );
+
+	// Randomize the rendering tasks :)
+	std::random_shuffle( unshuffled_tasks.begin(), unshuffled_tasks.end() );
+	for( size_t i=0; i<unshuffled_tasks.size(); ++i )
+		tasks_.push( unshuffled_tasks[i] );
 
     // Create the user specified number of threads
     for( uint32 thread=0; thread<numThreads_; ++thread )
@@ -190,7 +195,7 @@ DWORD RenderJob::ThreadRoutine() {
 
     scene_.PostProcess(img_);
     clock_t endTime = clock();
-    img_.WritePPM();
+    img_.WritePPM(endTime-startTime);
 
     std::cout << "Raytrace job of " << img_.GetWidth() << "x" << img_.GetHeight();
     std::cout << " done in " << float(endTime-startTime)/CLOCKS_PER_SEC << " seconds" << std::endl;

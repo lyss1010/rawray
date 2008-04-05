@@ -11,8 +11,11 @@ Vector3 Material::Shade(const Ray& ray, const HitInfo& hit, const Scene& scene) 
     UNREFERENCED_PARAMETER(hit);
     UNREFERENCED_PARAMETER(scene);
     
-    return Vector3(1.0f, 1.0f, 1.0f);
+    return Vector3(1);
 }
 
+Vector3 Material::BaseColor() const {
+	return Vector3(1);
+}
 
 } // namespace rawray

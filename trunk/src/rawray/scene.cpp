@@ -5,8 +5,27 @@
 #include "scene.h"
 #include "light.h"
 #include "material.h"
+#include "triangle_mesh.h"
 
 namespace rawray {
+
+Scene::~Scene() {
+	for( size_t i=0; i<lights_.size(); ++i )
+		delete lights_[i];
+	lights_.clear();
+
+	for( size_t i=0; i<objects_.size(); ++i )
+		delete objects_[i];
+	objects_.clear();
+
+	for( size_t i=0; i<materials_.size(); ++i )
+		delete materials_[i];
+	materials_.clear();
+
+	for( size_t i=0; i<meshes_.size(); ++i )
+		delete meshes_[i];
+	meshes_.clear();
+}
 
 void Scene::RenderGL() {
     for (size_t i=0; i<objects_.size(); ++i )

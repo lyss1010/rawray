@@ -151,9 +151,17 @@ void Image::RenderScanlineGL(uint32 y) {
     glDrawPixels(width_, 1, GL_RGB, GL_UNSIGNED_BYTE, &pixels_[y*width_]);
 }
 
-void Image::WritePPM() {
+void Image::WritePPM( ) {
     std::ostringstream filename;
     filename << "rawray_" << time(0) << ".ppm";
+
+    WritePPM( filename.str().c_str() );
+}
+
+void Image::WritePPM( clock_t rendertime ) {
+    std::ostringstream filename;
+    filename << "rawray_" << time(0) << "_" << ( float(rendertime)/CLOCKS_PER_SEC ) << ".ppm";
+
     WritePPM( filename.str().c_str() );
 }
 

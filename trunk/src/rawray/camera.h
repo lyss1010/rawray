@@ -39,6 +39,7 @@ public:
 
     Ray EyeRay(uint32 x, uint32 y, float xOffset, float yOffset, uint32 width, uint32 height) const;
 
+	void Resize(int x, int y);
     void RenderGL();
     void RenderImage();
 

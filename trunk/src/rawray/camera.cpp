@@ -16,6 +16,11 @@ Camera::Camera() : eye_(options::cam_eye), viewDir_(options::cam_view),
     CalcLookAt();
 }
 
+void Camera::Resize(int width, int height) {
+	if( height > 0 && width > 0 )
+		aspect_ = float(width) / height;
+}
+
 void Camera::RenderGL() {
     CalcLookAt();
     

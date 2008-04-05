@@ -10,22 +10,28 @@
 #include "camera.h"
 #include "image.h"
 
+
 /////////////////////////////////////////////////////////////////////////////
 namespace rawray {
 
 class Light;
+class Material;
+class TriangleMesh;
 
 class DllExport Scene : Object
 {
 public:
     Scene() : Object(NULL), bvh_(&objects_) { }
-    virtual ~Scene() { }
+    ~Scene();
 
     const std::vector<Object*>& GetObjects() const { return objects_; }
     const std::vector<Light*>& GetLights() const { return lights_; }
+	const std::vector<Material*>& GetMaterials() const { return materials_; }
 
-    void AddObject(Object* object) { objects_.push_back(object); }
-    void AddLight(Light* light) { lights_.push_back(light); }
+    Object* AddObject(Object* object) { objects_.push_back(object); return object; }
+    Light* AddLight(Light* light) { lights_.push_back(light); return light; }
+	Material* AddMaterial(Material* mat) { materials_.push_back(mat); return mat; }
+	TriangleMesh* AddMesh(TriangleMesh* mesh) { meshes_.push_back(mesh); return mesh; }
 
     virtual void RenderGL();
     virtual void PreCalc();
@@ -38,8 +44,10 @@ public:
     void PostProcess(Image& img);
 
 private:
+	std::vector<Material*> materials_;
     std::vector<Object*> objects_;
     std::vector<Light*> lights_;
+	std::vector<TriangleMesh*> meshes_;
     BVH bvh_;
     
     DISALLOW_COPY_CONSTRUCTORS(Scene);

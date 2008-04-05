@@ -7,6 +7,7 @@
 #include "stdafx.h"
 #include "math/tuple3.h"
 #include "math/vector3.h"
+#include "time.h"
 
 /////////////////////////////////////////////////////////////////////////////
 namespace rawray {
@@ -32,7 +33,8 @@ public:
     void RenderGL();
     void RenderScanlineGL(uint32 y);
 
-    void WritePPM();
+	void WritePPM();
+    void WritePPM(clock_t rendertime);
     void WritePPM(const char* filename);
     void WritePPM(const char* filename, uint8* data, uint32 width, uint32 height);
 

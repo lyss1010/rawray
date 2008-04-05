@@ -12,13 +12,16 @@
 /////////////////////////////////////////////////////////////////////////////
 namespace rawray {
 
+class GlutWindow;
 class RenderJob;
+
+DllExport extern GlutWindow* g_window;
 
 class DllExport GlutWindow
 {
 public:
-    GlutWindow(int* argc, char* argv[]);
-    ~GlutWindow() { }
+	static void Create(int* argc, char* argv[]);
+	static void Destroy() { SAFE_DELETE( g_window ); }
 
     void MainLoop();
 
@@ -30,7 +33,11 @@ public:
     void Idle();
 
 private:
-    void InitGL();
+	// MainLoop() will never return, we do not expect user to delete us
+    GlutWindow(int* argc, char* argv[]);
+	~GlutWindow();
+    
+	void InitGL();
     void InitCallbacks();
     void CreateGlutWindow();
     void ToggleRenderGL();
@@ -58,6 +65,5 @@ private:
 
 } // namespace rawray
 /////////////////////////////////////////////////////////////////////////////
-
 
 #endif // RAWRAY_RAWRAY_GLUT_WINDOW_H

@@ -32,7 +32,6 @@ namespace options {
     extern float cam_minDraw;
     extern float cam_maxDraw;
 
-    extern std::string win_name;
     extern uint32 win_width;
     extern uint32 win_height;
     extern uint32 win_posX;
@@ -46,6 +45,20 @@ namespace options {
     extern uint32 render_spin_lock_sleep;
 
     extern float gaussian_blur_max;
+	extern uint32 sphere_sections;
+
+	extern uint32 spiral_num_sphere;
+	extern float spiral_radius;
+
+	extern float lorenz_dt;
+	extern float lorenz_min_distance;
+	extern float lorenz_max_distance;
+	extern float lorenz_sigma;
+	extern float lorenz_rho;
+	extern float lorenz_beta;
+	extern float lorenz_radius;
+	extern uint32 lorenz_num_sphere;
+	extern math::Vector3 lorenz_start;
 
     DllExport void init();
 } // namespace rawray::options

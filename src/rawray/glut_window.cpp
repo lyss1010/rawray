@@ -3,32 +3,34 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 #include "glut_window.h"
-#include "light.h"
-#include "lambert.h"
-#include "sphere.h"
-#include "triangle_mesh.h"
-#include "triangle.h"
 #include "render_job.h"
 
 namespace {
 
 // Proxy callbacks to member functions for GLUT
-rawray::GlutWindow* g_window;
-void Display() { g_window->Display(); }
-void Reshape(int x, int y) { g_window->Reshape(x, y); }
-void Keyboard(uint8 key, int x, int y) { g_window->Keyboard(key, x, y); }
-void Mouse(int btn, int state, int x, int y) { g_window->Mouse(btn, state, x, y); }
-void Motion(int x, int y) { g_window->Motion(x,y); }
-void Idle() { g_window->Idle(); }
+void Display() { rawray::g_window->Display(); }
+void Reshape(int x, int y) { rawray::g_window->Reshape(x, y); }
+void Keyboard(uint8 key, int x, int y) { rawray::g_window->Keyboard(key, x, y); }
+void Mouse(int btn, int state, int x, int y) { rawray::g_window->Mouse(btn, state, x, y); }
+void Motion(int x, int y) { rawray::g_window->Motion(x,y); }
+void Idle() { rawray::g_window->Idle(); }
 
 } // namespace
 
-
 namespace rawray {
+
+// Singleton global window
+GlutWindow* g_window = NULL;
 
 const uint8 MOUSE_LEFT   = 1;
 const uint8 MOUSE_RIGHT  = 2;
 const uint8 MOUSE_MIDDLE = 4;
+
+
+void GlutWindow::Create(int* argc, char* argv[]) {
+	if( !g_window )
+		g_window = new GlutWindow(argc, argv);
+}
 
 GlutWindow::GlutWindow(int* argc, char* argv[]) : cam_(), img_(), scene_(),
     renderGL_(true), keySpeed_(0.1f), mouseXSpeed_(0.1f), mouseYSpeed_(0.03f),
@@ -41,12 +43,18 @@ GlutWindow::GlutWindow(int* argc, char* argv[]) : cam_(), img_(), scene_(),
     InitGL();
     InitCallbacks();
 
-    MakeSpiralScene();
+    //MakeSpiralScene();
     //MakeBunnyScene();
+	MakeLorenzScene();
+}
+
+GlutWindow::~GlutWindow() {
+	delete render_;
 }
 
 void GlutWindow::MainLoop() {
-    glutMainLoop();
+    glutMainLoop(); // This will never return
+	assert( 0 );
 }
 
 void GlutWindow::Display() {
@@ -64,9 +72,9 @@ void GlutWindow::Display() {
 }
 
 void GlutWindow::Reshape(int x, int y) {
-    // Come out of raytrace mode if needed
+    // Ignore resize in raytrace mode
     if( !renderGL_ )
-        ToggleRenderGL();
+        return;
 
     if( x < 0 ) x = -x;
     else if( x == 0 ) x = 1;
@@ -74,6 +82,7 @@ void GlutWindow::Reshape(int x, int y) {
     if( y < 0 ) y = -y;
     else if( y == 0 ) y = 1;
 
+	cam_.Resize( x, y );
     img_.Resize( (uint32)x, (uint32)y );
     glViewport( 0, 0, x, y );
 
@@ -94,6 +103,7 @@ void GlutWindow::Keyboard(uint8 key, int x, int y) {
     case 'c':
     case 'C':
         std::cout << "Camera Pos: " << cam_.GetEye() << std::endl;
+		std::cout << "View Direc: " << cam_.GetViewDir() << std::endl;
         break;
 
     case 'i':
@@ -235,7 +245,6 @@ void GlutWindow::InitGL() {
 }
 
 void GlutWindow::InitCallbacks() {
-    ::g_window = this;
     glutDisplayFunc( ::Display );
     glutKeyboardFunc( ::Keyboard );
     glutMouseFunc( ::Mouse );
@@ -248,7 +257,7 @@ void GlutWindow::CreateGlutWindow() {
     glutInitWindowSize( options::win_width, options::win_height );
     glutInitDisplayMode( GLUT_RGB | GLUT_DOUBLE );
     glutInitWindowPosition( options::win_posX, options::win_posY );
-    glutCreateWindow( options::win_name.c_str() );
+	glutCreateWindow( "RawRay" );
 }
 
 void GlutWindow::ToggleRenderGL() {
@@ -267,93 +276,6 @@ void GlutWindow::ToggleRenderGL() {
     }
 
     glutPostRedisplay();
-}
-
-void GlutWindow::MakeSpiralScene() {
-    //cam_.SetEye( Vector3(-5.0f, 2.0f, 3.0f) );
-    cam_.SetEye( Vector3(1.73f, -1.23f, -4.04f) );
-    cam_.SetLookAt( Vector3(0, 0, 0) );
-    cam_.SetUp( Vector3(0, 1, 0) );
-    cam_.SetFOV( 45 );
-
-    Light* light = new Light( Vector3(-3, 15, 3),
-                              Vector3(1, 1, 1),
-                              1000 );
-    scene_.AddLight(light);
-    
-    const int maxI = 200;
-    const float a = 0.15f;
-    for (int i=0; i<maxI; ++i ) {
-        float t = i/float(maxI);
-        float theta = 4 * math::PI * t;
-        float r = a*theta;
-
-        float x = r*cos(theta);
-        float y = r*sin(theta);
-        float z = 2 * ( 2 * math::PI * a - r);
-
-        //float red = 0.5f * ( 1.0f + sin(x+y*y-z) );
-        //float green = 0.5f * ( 1.0f + sin(theta-z) );
-        //float blue = 0.5f * ( 1.0f + tan(r) );
-
-        // NOTE: Memory leak!
-        Material* mat = new Lambert( Vector3(1,0,0) );
-        rawray::Sphere * sphere = new Sphere( Vector3(x,y,z), r/10, mat );
-        scene_.AddObject(sphere);
-    }
-
-    scene_.PreCalc();
-}
-
-void GlutWindow::MakeLorenzScene() {
-    cam_.SetEye( Vector3(-5.0f, 2.0f, 3.0f) );
-    cam_.SetLookAt( Vector3(0, 0, 0) );
-    cam_.SetUp( Vector3(0, 1, 0) );
-    cam_.SetFOV( 45 );
-
-    Light* light = new Light( Vector3(-3, 15, 3),
-                              Vector3(1, 1, 1),
-                              1000 );
-    scene_.AddLight(light);
-    
-    const int maxI = 200;
-    const float a = 0.15f;
-    for (int i=0; i<maxI; ++i ) {
-        float t = i/float(maxI);
-        float theta = 4 * math::PI * t;
-        float r = a*theta;
-    }
-
-    scene_.PreCalc();
-}
-
-void GlutWindow::MakeBunnyScene() {
-    // set up the camera
-    options::bg_color = Vector3(0.0f, 0.0f, 0.2f);
-
-    cam_.SetEye( Vector3(-2.0f, 3.0f, 5.0f) );
-    cam_.SetLookAt( Vector3(-0.5f, 1.0f, 0.0f) );
-    cam_.SetUp( Vector3(0, 1, 0) );
-    cam_.SetFOV( 45 );
-
-    Light* light = new Light( Vector3(-3, 15, 3),
-							  Vector3(1, 1, 1),
-							  500 );
-    scene_.AddLight(light);
-
-    Material* mat = new Lambert( Vector3(1, 1, 1) );
-
-    TriangleMesh* bunny = new TriangleMesh;
-    bunny->LoadOBJ( "./../res/sphere.obj" );
-    
-    // create all the triangles in the bunny mesh and add to the scene
-    for (uint32 i = 0; i < bunny->GetNumTriangles(); ++i)
-    {
-        Triangle* t = new Triangle( *bunny, i, mat );
-        scene_.AddObject(t);
-    }
-    
-    scene_.PreCalc();
 }
 
 } // namespace rawray

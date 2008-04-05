@@ -16,10 +16,11 @@ class DllExport Material
 {
 public:
     Material() { }
-    virtual ~Material() { }
+	virtual ~Material() {}
 
-    virtual void PreCalc() { }
+	virtual void PreCalc() {}
     virtual Vector3 Shade(const Ray&, const HitInfo& hit, const Scene&) const;
+	virtual Vector3 BaseColor() const;
 
 }; // class Material
 

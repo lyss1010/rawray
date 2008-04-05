@@ -36,6 +36,12 @@
 // Do not use windows min/max macros 
 #define NOMINMAX 1
 
+// For memory leak detection
+#ifdef _DEBUG
+#define _CRTDBG_MAP_ALLOC
+#define _INC_MALLOC
+#endif
+
 // Null pointer
 #ifndef NULL
 #define NULL 0

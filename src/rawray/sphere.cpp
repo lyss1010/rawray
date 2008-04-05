@@ -3,14 +3,17 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 #include "sphere.h"
+#include "material.h"
 
 namespace rawray {
 
 void Sphere::RenderGL() {
-    glColor3f(1, 1, 1);
+	Vector3 color = material_ ? material_->BaseColor() : Vector3(1);
+	glColor3f( color.x, color.y, color.z );
+
     glPushMatrix();
     glTranslatef(center_.x, center_.y, center_.z);
-    glutWireSphere(radius_, 8, 8);
+	glutWireSphere(radius_, options::sphere_sections, options::sphere_sections);
     glPopMatrix();
 }
 

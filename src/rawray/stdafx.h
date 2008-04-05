@@ -7,6 +7,7 @@
 #define RAWRAY_RAWRAY_STDAFX_H
 #include "base/global_defs.h"
 
+
 // Windows Includes
 #include <Windows.h>
 

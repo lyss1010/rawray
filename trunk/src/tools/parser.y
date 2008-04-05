@@ -52,25 +52,38 @@ extern FILE *yyin, *yyout;
 %token YY_SYM_GLOBAL_IMG_BG
 
 %token YY_STATE_CAMERA
-%token YY_SYM_CAMERA_VIEW_DIR
+%token YY_SYM_CAMERA_POS
 %token YY_SYM_CAMERA_VIEW_DIR
 %token YY_SYM_CAMERA_LOOK_AT
 %token YY_SYM_CAMERA_UP
 %token YY_SYM_CAMERA_FOV
 
+%token YY_STATE_LIGHT
+%token YY_SYM_LIGHT_POINTLIGHT
+%token YY_SYM_LIGHT_POS
+%token YY_SYM_LIGHT_COLOR
+%token YY_SYM_LIGHT_WATTAGE
+
 %token YY_STATE_MODEL
 %token YY_SYM_MODEL_LOAD
-
-%token YY_STATE_LIGHT
-%token YY_SYM_LIGHT_POS
-%token YY_SYM_LIGHT_DIFFUSE
-%token YY_SYM_LIGHT_AMBIENT
-%token YY_SYM_LIGHT_WATTAGE
 
 %token YY_STATE_SPHERE
 %token YY_SYM_SPHERE_POS
 %token YY_SYM_SPHERE_RADIUS
 %token YY_SYM_SPHERE_COLOR
+
+%token YY_MATH_COS
+%token YY_MATH_SIN
+%token YY_MATH_TAN
+%token YY_MATH_ACOS
+%token YY_MATH_ASIN
+%token YY_MATH_ATAN
+%token YY_MATH_LN
+%token YY_MATH_LOG
+%token YY_MATH_EXP
+%token YY_MATH_SQRT
+%token YY_MATH_E
+%token YY_MATH_PI
 
 %right '='
 %left '-' '+'
@@ -86,10 +99,10 @@ input:  /* empty */
         | input block
 ;
 
-block:    GLOBAL '{' globalOptions '}'
-        | CAMERA '{' cameraOptions '}'
+block:    YY_STATE_GLOBAL '{' globalOptions '}'
+        | YY_STATE_CAMERA '{' cameraOptions '}'
         | objectTypes 
-        | LIGHT lightTypes '}' { printf( "Adding Light\n" ); /*g_pScene->AddLight(pLight); pLight = 0;*/ }
+        | YY_STATE_LIGHT lightTypes '}' { printf( "Adding Light\n" ); /*g_pScene->AddLight(pLight); pLight = 0;*/ }
 ;
 
 objectTypes:
@@ -139,7 +152,7 @@ lightOptions: /* empty */
 
 
 meshOptions: /* empty */
-        | LOAD STRING
+        | YY_SYM_MODEL_LOAD YY_SYM_STRING
             {
                 // Remove quotes
                 $2[strlen($2)-1]=0;

@@ -16,11 +16,11 @@ WS [ \t\r]+
 OPTWS [ \t\r]*
 SIGN [+-]
 DIGIT [0-9]
-FLOATARGS 
 INT {DIGIT}+
 REAL {DIGIT}*("."{DIGIT}*)?([eE][+-]{DIGIT}+)?
 ID ([_a-zA-Z][_a-zA-Z0-9]*[\ \t\n])+
 STRING  \"[_a-zA-Z][_a-zA-Z0-9"."/\\: ]*\"
+NEWLINE ("\n"|"\r\n")
 
 %x global
 %x camera

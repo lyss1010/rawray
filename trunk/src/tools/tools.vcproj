@@ -187,7 +187,10 @@
 				Name="generated"
 				Filter="">
 				<File
-					RelativePath=".\parser.yy.h">
+					RelativePath=".\lexer.yy.c">
+				</File>
+				<File
+					RelativePath=".\parser.yy.c">
 				</File>
 				<File
 					RelativePath=".\unistd.h">
@@ -201,8 +204,7 @@
 			<File
 				RelativePath=".\lexer.lex">
 				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="TRUE">
+					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Creating Lexer with FLEX"
@@ -223,8 +225,7 @@
 			<File
 				RelativePath=".\parser.y">
 				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="TRUE">
+					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Creating Parser with BISON"
@@ -241,6 +242,9 @@
 "
 						Outputs="parser.yy.c"/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\symbols.yy.h">
 			</File>
 		</Filter>
 		<File

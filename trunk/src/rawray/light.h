@@ -25,6 +25,7 @@ public:
     const Vector3& GetPosition() const { return position_; }
 
     virtual void PreCalc() { }
+    virtual void RenderGL();
 
 protected:
     Vector3 position_;

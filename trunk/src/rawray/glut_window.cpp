@@ -238,7 +238,7 @@ void GlutWindow::InitGL() {
     glFrontFace( GL_FRONT );
     //glEnable( GL_CULL_FACE );
 
-	glPolygonMode( GL_FRONT, GL_FILL );
+	glPolygonMode( GL_FRONT, GL_POINT );
     glPolygonMode( GL_BACK, GL_POINT );
 
     glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );

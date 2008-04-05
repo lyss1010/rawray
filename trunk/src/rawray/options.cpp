@@ -81,7 +81,7 @@ void init() {
     render_spin_lock_sleep = 10;
 
     gaussian_blur_max = 2.0f;
-	sphere_sections = 4;
+	sphere_sections = 8;
 
 	spiral_num_sphere = 100;
 	spiral_radius = 0.15f;
@@ -92,8 +92,8 @@ void init() {
 	lorenz_sigma = 5.7f;
 	lorenz_rho = 32;
 	lorenz_beta = 2.0f;
-	lorenz_radius = 0.10f;
-	lorenz_num_sphere = 3000;
+	lorenz_radius = 0.131f;
+	lorenz_num_sphere = 30000;
 	lorenz_start = Vector3(0.0f, 1.0f, 0.0f);
 }
 

@@ -193,12 +193,14 @@ DWORD RenderJob::ThreadRoutine() {
         }
     }
 
-    scene_.PostProcess(img_);
-    clock_t endTime = clock();
-    img_.WritePPM(endTime-startTime);
+    if( !abort_ ) {
+        scene_.PostProcess(img_);
+        clock_t endTime = clock();
+        img_.WritePPM(endTime-startTime);
 
-    std::cout << "Raytrace job of " << img_.GetWidth() << "x" << img_.GetHeight();
-    std::cout << " done in " << float(endTime-startTime)/CLOCKS_PER_SEC << " seconds" << std::endl;
+        std::cout << "Raytrace job of " << img_.GetWidth() << "x" << img_.GetHeight();
+        std::cout << " done in " << float(endTime-startTime)/CLOCKS_PER_SEC << " seconds" << std::endl;
+    }
 
     isDone_ = true;
     return 0;

@@ -25,17 +25,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rawray_console", "src\rawra
 		{223E68B7-30C0-4701-ADBF-7FE459ADBBEC} = {223E68B7-30C0-4701-ADBF-7FE459ADBBEC}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rawray_gui", "src\rawray_gui\rawray_gui.vcproj", "{847724C9-A5BC-4D0B-855F-E0B61A918E3F}"
-	ProjectSection(ProjectDependencies) = postProject
-		{223E68B7-30C0-4701-ADBF-7FE459ADBBEC} = {223E68B7-30C0-4701-ADBF-7FE459ADBBEC}
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
 		Release = Release
-	EndGlobalSection
-	GlobalSection(ProjectDependencies) = postSolution
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
 		{01EBC18F-8138-49FF-8274-08DE041E580E}.Debug.ActiveCfg = Debug|Win32
@@ -58,10 +51,6 @@ Global
 		{F44D173D-C201-42AB-9A51-3275D0EB404C}.Debug.Build.0 = Debug|Win32
 		{F44D173D-C201-42AB-9A51-3275D0EB404C}.Release.ActiveCfg = Release|Win32
 		{F44D173D-C201-42AB-9A51-3275D0EB404C}.Release.Build.0 = Release|Win32
-		{847724C9-A5BC-4D0B-855F-E0B61A918E3F}.Debug.ActiveCfg = Debug|Win32
-		{847724C9-A5BC-4D0B-855F-E0B61A918E3F}.Debug.Build.0 = Debug|Win32
-		{847724C9-A5BC-4D0B-855F-E0B61A918E3F}.Release.ActiveCfg = Release|Win32
-		{847724C9-A5BC-4D0B-855F-E0B61A918E3F}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

@@ -25,10 +25,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rawray_console", "src\rawra
 		{223E68B7-30C0-4701-ADBF-7FE459ADBBEC} = {223E68B7-30C0-4701-ADBF-7FE459ADBBEC}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rawray_gui", "src\rawray_gui\rawray_gui.vcproj", "{07F86C3B-24E8-433D-83ED-57037F57BEE0}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -55,10 +51,6 @@ Global
 		{F44D173D-C201-42AB-9A51-3275D0EB404C}.Debug.Build.0 = Debug|Win32
 		{F44D173D-C201-42AB-9A51-3275D0EB404C}.Release.ActiveCfg = Release|Win32
 		{F44D173D-C201-42AB-9A51-3275D0EB404C}.Release.Build.0 = Release|Win32
-		{07F86C3B-24E8-433D-83ED-57037F57BEE0}.Debug.ActiveCfg = Debug|Win32
-		{07F86C3B-24E8-433D-83ED-57037F57BEE0}.Debug.Build.0 = Debug|Win32
-		{07F86C3B-24E8-433D-83ED-57037F57BEE0}.Release.ActiveCfg = Release|Win32
-		{07F86C3B-24E8-433D-83ED-57037F57BEE0}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

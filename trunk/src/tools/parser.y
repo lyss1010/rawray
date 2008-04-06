@@ -1,8 +1,10 @@
 %{
 #ifdef WIN32
 #pragma warning(disable:4244) // smaller type conversion warnings
+#pragma warning(disable:4701) // variable used without being initialized
 #endif
 
+#include <malloc.h>
 #include <stdlib.h>
 #include <math.h>
 #include <stack>

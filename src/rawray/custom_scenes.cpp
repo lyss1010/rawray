@@ -9,7 +9,7 @@
 #include "triangle_mesh.h"
 #include "triangle.h"
 #include "float.h"
-#include "tools/config_parser.h"
+#include "parser.h"
 
 namespace rawray {
 
@@ -146,7 +146,7 @@ void GlutWindow::MakeLorenzScene() {
 }
 
 void GlutWindow::MakeBunnyScene() {
-    tools::ConfigParser( "./../res/scenes/bunny.cfg" );
+    ConfigParser( "./../res/scenes/bunny.cfg" );
     scene_.PreCalc();
 
  //   // set up the camera

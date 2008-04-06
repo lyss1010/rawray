@@ -689,7 +689,7 @@ char *yytext;
 #include <cstdlib>
 #include <stdio.h>
 #include <string.h>
-#include "parser.yy.h"
+#include "parser.yy.cc.h"
 
 int yyline=1;
 #define global 1

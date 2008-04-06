@@ -67,14 +67,7 @@
 #pragma warning(disable:4701) // variable used without being initialized
 #endif
 
-// If we are compiling to a DLL, this is how we export names
-#ifdef _USRDLL
-#define DllExport __declspec( dllexport )
-#else
-#define DllExport __declspec( dllimport )
-#endif
-
-
+#include "parser.h"
 #include <malloc.h>
 #include <stdlib.h>
 #include <math.h>
@@ -83,9 +76,13 @@
 #include <map>
 #include <string>
 #include <iostream>
+#include "math/vector3.h"
+#include "math/matrix4x4.h"
+#include "rawray/object.h"
+#include "rawray/material.h"
+#include "rawray/light.h"
 
 //#define YYDEBUG 1
-
 
 #define yyerror(x) printf("Parser error on line %d: %s\n", yyline, x); 
 
@@ -93,30 +90,18 @@ extern int yylex();
 extern int yyline;
 extern FILE *yyin, *yyout;
 
-// For including multiple files
-std::queue<const char*> g_fileQueue;
 
 // variables for adding objects, keeping track of variables
-//Object* pObj=0;
-//std::map<std::string, Object*> g_objectMap;
-//Material* pMat=new Material;
-// add more here
-
-//Vector3 __parse_temp_vector;
-//std::stack<Matrix4x4> g_kMatrixStack;
-//PointLight* pLight=0;
-
-//Vector3& Vertex3(const float& x, const float& y, const float& z);
-//Vector3& Vertex3(const Vector3& v);
-//void Translate(const float& x, const float& y, const float& z);
-//void Rotate(const float& angle, float x, float y, float z); // angle is in degrees
-//void Scale(const float& x, const float& y, const float& z);
-//Matrix4x4& GetCTM();
-//void PushMatrix();
-//void PopMatrix();
+rawray::Object*                         g_obj = NULL;
+rawray::Material*                       g_material = NULL;
+rawray::Light*                          g_light = NULL;
+math::Vector3                           g_vector;
+std::map<std::string, rawray::Object*>  g_objectMap;
+//std::stack<Matrix4x4>                 g_matrixStack;
 
 
-#line 57 "parser.y"
+
+#line 42 "parser.y"
 typedef union
 {
     float real;
@@ -255,16 +240,16 @@ static const short yyrhs[] = {    -1,
 
 #if YYDEBUG != 0
 static const short yyrline[] = { 0,
-   142,   143,   146,   147,   148,   149,   150,   153,   161,   169,
-   177,   186,   192,   200,   207,   216,   222,   230,   237,   246,
-   252,   260,   267,   276,   277,   279,   281,   283,   285,   287,
-   291,   292,   294,   298,   299,   309,   310,   312,   314,   316,
-   320,   321,   323,   324,   326,   328,   333,   334,   343,   344,
-   346,   348,   350,   354,   355,   357,   359,   361,   363,   367,
-   368,   369,   371,   372,   373,   375,   376,   377,   379,   380,
-   381,   383,   384,   385,   387,   388,   389,   391,   392,   393,
-   396,   397,   398,   399,   400,   401,   402,   403,   404,   405,
-   408,   410,   413,   414,   415,   416,   417,   418,   419,   420
+   127,   128,   131,   132,   133,   134,   135,   138,   146,   154,
+   162,   171,   177,   185,   192,   201,   207,   215,   222,   231,
+   237,   245,   252,   261,   262,   264,   266,   268,   270,   272,
+   276,   277,   279,   283,   284,   294,   295,   297,   299,   301,
+   305,   306,   308,   309,   311,   313,   318,   319,   328,   329,
+   331,   333,   335,   339,   340,   342,   344,   346,   348,   352,
+   353,   354,   356,   357,   358,   360,   361,   362,   364,   365,
+   366,   368,   369,   370,   372,   373,   374,   376,   377,   378,
+   381,   382,   383,   384,   385,   386,   387,   388,   389,   390,
+   393,   395,   398,   399,   400,   401,   402,   403,   404,   405
 };
 
 static const char * const yytname[] = {   "$","error","$undefined.","REAL","PARSE_INT",
@@ -1038,11 +1023,11 @@ yyreduce:
   switch (yyn) {
 
 case 6:
-#line 149 "parser.y"
+#line 134 "parser.y"
 { printf( "Adding Light\n" ); ;
     break;}
 case 8:
-#line 155 "parser.y"
+#line 140 "parser.y"
 {
                 printf( "Creating Triangle\n" );
                 //pObj = new Triangle;
@@ -1051,7 +1036,7 @@ case 8:
             ;
     break;}
 case 9:
-#line 162 "parser.y"
+#line 147 "parser.y"
 {
                 printf( "Adding Triangle to Scene\n" );
                 //if (pObj)
@@ -1060,7 +1045,7 @@ case 9:
             ;
     break;}
 case 10:
-#line 170 "parser.y"
+#line 155 "parser.y"
 {
                 printf( "Creating named triangle '%s'\n", yyvsp[-1].str );
                 //pObj = new TriangleMesh;
@@ -1070,7 +1055,7 @@ case 10:
             ;
     break;}
 case 11:
-#line 178 "parser.y"
+#line 163 "parser.y"
 {
                 printf( "Adding named Triangle to Scene\n" );
                 //if (pObj)
@@ -1079,7 +1064,7 @@ case 11:
             ;
     break;}
 case 12:
-#line 187 "parser.y"
+#line 172 "parser.y"
 {
                 printf( "Creating new mesh\n" );
                 //pObj = new TriangleMesh;
@@ -1087,7 +1072,7 @@ case 12:
             ;
     break;}
 case 13:
-#line 193 "parser.y"
+#line 178 "parser.y"
 {
                 printf( "Adding mesh to scene\n" );
                 //if (pObj)
@@ -1096,7 +1081,7 @@ case 13:
             ;
     break;}
 case 14:
-#line 201 "parser.y"
+#line 186 "parser.y"
 {
                 printf( "Creating new named mesh '%s'\n", yyvsp[-1].str );
                 //pObj = new TriangleMesh;
@@ -1105,7 +1090,7 @@ case 14:
             ;
     break;}
 case 15:
-#line 208 "parser.y"
+#line 193 "parser.y"
 {
                 printf( "Adding named mesh to scene\n" );
                 //if (pObj)
@@ -1114,7 +1099,7 @@ case 15:
             ;
     break;}
 case 16:
-#line 217 "parser.y"
+#line 202 "parser.y"
 {
                 printf( "Creating new sphere\n" );
                 //pObj = new Sphere;
@@ -1122,7 +1107,7 @@ case 16:
             ;
     break;}
 case 17:
-#line 223 "parser.y"
+#line 208 "parser.y"
 {
                 printf( "Adding sphere to scene\n" );
                 //if (pObj)
@@ -1131,7 +1116,7 @@ case 17:
             ;
     break;}
 case 18:
-#line 231 "parser.y"
+#line 216 "parser.y"
 {
                 printf( "Creating new sphere named '%s'\n", yyvsp[-1].str );
                 //pObj = new Sphere;
@@ -1140,7 +1125,7 @@ case 18:
             ;
     break;}
 case 19:
-#line 238 "parser.y"
+#line 223 "parser.y"
 {
                 printf( "Adding sphere to scene\n" );
                 //if (pObj)
@@ -1149,7 +1134,7 @@ case 19:
             ;
     break;}
 case 20:
-#line 247 "parser.y"
+#line 232 "parser.y"
 {
                 printf( "Creating new instance\n" );
                 //pObj = new Instance;
@@ -1157,7 +1142,7 @@ case 20:
             ;
     break;}
 case 21:
-#line 253 "parser.y"
+#line 238 "parser.y"
 {
                 printf( "Adding instance to scene\n" );
                 //if (pObj)
@@ -1166,7 +1151,7 @@ case 21:
             ;
     break;}
 case 22:
-#line 261 "parser.y"
+#line 246 "parser.y"
 {
                 printf( "Creating new named instance '%s'\n", yyvsp[-1].str );
                 //pObj = new Instance;
@@ -1175,7 +1160,7 @@ case 22:
             ;
     break;}
 case 23:
-#line 268 "parser.y"
+#line 253 "parser.y"
 {
                 printf( "Adding named instance to scene\n" );
                 //if (pObj)
@@ -1184,39 +1169,39 @@ case 23:
             ;
     break;}
 case 25:
-#line 278 "parser.y"
+#line 263 "parser.y"
 { /*((TriangleMesh*)pObj)->SetV1(Vertex3($2, $4, $6));*/ ;
     break;}
 case 26:
-#line 280 "parser.y"
+#line 265 "parser.y"
 {  ;
     break;}
 case 27:
-#line 282 "parser.y"
+#line 267 "parser.y"
 {  ;
     break;}
 case 28:
-#line 284 "parser.y"
+#line 269 "parser.y"
 {  ;
     break;}
 case 29:
-#line 286 "parser.y"
+#line 271 "parser.y"
 {  ;
     break;}
 case 30:
-#line 288 "parser.y"
+#line 273 "parser.y"
 {  ;
     break;}
 case 32:
-#line 293 "parser.y"
+#line 278 "parser.y"
 {  ;
     break;}
 case 33:
-#line 295 "parser.y"
+#line 280 "parser.y"
 {  ;
     break;}
 case 35:
-#line 300 "parser.y"
+#line 285 "parser.y"
 {
                 //std::map<std::string, Object*>::const_iterator it = g_objectMap.find ($2);
                 //if (it != g_objectMap.end ())
@@ -1226,43 +1211,43 @@ case 35:
             ;
     break;}
 case 36:
-#line 309 "parser.y"
+#line 294 "parser.y"
 { /*PushMatrix();*/ ;
     break;}
 case 37:
-#line 311 "parser.y"
+#line 296 "parser.y"
 { /*PopMatrix();*/ ;
     break;}
 case 38:
-#line 313 "parser.y"
+#line 298 "parser.y"
 { /*Rotate($2, $4, $6, $8);*/ ;
     break;}
 case 39:
-#line 315 "parser.y"
+#line 300 "parser.y"
 { /*Translate($2, $4, $6);*/ ;
     break;}
 case 40:
-#line 317 "parser.y"
+#line 302 "parser.y"
 { /*Scale($2, $4, $6);*/ ;
     break;}
 case 41:
-#line 320 "parser.y"
+#line 305 "parser.y"
 { /*pLight = new PointLight;*/ ;
     break;}
 case 44:
-#line 325 "parser.y"
+#line 310 "parser.y"
 { /*pLight->SetPosition(Vertex3($2, $4, $6));*/ ;
     break;}
 case 45:
-#line 327 "parser.y"
+#line 312 "parser.y"
 { /*pLight->SetWattage($2);*/ ;
     break;}
 case 46:
-#line 329 "parser.y"
+#line 314 "parser.y"
 { /*pLight->SetColor(Vector3($2, $4, $6));*/ ;
     break;}
 case 48:
-#line 335 "parser.y"
+#line 320 "parser.y"
 {
                 yyvsp[0].str[strlen(yyvsp[0].str)-1]=0;
                 printf( "Load Mesh: '%s'\n", yyvsp[0].str+1 );
@@ -1271,199 +1256,199 @@ case 48:
             ;
     break;}
 case 50:
-#line 345 "parser.y"
+#line 330 "parser.y"
 { /*g_pImage->Resize(g_pImage->Width(), $2);*/ ;
     break;}
 case 51:
-#line 347 "parser.y"
+#line 332 "parser.y"
 { /*g_pImage->Resize($2, g_pImage->Height());*/ ;
     break;}
 case 52:
-#line 349 "parser.y"
+#line 334 "parser.y"
 { /*g_pCamera->SetBGColor(Vector3($2, $4, $6));*/ ;
     break;}
 case 53:
-#line 351 "parser.y"
+#line 336 "parser.y"
 { /*g_pCamera->SetBGColor(Vector3($2, $4, $6));*/ ;
     break;}
 case 55:
-#line 356 "parser.y"
+#line 341 "parser.y"
 { /*g_pCamera->SetEye(Vector3($2, $4, $6));*/ ;
     break;}
 case 56:
-#line 358 "parser.y"
+#line 343 "parser.y"
 { /*g_pCamera->SetViewDir(Vector3($2, $4, $6));*/ ;
     break;}
 case 57:
-#line 360 "parser.y"
+#line 345 "parser.y"
 { /*g_pCamera->SetLookAt(Vector3($2, $4, $6));*/ ;
     break;}
 case 58:
-#line 362 "parser.y"
+#line 347 "parser.y"
 { /*g_pCamera->SetUp(Vector3($2, $4, $6));*/ ;
     break;}
 case 59:
-#line 364 "parser.y"
+#line 349 "parser.y"
 { /*g_pCamera->SetFOV($2);*/ ;
     break;}
 case 60:
-#line 367 "parser.y"
+#line 352 "parser.y"
 { yyval.real = yyvsp[0].real; ;
     break;}
 case 61:
-#line 368 "parser.y"
+#line 353 "parser.y"
 { yyval.real = yyvsp[0].integer; ;
     break;}
 case 62:
-#line 369 "parser.y"
+#line 354 "parser.y"
 { yyval.real = yyvsp[0].real; ;
     break;}
 case 63:
-#line 371 "parser.y"
+#line 356 "parser.y"
 { yyval.real = yyvsp[-2].real + yyvsp[0].real; ;
     break;}
 case 64:
-#line 372 "parser.y"
+#line 357 "parser.y"
 { yyval.real = yyvsp[-2].integer + yyvsp[0].real; ;
     break;}
 case 65:
-#line 373 "parser.y"
+#line 358 "parser.y"
 { yyval.real = yyvsp[-2].real + yyvsp[0].integer; ;
     break;}
 case 66:
-#line 375 "parser.y"
+#line 360 "parser.y"
 { yyval.real = yyvsp[-2].real - yyvsp[0].real; ;
     break;}
 case 67:
-#line 376 "parser.y"
+#line 361 "parser.y"
 { yyval.real = yyvsp[-2].integer - yyvsp[0].real; ;
     break;}
 case 68:
-#line 377 "parser.y"
+#line 362 "parser.y"
 { yyval.real = yyvsp[-2].real - yyvsp[0].integer; ;
     break;}
 case 69:
-#line 379 "parser.y"
+#line 364 "parser.y"
 { yyval.real = yyvsp[-2].real * yyvsp[0].real; ;
     break;}
 case 70:
-#line 380 "parser.y"
+#line 365 "parser.y"
 { yyval.real = yyvsp[-2].integer * yyvsp[0].real; ;
     break;}
 case 71:
-#line 381 "parser.y"
+#line 366 "parser.y"
 { yyval.real = yyvsp[-2].real * yyvsp[0].integer; ;
     break;}
 case 72:
-#line 383 "parser.y"
+#line 368 "parser.y"
 { yyval.real = yyvsp[-2].real / yyvsp[0].real; ;
     break;}
 case 73:
-#line 384 "parser.y"
+#line 369 "parser.y"
 { yyval.real = yyvsp[-2].integer / yyvsp[0].real; ;
     break;}
 case 74:
-#line 385 "parser.y"
+#line 370 "parser.y"
 { yyval.real = yyvsp[-2].real / yyvsp[0].integer; ;
     break;}
 case 75:
-#line 387 "parser.y"
+#line 372 "parser.y"
 { yyval.real = pow (float (yyvsp[-2].real), float (yyvsp[0].real)); ;
     break;}
 case 76:
-#line 388 "parser.y"
+#line 373 "parser.y"
 { yyval.real = pow (float (yyvsp[-2].integer), float (yyvsp[0].real)); ;
     break;}
 case 77:
-#line 389 "parser.y"
+#line 374 "parser.y"
 { yyval.real = pow (float (yyvsp[-2].real), float (yyvsp[0].integer)); ;
     break;}
 case 78:
-#line 391 "parser.y"
+#line 376 "parser.y"
 { yyval.real = -yyvsp[0].real; ;
     break;}
 case 79:
-#line 392 "parser.y"
+#line 377 "parser.y"
 { yyval.real = yyvsp[-1].real; ;
     break;}
 case 81:
-#line 396 "parser.y"
+#line 381 "parser.y"
 {yyval.real = sin(yyvsp[-1].real); ;
     break;}
 case 82:
-#line 397 "parser.y"
+#line 382 "parser.y"
 {yyval.real = cos(yyvsp[-1].real); ;
     break;}
 case 83:
-#line 398 "parser.y"
+#line 383 "parser.y"
 {yyval.real = tan(yyvsp[-1].real); ;
     break;}
 case 84:
-#line 399 "parser.y"
+#line 384 "parser.y"
 {yyval.real = asin(yyvsp[-1].real); ;
     break;}
 case 85:
-#line 400 "parser.y"
+#line 385 "parser.y"
 {yyval.real = acos(yyvsp[-1].real); ;
     break;}
 case 86:
-#line 401 "parser.y"
+#line 386 "parser.y"
 {yyval.real = atan(yyvsp[-1].real); ;
     break;}
 case 87:
-#line 402 "parser.y"
+#line 387 "parser.y"
 {yyval.real = log(yyvsp[-1].real); ;
     break;}
 case 88:
-#line 403 "parser.y"
+#line 388 "parser.y"
 {yyval.real = log10(yyvsp[-1].real); ;
     break;}
 case 89:
-#line 404 "parser.y"
+#line 389 "parser.y"
 {yyval.real = exp(yyvsp[-1].real); ;
     break;}
 case 90:
-#line 405 "parser.y"
+#line 390 "parser.y"
 {yyval.real = sqrt(yyvsp[-1].real); ;
     break;}
 case 91:
-#line 409 "parser.y"
+#line 394 "parser.y"
 { yyval.real = 2.718281828459f; ;
     break;}
 case 92:
-#line 410 "parser.y"
+#line 395 "parser.y"
 { yyval.real = 3.141592653589793f; ;
     break;}
 case 93:
-#line 413 "parser.y"
+#line 398 "parser.y"
 { yyval.integer = yyvsp[0].integer; ;
     break;}
 case 94:
-#line 414 "parser.y"
+#line 399 "parser.y"
 { yyval.integer = yyvsp[-2].integer + yyvsp[0].integer; ;
     break;}
 case 95:
-#line 415 "parser.y"
+#line 400 "parser.y"
 { yyval.integer = yyvsp[-2].integer - yyvsp[0].integer; ;
     break;}
 case 96:
-#line 416 "parser.y"
+#line 401 "parser.y"
 { yyval.integer = yyvsp[-2].integer * yyvsp[0].integer; ;
     break;}
 case 97:
-#line 417 "parser.y"
+#line 402 "parser.y"
 { yyval.integer = yyvsp[-2].integer / yyvsp[0].integer; ;
     break;}
 case 98:
-#line 418 "parser.y"
+#line 403 "parser.y"
 { yyval.integer = -yyvsp[0].integer; ;
     break;}
 case 99:
-#line 419 "parser.y"
+#line 404 "parser.y"
 { yyval.integer = (int)pow((float)yyvsp[-2].integer, (float)yyvsp[0].integer); ;
     break;}
 case 100:
-#line 420 "parser.y"
+#line 405 "parser.y"
 { yyval.integer = yyvsp[-1].integer; ;
     break;}
 }
@@ -1664,7 +1649,7 @@ yyerrhandle:
   yystate = yyn;
   goto yynewstate;
 }
-#line 424 "parser.y"
+#line 409 "parser.y"
 
 //Additional C code
 
@@ -1772,27 +1757,16 @@ void ParseFile(FILE* fp)
 }
 */
 
-void ParseConfigFile(FILE* fp) {
+namespace rawray {
+
+void ConfigParser(const char* filename) {
     // yydebug = 1;
-    if( fp ) {
-        yyin = fp;
+    
+    yyin = fopen( filename, "r" );
+    if( yyin )
         yyparse();
-    }
-}
-
-namespace tools {
-    
-DllExport void ConfigParser(const char* filename) {
-    g_fileQueue.push( filename );
-    
-    bool success = true;
-    while( !g_fileQueue.empty() ) {
-        FILE* fp = fopen( g_fileQueue.front(), "r" );
-        g_fileQueue.pop();
         
-        if( fp )
-            ParseConfigFile(fp);
-    }
+    fclose( yyin );
 }
 
-} // namespace tools
+} // namespace rawray

@@ -35,7 +35,7 @@
 				BrowseInformation="0"
 				BrowseInformationFile="$(IntDir)"
 				WarningLevel="4"
-				Detect64BitPortabilityProblems="TRUE"
+				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="3"
 				DisableSpecificWarnings="4251"/>
 			<Tool
@@ -57,7 +57,7 @@
 				SubSystem="1"
 				OptimizeReferences="1"
 				EnableCOMDATFolding="1"
-				OptimizeForWindows98="1"
+				OptimizeForWindows98="0"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -114,7 +114,7 @@ copy &quot;$(SolutionDir)lib\d_tools.dll&quot; &quot;$(OutDir)&quot;
 				UsePrecompiledHeader="2"
 				BrowseInformation="0"
 				WarningLevel="4"
-				Detect64BitPortabilityProblems="TRUE"
+				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="0"
 				DisableSpecificWarnings="4251"/>
 			<Tool
@@ -130,7 +130,7 @@ copy &quot;$(SolutionDir)lib\d_tools.dll&quot; &quot;$(OutDir)&quot;
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				OptimizeForWindows98="1"
+				OptimizeForWindows98="0"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>

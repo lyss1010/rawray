@@ -44,6 +44,7 @@ STRING      '([^']*)'|\"([^\"]*)\"
 %x light
 %x pointlight
 %x sphere
+%x p0
 %%
 
 <*>enable{WS}       { return ENABLE; }
@@ -65,8 +66,18 @@ STRING      '([^']*)'|\"([^\"]*)\"
 <INITIAL>global{WS}                 { yy_push_state(global); return GLOBAL; }
 <global>width{WS}	                { return WIDTH; }
 <global>height{WS}	                { return HEIGHT; }
+<global>pos{WS}                     { return POS; }
 <global>image{WS}background{WS}     { return IMG_BGCOLOR; }
 <global>gl{WS}background{WS}        { return GL_BGCOLOR; }
+<global>gl{WS}sphere{WS}sections    { return GL_SPHERE_SECTIONS; }
+<global>num{WS}threads              { return NUM_THREADS; }
+<global>render{WS}x{WS}block        { return RENDER_X_BLOCK; }
+<global>render{WS}y{WS}block        { return RENDER_Y_BLOCK; }
+<global>render{WS}handler{WS}sleep  { return RENDER_HANDLER_SLEEP; }
+<global>render{WS}thread{WS}sleep   { return RENDER_THREAD_SLEEP; }
+<global>render{WS}spinlock{WS}sleep { return RENDER_SPINLOCK_SLEEP; }
+<global>gaussian{WS}blur{WS}max     { return GAUSSIAN_BLUR_MAX; }
+<global>gaussian{WS}blur{WS}sigma   { return GAUSSIAN_BLUR_SIGMA; }
 
 <INITIAL>camera{WS}                 { yy_push_state(camera); return CAMERA; }
 <camera>pos{WS}                     { return POS; }
@@ -74,6 +85,19 @@ STRING      '([^']*)'|\"([^\"]*)\"
 <camera>look{WS}at{WS}              { return LOOKAT; }
 <camera>up{WS}                      { return UP; }
 <camera>fov{WS}                     { return FOV; }
+
+<INITIAL>p0{WS}                     { yy_push_state(p0); return P0; }
+<p0>spiral{WS}num{WS}spheres        { return SPIRAL_NUM_SPHERES; }
+<p0>spiral{WS}radius                { return SPIRAL_RADIUS; }
+<p0>lorenz{WS}dt                    { return LORENZ_DT; }
+<p0>lorenz{WS}min{WS}distance       { return LORENZ_MIN_DISTANCE; }
+<p0>lorenz{WS}max{WS}distance       { return LORENZ_MAX_DISTANCE; }
+<p0>lorenz{WS}sigma                 { return LORENZ_SIGMA; }
+<p0>lorenz{WS}rho                   { return LORENZ_RHO; }
+<p0>lorenz{WS}beta                  { return LORENZ_BETA; }
+<p0>lorenz{WS}radius                { return LORENZ_RADIUS; }
+<p0>lorenz{WS}num{WS}spheres        { return LORENZ_NUM_SPHERES; }
+<p0>lorenz{WS}start                 { return LORENZ_START; }
 
 <INITIAL>triangle{WS}               { yy_push_state(triangle); return TRIANGLE; }
 <triangle>v1{WS}                    { return V1; }

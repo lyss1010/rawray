@@ -29,9 +29,9 @@ void GlutWindow::MakeSpiralScene() {
 						Vector3(1, 1, 1),
 						700 ) );
     
-	const float dt = 1.0f / options::spiral_num_sphere;
-	const float a = options::spiral_radius;
-    for (int i=0; i<options::spiral_num_sphere; ++i ) {
+    const float dt = 1.0f / options::p0::spiral_num_spheres;
+    const float a = options::p0::spiral_radius;
+    for (int i=0; i<options::p0::spiral_num_spheres; ++i ) {
         const float t = i * dt;
         const float theta = 4 * math::PI * t;
         const float r = a*theta;
@@ -61,7 +61,7 @@ void GlutWindow::MakeLorenzScene() {
     cam_.SetUp( Vector3(0, 1, 0) );
     cam_.SetFOV( 45 );
     
-    options::sphere_sections = 5;
+    options::global::gl_sphere_sections = 2;
 
     scene_.AddLight( new Light( 
 						Vector3(3, 5, -6),
@@ -94,15 +94,15 @@ void GlutWindow::MakeLorenzScene() {
 			            Vector3(1),
 			            900 ) );
 
-	float base_dt = options::lorenz_dt;
-	float min_dist = options::lorenz_min_distance;
-	float max_dist = options::lorenz_max_distance;
+    float base_dt = options::p0::lorenz_dt;
+	float min_dist = options::p0::lorenz_min_distance;
+	float max_dist = options::p0::lorenz_max_distance;
 
-	const float r = options::lorenz_radius;
-	const float sigma = options::lorenz_sigma;
-	const float rho = options::lorenz_rho;
-	const float beta = options::lorenz_beta;
-	Vector3 delta, l( options::lorenz_start );
+	const float r = options::p0::lorenz_radius;
+	const float sigma = options::p0::lorenz_sigma;
+	const float rho = options::p0::lorenz_rho;
+	const float beta = options::p0::lorenz_beta;
+	Vector3 delta, l( options::p0::lorenz_start );
 
 	if( base_dt > 0.0f ) {
 		min_dist = FLT_MIN;
@@ -113,7 +113,7 @@ void GlutWindow::MakeLorenzScene() {
 
 	// MIN == -16.35  -25.50  00.00
 	// MAX ==  18.90   31.80  58.20
-    for (int i=0; i<options::lorenz_num_sphere; ++i ) {
+    for (int i=0; i<options::p0::lorenz_num_spheres; ++i ) {
 		float dt = base_dt;
 
 		do {
@@ -150,7 +150,7 @@ void GlutWindow::MakeBunnyScene() {
     scene_.PreCalc();
 
  //   // set up the camera
- //   options::bg_color = Vector3(0.0f, 0.0f, 0.2f);
+ //   options::global::img_bg_color = Vector3(0.0f, 0.0f, 0.2f);
 
  //   cam_.SetEye( Vector3(-2.0f, 3.0f, 5.0f) );
  //   cam_.SetLookAt( Vector3(-0.5f, 1.0f, 0.0f) );

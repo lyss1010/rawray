@@ -34,7 +34,7 @@ RenderThread::~RenderThread() {
 }
 
 void RenderThread::Abort() {
-    const uint32 sleepDuration = options::render_spin_lock_sleep;
+    const uint32 sleepDuration = options::global::render_spinlock_sleep;
 
     // Block here waiting for controller thread to finish
     abort_ = true;
@@ -49,7 +49,7 @@ void RenderThread::Abort() {
 }
 
 DWORD RenderThread::ThreadRoutine() {
-    const uint32 sleepDuration = options::render_thread_sleep;
+    const uint32 sleepDuration = options::global::render_thread_sleep;
 
     while( !abort_ ) {
         Sleep( sleepDuration );
@@ -113,8 +113,8 @@ bool RenderJob::Run() {
     const uint32 imgHeight = img_.GetHeight();
     const uint32 imgWidth = img_.GetWidth();
 
-    const uint32 xChunk = options::render_x_block;
-    const uint32 yChunk = options::render_y_block;
+    const uint32 xChunk = options::global::render_x_block;
+    const uint32 yChunk = options::global::render_y_block;
     
 	// Create the rendering tasks in a temporary vector
 	std::vector<RenderTask*> unshuffled_tasks;
@@ -145,7 +145,7 @@ bool RenderJob::Run() {
 }
 
 void RenderJob::Abort() {
-    const uint32 sleepDuration = options::render_spin_lock_sleep;
+    const uint32 sleepDuration = options::global::render_spinlock_sleep;
     abort_ = true;
 
     // Block here waiting for controller thread to finish
@@ -162,7 +162,7 @@ void RenderJob::Abort() {
 DWORD RenderJob::ThreadRoutine() {
     std::list<RenderThread*>::iterator threadIter;
     std::list<RenderThread*>::iterator toDelete;
-    const uint32 sleepDuration = options::render_handler_sleep;
+    const uint32 sleepDuration = options::global::render_handler_sleep;
 
     clock_t startTime = clock();
     while( !threads_.empty() ) {

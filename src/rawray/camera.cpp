@@ -8,10 +8,10 @@
 
 namespace rawray {
 
-Camera::Camera() : eye_(options::cam_eye), viewDir_(options::cam_view),
-    up_(options::cam_up), lookAt_(options::cam_up), fov_(options::cam_fov),
-    aspect_(options::cam_aspect), minDraw_(options::cam_minDraw), 
-    maxDraw_(options::cam_maxDraw), redrawImage_(true)
+Camera::Camera() : eye_(options::camera::eye), viewDir_(options::camera::view),
+    up_(options::camera::up), lookAt_(options::camera::up), fov_(options::camera::fov),
+    aspect_(options::camera::aspect), minDraw_(options::camera::minDraw), 
+    maxDraw_(options::camera::maxDraw), redrawImage_(true)
 {
     CalcLookAt();
 }

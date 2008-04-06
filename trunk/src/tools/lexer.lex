@@ -4,7 +4,7 @@
 %option batch
 %option case-insensitive
 %option yylineno
-%option outfile="lexer.yy.c"
+%option outfile="lexer.yy.cc"
 
 %{
 #ifdef WIN32
@@ -18,7 +18,7 @@
 #include <cstdlib>
 #include <stdio.h>
 #include <string.h>
-#include "parser.yy.h"
+#include "parser.yy.cc.h"
 
 int yyline=1;
 %}

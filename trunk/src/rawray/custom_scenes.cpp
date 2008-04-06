@@ -9,6 +9,7 @@
 #include "triangle_mesh.h"
 #include "triangle.h"
 #include "float.h"
+#include "tools/config_parser.h"
 
 namespace rawray {
 
@@ -145,34 +146,37 @@ void GlutWindow::MakeLorenzScene() {
 }
 
 void GlutWindow::MakeBunnyScene() {
-    // set up the camera
-    options::bg_color = Vector3(0.0f, 0.0f, 0.2f);
-
-    cam_.SetEye( Vector3(-2.0f, 3.0f, 5.0f) );
-    cam_.SetLookAt( Vector3(-0.5f, 1.0f, 0.0f) );
-    cam_.SetUp( Vector3(0, 1, 0) );
-    cam_.SetFOV( 45 );
-
-    Light* light = new Light( Vector3(-3, 15, 3),
-							  Vector3(1, 1, 1),
-							  500 );
-    scene_.AddLight(light);
-
-	Material* mat = scene_.AddMaterial( 
-						new Lambert( Vector3(0.86f, 0.89f, 0.91f) ) );
-
-    TriangleMesh* bunny = new TriangleMesh;
-    bunny->LoadOBJ( "./../res/bunny.obj" );
-	scene_.AddMesh( bunny );
-    
-    // create all the triangles in the bunny mesh and add to the scene
-    for (uint32 i = 0; i < bunny->GetNumTriangles(); ++i)
-    {
-        Triangle* t = new Triangle( *bunny, i, mat );
-        scene_.AddObject(t);
-    }
-    
+    tools::ConfigParser( "./../res/scenes/bunny.cfg" );
     scene_.PreCalc();
+
+ //   // set up the camera
+ //   options::bg_color = Vector3(0.0f, 0.0f, 0.2f);
+
+ //   cam_.SetEye( Vector3(-2.0f, 3.0f, 5.0f) );
+ //   cam_.SetLookAt( Vector3(-0.5f, 1.0f, 0.0f) );
+ //   cam_.SetUp( Vector3(0, 1, 0) );
+ //   cam_.SetFOV( 45 );
+
+ //   Light* light = new Light( Vector3(-3, 15, 3),
+	//						  Vector3(1, 1, 1),
+	//						  500 );
+ //   scene_.AddLight(light);
+
+	//Material* mat = scene_.AddMaterial( 
+	//					new Lambert( Vector3(0.86f, 0.89f, 0.91f) ) );
+
+ //   TriangleMesh* bunny = new TriangleMesh;
+ //   bunny->LoadOBJ( "./../res/models/bunny.obj" );
+	//scene_.AddMesh( bunny );
+ //   
+ //   // create all the triangles in the bunny mesh and add to the scene
+ //   for (uint32 i = 0; i < bunny->GetNumTriangles(); ++i)
+ //   {
+ //       Triangle* t = new Triangle( *bunny, i, mat );
+ //       scene_.AddObject(t);
+ //   }
+ //   
+ //   scene_.PreCalc();
 }
 
 } // namespace rawray

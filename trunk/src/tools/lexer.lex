@@ -24,17 +24,17 @@ int yyline=1;
 %}
 
 
-COMMENT "#".* 
-SPACE [ ]+
-WS [ \t]*
+COMMENT     "#".* 
+SPACE       [ ]+
+WS          [ \t]*
 
-SIGN    [+-]
-DIGIT   [0-9]
-FLOATARGS [eE][+-]
-INT {DIGIT}+
-REAL {DIGIT}*("."{DIGIT}*)?({FLOATARGS}{DIGIT}+)?
-ID  ([_a-zA-Z][_a-zA-Z0-9]*[\ \t\n])+
-STRING  \"[_a-zA-Z][_a-zA-Z0-9"."/\\: ]*\"
+SIGN        [+-]
+DIGIT       [0-9]
+INT         {DIGIT}+
+REAL        {DIGIT}*("."{DIGIT}*)
+ID          ([_a-zA-Z][_a-zA-Z0-9]*[\ \t\n])+
+STRING      '([^']*)'|\"([^\"]*)\"
+
 
 %x global
 %x camera
@@ -105,28 +105,12 @@ STRING  \"[_a-zA-Z][_a-zA-Z0-9"."/\\: ]*\"
 <sphere>center{WS}                  { return CENTER; }
 <sphere>radius{WS}                  { return RADIUS; }
 
-<*>{INT}                            { yylval.integer = atoi(yytext); return PARSE_INT; }
-<*>{REAL}                           { yylval.real = (float)atof(yytext); return REAL; }
-<*>{STRING}                         { yylval.str = _strdup(yytext); return STRING; }
-
-<*>"/*" { // C style comments
-  register int c;
-  for ( ; ; ) {
-    while ((c = yyinput()) != '*' && c != EOF ) if (c == '\n') yyline++;
-    if ( c == '*' ) {
-      while ( (c = yyinput()) == '*' ) if (c == '\n') yyline++;
-	  if ( c == '/' )
-	    break;    /* found the end */
-      if ( c == EOF ) {
-	    fprintf(stderr, "EOF in comment");
-	    printf("Press Enter to continue...");
-	  }
-	}
-  }
-}
+<*>{STRING}{WS}                     { yylval.str = _strdup(yytext); return STRING; }
+<*>{INT}{WS}                        { yylval.integer = atoi(yytext); return PARSE_INT; }
+<*>{REAL}{WS}                       { yylval.real = (float)atof(yytext); return REAL; }
 
 <*>[!{,=\-+\\/*()]{WS}              { return yytext[0]; }
-<*>"}"                              { yy_pop_state(); return yytext[0]; }
+<*>"}"{WS}                          { yy_pop_state(); return yytext[0]; }
 <*>{COMMENT}                        // eat up comments 
 <*>[ ,\t\r]+                        // eat up whitespace
 <*>"\n"                             { yyline++; }

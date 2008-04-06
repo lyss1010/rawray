@@ -13,7 +13,7 @@ void Sphere::RenderGL() {
 
     glPushMatrix();
     glTranslatef(center_.x, center_.y, center_.z);
-	glutWireSphere(radius_, options::sphere_sections, options::sphere_sections);
+    glutWireSphere(radius_, options::global::gl_sphere_sections, options::global::gl_sphere_sections);
     glPopMatrix();
 }
 

@@ -226,7 +226,11 @@ void GlutWindow::Idle() {
 }
 
 void GlutWindow::InitGL() {
-    glClearColor( options::gl_bg_color.x, options::gl_bg_color.y, options::gl_bg_color.z, 1.0f );
+    glClearColor( options::global::gl_bg_color.x, 
+                  options::global::gl_bg_color.y, 
+                  options::global::gl_bg_color.z, 
+                  1.0f );
+
     glClearDepth( 1.0f );
     glDepthFunc( GL_LEQUAL );
     glEnable( GL_DEPTH_TEST );
@@ -254,9 +258,9 @@ void GlutWindow::InitCallbacks() {
 }
 
 void GlutWindow::CreateGlutWindow() {
-    glutInitWindowSize( options::win_width, options::win_height );
+    glutInitWindowSize( options::global::win_width, options::global::win_height );
     glutInitDisplayMode( GLUT_RGB | GLUT_DOUBLE );
-    glutInitWindowPosition( options::win_posX, options::win_posY );
+    glutInitWindowPosition( options::global::win_posX, options::global::win_posY );
 	glutCreateWindow( "RawRay" );
 }
 
@@ -269,9 +273,10 @@ void GlutWindow::ToggleRenderGL() {
     if( !renderGL_ ) {
         // We set the un-raytraced pixels to be the a blurred opengl render
         img_.ScreenShot();
-        img_.GaussianBlur(0.75f);
+        img_.GaussianBlur(options::global::gaussian_blur_sigma);
 
-        render_ = new RenderJob(options::num_threads, scene_, cam_, img_);
+        render_ = new RenderJob( options::global::num_threads, 
+                                scene_, cam_, img_);
         render_->Run();
     }
 

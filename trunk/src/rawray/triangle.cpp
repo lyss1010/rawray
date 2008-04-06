@@ -31,7 +31,7 @@ void Triangle::PreCalc() {
 }
 
 bool Triangle::Intersect(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance) {
-    switch( options::triangle_intersection_algorithm )
+    switch( options::global::triangle_intersection_algorithm )
     {
     case options::BARYCENTRIC:
         return Barycentric(hit, ray, minDistance, maxDistance);

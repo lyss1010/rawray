@@ -87,7 +87,7 @@ bool Image::GaussianBlur(float sigma) {
     // See: http://en.wikipedia.org/wiki/Gaussian_blur
 
     // Clamp the gaussian distribution off at a fixed distance (x*sigma pixels in each direction)
-    int half_matrix_size = static_cast<int>(options::gaussian_blur_max*sigma);
+    int half_matrix_size = static_cast<int>(options::global::gaussian_blur_max*sigma);
     int matrix_size = 1 + 2*half_matrix_size;
 
     // Precompute matrix with weight multipliers

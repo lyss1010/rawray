@@ -72,7 +72,7 @@ void Scene::Raytrace(const Camera& cam, Image& image, uint32 xStart, uint32 ySta
 			if ( Intersect( hit, eyeRay ) && hit.material != NULL )
                 shadedColor = hit.material->Shade(eyeRay, hit, *this);
 			else
-				shadedColor = options::bg_color;
+                shadedColor = options::global::img_bg_color;
 
 			image.SetPixel( x, y, shadedColor );
         }

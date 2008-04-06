@@ -18,6 +18,7 @@
 #include "rawray/object.h"
 #include "rawray/material.h"
 #include "rawray/light.h"
+#include "rawray/options.h"
 
 //#define YYDEBUG 1
 
@@ -73,8 +74,18 @@ std::map<std::string, rawray::Object*>  g_objectMap;
 %token GLOBAL
 %token WIDTH
 %token HEIGHT
-%token GL_BGCOLOR
+%token POS
 %token IMG_BGCOLOR
+%token GL_BGCOLOR
+%token GL_SPHERE_SECTIONS
+%token NUM_THREADS
+%token RENDER_X_BLOCK
+%token RENDER_Y_BLOCK
+%token RENDER_HANDLER_SLEEP
+%token RENDER_THREAD_SLEEP
+%token RENDER_SPINLOCK_SLEEP
+%token GAUSSIAN_BLUR_MAX
+%token GAUSSIAN_BLUR_SIGMA
 
 %token CAMERA
 %token POS
@@ -82,6 +93,19 @@ std::map<std::string, rawray::Object*>  g_objectMap;
 %token LOOKAT
 %token UP
 %token FOV
+
+%token P0
+%token SPIRAL_NUM_SPHERES
+%token SPIRAL_RADIUS
+%token LORENZ_DT
+%token LORENZ_MIN_DISTANCE
+%token LORENZ_MAX_DISTANCE
+%token LORENZ_SIGMA
+%token LORENZ_RHO
+%token LORENZ_BETA
+%token LORENZ_RADIUS
+%token LORENZ_NUM_SPHERES
+%token LORENZ_START
 
 %token TRIANGLE
 %token V1
@@ -130,8 +154,9 @@ input:  /* empty */
 
 block:    GLOBAL '{' globalOptions '}'
         | CAMERA '{' cameraOptions '}'
-        | objectTypes 
         | LIGHT lightTypes '}'          { printf( "Adding Light\n" ); }
+        | P0 '{' p0Options '}'
+        | objectTypes 
         | transform
 ;
 
@@ -327,26 +352,69 @@ meshOptions: /* empty */
 
 globalOptions: /* empty */
         | HEIGHT iExp globalOptions
-            { /*g_pImage->Resize(g_pImage->Width(), $2);*/ }
+            { rawray::options::global::win_height = $2; }
         | WIDTH iExp globalOptions
-            { /*g_pImage->Resize($2, g_pImage->Height());*/ }
+            { rawray::options::global::win_width = $2; }
         | GL_BGCOLOR rExp ',' rExp ',' rExp globalOptions
-            { /*g_pCamera->SetBGColor(Vector3($2, $4, $6));*/ }
+            { rawray::options::global::gl_bg_color = math::Vector3($2,$4,$6); }
         | IMG_BGCOLOR rExp ',' rExp ',' rExp globalOptions
-            { /*g_pCamera->SetBGColor(Vector3($2, $4, $6));*/ }
+            { rawray::options::global::img_bg_color = math::Vector3($2,$4,$6); }
+        | GL_SPHERE_SECTIONS iExp globalOptions
+            { rawray::options::global::gl_sphere_sections = $2; }
+        | NUM_THREADS iExp globalOptions
+            { rawray::options::global::num_threads = $2; }
+        | RENDER_X_BLOCK iExp globalOptions
+            { rawray::options::global::render_x_block = $2; }
+        | RENDER_Y_BLOCK iExp globalOptions
+            { rawray::options::global::render_y_block = $2; }
+        | RENDER_HANDLER_SLEEP iExp globalOptions
+            { rawray::options::global::render_handler_sleep = $2; }
+        | RENDER_THREAD_SLEEP iExp globalOptions
+            { rawray::options::global::render_thread_sleep = $2; }
+        | RENDER_SPINLOCK_SLEEP iExp globalOptions
+            { rawray::options::global::render_spinlock_sleep = $2; }
+        | GAUSSIAN_BLUR_MAX iExp globalOptions
+            { rawray::options::global::gaussian_blur_max = $2; }
+        | GAUSSIAN_BLUR_SIGMA iExp globalOptions
+            { rawray::options::global::gaussian_blur_sigma = $2; }
 ;
 
 cameraOptions: /* empty */
         | POS rExp ',' rExp ',' rExp cameraOptions
-            { /*g_pCamera->SetEye(Vector3($2, $4, $6));*/ }
+            { rawray::options::camera::eye = math::Vector3($2,$4,$6); }
         | DIR rExp ',' rExp ',' rExp cameraOptions
-            { /*g_pCamera->SetViewDir(Vector3($2, $4, $6));*/ }
+            { rawray::options::camera::view = math::Vector3($2,$4,$6); }
         | LOOKAT rExp ',' rExp ',' rExp cameraOptions
-            { /*g_pCamera->SetLookAt(Vector3($2, $4, $6));*/ }
+            { rawray::options::camera::lookat = math::Vector3($2,$4,$6); }
         | UP rExp ',' rExp ',' rExp cameraOptions
-            { /*g_pCamera->SetUp(Vector3($2, $4, $6));*/ }
+            { rawray::options::camera::up = math::Vector3($2,$4,$6); }
         | FOV rExp cameraOptions
-            { /*g_pCamera->SetFOV($2);*/ }
+            { rawray::options::camera::fov = $2; }
+;
+
+p0Options: /* empty */
+        | SPIRAL_NUM_SPHERES iExp p0Options
+            { rawray::options::p0::spiral_num_spheres = $2; }
+        | SPIRAL_RADIUS rExp p0Options
+            { rawray::options::p0::spiral_radius = $2; }
+        | LORENZ_DT rExp p0Options
+            { rawray::options::p0::lorenz_dt = $2; }
+        | LORENZ_MIN_DISTANCE rExp p0Options
+            { rawray::options::p0::lorenz_min_distance = $2; }
+        | LORENZ_MAX_DISTANCE rExp p0Options
+            { rawray::options::p0::lorenz_max_distance = $2; }
+        | LORENZ_SIGMA rExp p0Options
+            { rawray::options::p0::lorenz_sigma = $2; }
+        | LORENZ_RHO rExp p0Options
+            { rawray::options::p0::lorenz_rho = $2; }
+        | LORENZ_BETA rExp p0Options
+            { rawray::options::p0::lorenz_beta = $2; }
+        | LORENZ_RADIUS rExp p0Options
+            { rawray::options::p0::lorenz_radius = $2; }
+        | LORENZ_NUM_SPHERES iExp p0Options
+            { rawray::options::p0::lorenz_num_spheres = $2; }
+        | LORENZ_START rExp ',' rExp ',' rExp p0Options
+            { rawray::options::p0::lorenz_start = math::Vector3($2,$4,$6); }
 ;
 
 rExp:     REAL                 { $$ = $1; }
@@ -409,109 +477,6 @@ iExp:     PARSE_INT             { $$ = $1; }
 %%
 //Additional C code
 
-/*
-Matrix4x4& GetCTM()
-{
-    return g_kMatrixStack.top();
-}
-
-void PushMatrix()
-{
-    g_kMatrixStack.push(g_kMatrixStack.top());
-}
-
-void PopMatrix()
-{
-    if(g_kMatrixStack.size() == 1)
-    {
-        Warning("Matrix stack empty!  Too many pops!\n");
-    }
-    else
-        g_kMatrixStack.pop();
-}
-
-void Translate(const float& x, const float& y, const float& z)
-{
-    Matrix4x4 m;
-    m.SetIdentity();
-    m.SetColumn4(Vector4(x, y, z, 1));
-
-    Matrix4x4& ctm = GetCTM();
-    ctm *= m;
-}
-
-void Scale(const float& x, const float& y, const float& z)
-{
-    Matrix4x4 m;
-    m.SetIdentity();
-    m.m11 = x;
-    m.m22 = y;
-    m.m33 = z;
-
-    Matrix4x4& ctm = GetCTM();
-    ctm *= m;
-}
-
-void Rotate(const float& angle, float x, float y, float z) // angle is in degrees
-{
-
-    float rad = angle*(PI/180.);
-
-    float x2 = x*x;
-    float y2 = y*y;
-    float z2 = z*z;
-    float c = cos(rad);
-    float cinv = 1-c;
-    float s = sin(rad);
-    float xy = x*y;
-    float xz = x*z;
-    float yz = y*z;
-    float xs = x*s;
-    float ys = y*s;
-    float zs = z*s;
-    float xzcinv = xz*cinv;
-    float xycinv = xy*cinv;
-    float yzcinv = yz*cinv;
-
-    Matrix4x4 m;
-    m.SetIdentity();
-    m.Set(x2 + c*(1-x2), xy*cinv+zs, xzcinv - ys, 0,
-          xycinv - zs, y2 + c*(1-y2), yzcinv + xs, 0,
-          xzcinv + ys, yzcinv - xs, z2 + c*(1-z2), 0,
-          0, 0, 0, 1);
-
-    g_kMatrixStack.top() *= m;
-}
-
-Vector3& Vertex3(const Vector3& v)
-{
-    __parse_temp_vector = v;
-    __parse_temp_vector = g_kMatrixStack.top()*__parse_temp_vector; // do transformation
-
-    return __parse_temp_vector;
-}
-
-Vector3& Vertex3(const float& x, const float& y, const float& z)
-{
-    __parse_temp_vector.Set(x, y, z);
-    __parse_temp_vector = g_kMatrixStack.top()*__parse_temp_vector; // do transformation
-
-    return __parse_temp_vector;
-}
-
-void ParseFile(FILE* fp)
-{
-    Matrix4x4 m;
-    m.SetIdentity();
-    g_kMatrixStack.push(m);
-
-    yyin = fp;
-    //yydebug = 1;
-    yyparse();
-    if (g_kMatrixStack.size() > 1)
-        Warning("There were more matrix pushes than pops!\n");
-}
-*/
 
 namespace rawray {
 

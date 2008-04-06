@@ -8,93 +8,105 @@ namespace options {
 
 float epsilon;
 
-TriangleIntersection triangle_intersection_algorithm;
-Vector3 bg_color;
-Vector3 gl_bg_color;
+namespace global {
+    uint32 win_width;
+    uint32 win_height;
+    uint32 win_posX;
+    uint32 win_posY;
 
-Vector3 cam_eye;
-Vector3 cam_view;
-Vector3 cam_up;
-Vector3 cam_lookat;
+    math::Vector3 img_bg_color;
+    math::Vector3 gl_bg_color;
+    uint32 gl_sphere_sections;
 
-float cam_fov;
-float cam_aspect;
-float cam_minDraw;
-float cam_maxDraw;
+    TriangleIntersection triangle_intersection_algorithm;
 
-uint32 win_width;
-uint32 win_height;
-uint32 win_posX;
-uint32 win_posY;
+    uint32 num_threads;
+    uint32 render_x_block;
+    uint32 render_y_block;
+    uint32 render_handler_sleep;
+    uint32 render_thread_sleep;
+    uint32 render_spinlock_sleep;
 
-uint32 num_threads;
-uint32 render_x_block;
-uint32 render_y_block;
-uint32 render_handler_sleep;
-uint32 render_thread_sleep;
-uint32 render_spin_lock_sleep;
+    float gaussian_blur_max;
+    float gaussian_blur_sigma;
 
-float gaussian_blur_max;
-uint32 sphere_sections;
+} // namespace global
 
-uint32 spiral_num_sphere;
-float spiral_radius;
 
-float lorenz_dt;
-float lorenz_min_distance;
-float lorenz_max_distance;
-float lorenz_sigma;
-float lorenz_rho;
-float lorenz_beta;
-float lorenz_radius;
-uint32 lorenz_num_sphere;
-Vector3 lorenz_start;
+namespace camera {
+     math::Vector3 eye;
+     math::Vector3 view;
+     math::Vector3 up;
+     math::Vector3 lookat;
+
+     float fov;
+     float aspect;
+     float minDraw;
+     float maxDraw;
+
+} // namespace camera
+
+namespace p0 {
+	 uint32 spiral_num_spheres;
+	 float spiral_radius;
+
+	 float lorenz_dt;
+	 float lorenz_min_distance;
+	 float lorenz_max_distance;
+	 float lorenz_sigma;
+	 float lorenz_rho;
+	 float lorenz_beta;
+	 float lorenz_radius;
+	 uint32 lorenz_num_spheres;
+	 math::Vector3 lorenz_start;
+
+} // namespace p0
+
+
 
 // A DLL can't initialize non-primitive static data
 void init() {
     epsilon = 0.00001f;
 
-    triangle_intersection_algorithm = BARYCENTRIC;
+    global::triangle_intersection_algorithm = BARYCENTRIC;
+    global::img_bg_color = Vector3(1);
+    global::gl_bg_color = Vector3(0);
+    global::win_width  = 800;
+    global::win_height = 800;
+    global::win_posX   = 100;
+    global::win_posY   = 100;
 
-    bg_color = Vector3(1);
-    gl_bg_color = Vector3(0);
-    cam_eye = Vector3(0);
-    cam_view = Vector3(0.0f, 0.0f, -1.0f);
-    cam_up = Vector3(0.0f, 1.0f, 0.0f);
-    cam_lookat = Vector3(FLT_MAX);
+    global::num_threads = 4;
+    global::render_x_block = 32;
+    global::render_y_block = 32;
+    global::render_handler_sleep = 50;
+    global::render_thread_sleep = 10;
+    global::render_spinlock_sleep = 10;
 
-	win_width = 800;
-    win_height = 800;
-    win_posX = 100;
-    win_posY = 100;
+    global::gaussian_blur_max = 2.0f;
+	global::gl_sphere_sections = 8;
 
-    cam_fov = 45.0f * 180.0f * math::PI;
-    cam_aspect = float(win_width) / win_height;
-    cam_minDraw = 0.01f;
-    cam_maxDraw = 10000.0f;
+    camera::eye = Vector3(0);
+    camera::view = Vector3(0.0f, 0.0f, -1.0f);
+    camera::up = Vector3(0.0f, 1.0f, 0.0f);
+    camera::lookat = Vector3(FLT_MAX);
+    camera::fov = 45.0f * 180.0f * math::PI;
+    camera::aspect = 1.0f;
+    camera::minDraw = 0.01f;
+    camera::maxDraw = 10000.0f;
 
-    num_threads = 4;
-    render_x_block = 32;
-    render_y_block = 32;
-    render_handler_sleep = 50;
-    render_thread_sleep = 10;
-    render_spin_lock_sleep = 10;
+    p0::spiral_num_spheres = 100;
+	p0::spiral_radius = 0.15f;
 
-    gaussian_blur_max = 2.0f;
-	sphere_sections = 8;
-
-	spiral_num_sphere = 100;
-	spiral_radius = 0.15f;
-
-	lorenz_dt = 0.0040f;
-	lorenz_min_distance = 0.35f;
-	lorenz_max_distance = 2.5f;
-	lorenz_sigma = 5.7f;
-	lorenz_rho = 32;
-	lorenz_beta = 2.0f;
-	lorenz_radius = 0.131f;
-	lorenz_num_sphere = 30000;
-	lorenz_start = Vector3(0.0f, 1.0f, 0.0f);
+	p0::lorenz_dt = 0.0040f;
+	p0::lorenz_min_distance = 0.35f;
+	p0::lorenz_max_distance = 2.5f;
+	p0::lorenz_sigma = 5.7f;
+	p0::lorenz_rho = 32;
+	p0::lorenz_beta = 2.0f;
+	p0::lorenz_radius = 0.131f;
+	p0::lorenz_num_spheres = 30000;
+	p0::lorenz_start = Vector3(0.0f, 1.0f, 0.0f);
 }
 
 } // namespace rawray::options

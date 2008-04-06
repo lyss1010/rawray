@@ -35,7 +35,7 @@
 				BrowseInformation="0"
 				BrowseInformationFile="$(IntDir)"
 				WarningLevel="4"
-				Detect64BitPortabilityProblems="TRUE"
+				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="3"
 				DisableSpecificWarnings="4251"/>
 			<Tool
@@ -56,7 +56,7 @@
 				MapLines="FALSE"
 				OptimizeReferences="1"
 				EnableCOMDATFolding="1"
-				OptimizeForWindows98="1"
+				OptimizeForWindows98="0"
 				ResourceOnlyDLL="TRUE"
 				TargetMachine="1"/>
 			<Tool
@@ -107,7 +107,7 @@
 				UsePrecompiledHeader="2"
 				BrowseInformation="0"
 				WarningLevel="4"
-				Detect64BitPortabilityProblems="TRUE"
+				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="0"
 				DisableSpecificWarnings="4251"/>
 			<Tool
@@ -121,7 +121,7 @@
 				ForceSymbolReferences="__DllMainCRTStartup@12"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				OptimizeForWindows98="1"
+				OptimizeForWindows98="0"
 				ResourceOnlyDLL="TRUE"
 				TargetMachine="1"/>
 			<Tool
@@ -187,7 +187,7 @@
 				Name="generated"
 				Filter="">
 				<File
-					RelativePath=".\lexer.yy.cpp">
+					RelativePath=".\lexer.yy.c">
 					<FileConfiguration
 						Name="Debug|Win32">
 						<Tool
@@ -195,7 +195,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\parser.yy.cpp">
+					RelativePath=".\parser.yy.c">
 					<FileConfiguration
 						Name="Debug|Win32">
 						<Tool
@@ -203,7 +203,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\unistd.h">
+					RelativePath=".\parser.yy.h">
 				</File>
 			</Filter>
 		</Filter>
@@ -225,16 +225,16 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Creating Lexer with FLEX"
-						CommandLine="&quot;$(InputDir)flex.exe&quot; -i -+ -olexer.yy.cpp $(InputFileName)"
-						Outputs="lexer.yy.cpp"/>
+						CommandLine="&quot;$(InputDir)flex.exe&quot; $(InputFileName)"
+						Outputs="lexer.yy.c"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Creating Lexer with FLEX"
-						CommandLine="&quot;$(InputDir)flex.exe&quot; -i -+ -olexer.yy.cpp $(InputFileName)"
-						Outputs="lexer.yy.cpp"/>
+						CommandLine="&quot;$(InputDir)flex.exe&quot; $(InputFileName)"
+						Outputs="lexer.yy.c"/>
 				</FileConfiguration>
 			</File>
 			<File
@@ -245,22 +245,17 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Creating Parser with BISON"
-						CommandLine="&quot;$(InputDir)bison.exe&quot; -d -oparser.yy.cpp $(InputFileName)
-"
-						Outputs="parser.yy.cpp"/>
+						CommandLine="&quot;$(InputDir)bison.exe&quot; -d -oparser.yy.c $(InputFileName)"
+						Outputs="parser.yy.c"/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Creating Parser with BISON"
-						CommandLine="&quot;$(InputDir)bison.exe&quot; -d -oparser.yy.cpp $(InputFileName)
-"
-						Outputs="parser.yy.cpp"/>
+						CommandLine="&quot;$(InputDir)bison.exe&quot; -d -oparser.yy.c $(InputFileName)"
+						Outputs="parser.yy.c"/>
 				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\symbols.yy.h">
 			</File>
 		</Filter>
 		<File

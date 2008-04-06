@@ -4,6 +4,7 @@
 /////////////////////////////////////////////////////////////////////////////
 #include "triangle.h"
 #include "math/tuple3.h"
+#include "material.h"
 
 namespace rawray {
 
@@ -13,8 +14,10 @@ void Triangle::RenderGL() {
     const Vector3& v0 = mesh_.GetVertices()[ indicies.x ];
     const Vector3& v1 = mesh_.GetVertices()[ indicies.y ];
     const Vector3& v2 = mesh_.GetVertices()[ indicies.z ];
+    const Vector3& color = material_ ? material_->BaseColor() : Vector3(1);
 
     glBegin(GL_TRIANGLES);
+        glColor3f( color.x, color.y, color.z );
         glVertex3f(v0.x, v0.y, v0.z);
         glVertex3f(v1.x, v1.y, v1.z);
         glVertex3f(v2.x, v2.y, v2.z);

@@ -38,6 +38,7 @@ private:
 	~GlutWindow();
     
 	void InitGL();
+    void ReInitGL();
     void InitCallbacks();
     void CreateGlutWindow();
     void ToggleRenderGL();

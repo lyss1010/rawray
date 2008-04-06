@@ -29,14 +29,16 @@ Image::~Image() {
 }
 
 int Image::Resize(uint32 width, uint32 height) {
-    if( width < 0 || height < 0 )
-        return 0;
+    if( width == width_ && height == height_ )
+        return width*height;
 
-    SAFE_DELETE_ARRAY( pixels_ );
     width_ = width;
     height_ = height;
 
     register uint32 numPixels = width_*height_;
+    if( numPixels <= 0 ) return 0;
+    
+    SAFE_DELETE_ARRAY( pixels_ );
     pixels_ = new Pixel[ numPixels ];
     memset( pixels_, 0, sizeof(Pixel)*numPixels );
 

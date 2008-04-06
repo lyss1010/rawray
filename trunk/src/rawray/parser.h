@@ -5,8 +5,15 @@
 #define DllExport __declspec( dllimport )
 #endif
 
+
 namespace rawray {
 
-void ConfigParser(const char* filename);
+class Scene;
+class Camera;
+class Image;
+
+void AddTrianglesOfMesh();
+void SetConfigSources(Scene* scene, Camera* cam, Image* img);
+bool ConfigParser(const char* filename);
 
 } // namespace rawray

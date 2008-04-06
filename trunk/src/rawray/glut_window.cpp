@@ -4,6 +4,7 @@
 /////////////////////////////////////////////////////////////////////////////
 #include "glut_window.h"
 #include "render_job.h"
+#include "parser.h"
 
 namespace {
 
@@ -42,6 +43,7 @@ GlutWindow::GlutWindow(int* argc, char* argv[]) : cam_(), img_(), scene_(),
     CreateGlutWindow();
     InitGL();
     InitCallbacks();
+    SetConfigSources(&scene_, &cam_, &img_);
 
     //MakeSpiralScene();
     MakeBunnyScene();
@@ -248,6 +250,14 @@ void GlutWindow::InitGL() {
     glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
 }
 
+void GlutWindow::ReInitGL() {
+    glutReshapeWindow( img_.GetWidth(), img_.GetHeight() );
+    glClearColor( options::global::gl_bg_color.x, 
+                  options::global::gl_bg_color.y, 
+                  options::global::gl_bg_color.z, 
+                  1.0f );
+}
+
 void GlutWindow::InitCallbacks() {
     glutDisplayFunc( ::Display );
     glutKeyboardFunc( ::Keyboard );
@@ -258,8 +268,8 @@ void GlutWindow::InitCallbacks() {
 }
 
 void GlutWindow::CreateGlutWindow() {
-    glutInitWindowSize( options::global::win_width, options::global::win_height );
     glutInitDisplayMode( GLUT_RGB | GLUT_DOUBLE );
+    glutInitWindowSize( options::global::win_width, options::global::win_height );
     glutInitWindowPosition( options::global::win_posX, options::global::win_posY );
 	glutCreateWindow( "RawRay" );
 }

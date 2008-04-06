@@ -85,6 +85,9 @@ STRING      '([^']*)'|\"([^\"]*)\"
 <camera>look{WS}at{WS}              { return LOOKAT; }
 <camera>up{WS}                      { return UP; }
 <camera>fov{WS}                     { return FOV; }
+<camera>aspect{WS}                  { return ASPECT; }
+<camera>min{WS}draw                 { return MIN_DRAW; }
+<camera>max{WS}draw                 { return MAX_DRAW; }
 
 <INITIAL>p0{WS}                     { yy_push_state(p0); return P0; }
 <p0>spiral{WS}num{WS}spheres        { return SPIRAL_NUM_SPHERES; }

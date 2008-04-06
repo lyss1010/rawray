@@ -23,6 +23,9 @@ bool TriangleMesh::LoadOBJ(const char* filename, const Matrix4x4& ctm) {
     fp = fopen( filename, "rb" );
 
     if( !fp ) {
+        TCHAR dir[ MAX_PATH + 1 ];
+        GetCurrentDirectory( MAX_PATH, dir );
+
         return false;
     }
 

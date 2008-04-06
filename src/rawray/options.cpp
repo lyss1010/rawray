@@ -41,8 +41,8 @@ namespace camera {
 
      float fov;
      float aspect;
-     float minDraw;
-     float maxDraw;
+     float min_draw;
+     float max_draw;
 
 } // namespace camera
 
@@ -90,10 +90,10 @@ void init() {
     camera::view = Vector3(0.0f, 0.0f, -1.0f);
     camera::up = Vector3(0.0f, 1.0f, 0.0f);
     camera::lookat = Vector3(FLT_MAX);
-    camera::fov = 45.0f * 180.0f * math::PI;
+    camera::fov = 45.0f;
     camera::aspect = 1.0f;
-    camera::minDraw = 0.01f;
-    camera::maxDraw = 10000.0f;
+    camera::min_draw = 0.01f;
+    camera::max_draw = 10000.0f;
 
     p0::spiral_num_spheres = 100;
 	p0::spiral_radius = 0.15f;

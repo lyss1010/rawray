@@ -15,10 +15,16 @@
 #include <iostream>
 #include "math/vector3.h"
 #include "math/matrix4x4.h"
-#include "rawray/object.h"
-#include "rawray/material.h"
-#include "rawray/light.h"
-#include "rawray/options.h"
+#include "object.h"
+#include "material.h"
+#include "light.h"
+#include "options.h"
+#include "scene.h"
+#include "camera.h"
+#include "image.h"
+#include "triangle.h"
+#include "triangle_mesh.h"
+#include "sphere.h"
 
 //#define YYDEBUG 1
 
@@ -30,13 +36,18 @@ extern FILE *yyin, *yyout;
 
 
 // variables for adding objects, keeping track of variables
+rawray::Camera*                         g_camera = NULL;
+rawray::Scene*                          g_scene = NULL;
+rawray::Image*                          g_image = NULL;
+
 rawray::Object*                         g_obj = NULL;
 rawray::Material*                       g_material = NULL;
 rawray::Light*                          g_light = NULL;
+rawray::TriangleMesh*                   g_mesh = NULL;
+
 math::Vector3                           g_vector;
 std::map<std::string, rawray::Object*>  g_objectMap;
 //std::stack<Matrix4x4>                 g_matrixStack;
-
 
 %}
 // BISON Declarations
@@ -93,6 +104,9 @@ std::map<std::string, rawray::Object*>  g_objectMap;
 %token LOOKAT
 %token UP
 %token FOV
+%token ASPECT
+%token MIN_DRAW
+%token MAX_DRAW
 
 %token P0
 %token SPIRAL_NUM_SPHERES
@@ -163,22 +177,18 @@ block:    GLOBAL '{' globalOptions '}'
 objectTypes:
           TRIANGLE '{'
             {
-                printf( "Creating Triangle\n" );
-                //pObj = new Triangle;
+                //pObj = new Triangle();
                 //pObj->SetMaterial (pMat);
                 //((TriangleMesh*)pObj)->CreateSingleTriangle();
             }
           triangleOptions '}'
             {
-                printf( "Adding Triangle to Scene\n" );
-                //if (pObj)
-                    //g_pScene->AddObject(pObj);
-                //pObj = 0;
+                g_scene->AddObject( g_obj );
+                g_obj = NULL;
             }
 
         | TRIANGLE STRING '{'
             {
-                printf( "Creating named triangle '%s'\n", $2 );
                 //pObj = new TriangleMesh;
                 //pObj->SetMaterial (pMat);
                 //g_objectMap[$2] = pObj;
@@ -186,123 +196,93 @@ objectTypes:
             }
           triangleOptions '}'
             {
-                printf( "Adding named Triangle to Scene\n" );
-                //if (pObj)
-                    //g_pScene->AddObject(pObj);
-                //pObj = 0;
+                g_scene->AddObject( g_obj );
+                g_obj = NULL;
             }
-
             
 	| MESH '{'
             {
-                printf( "Creating new mesh\n" );
-                //pObj = new TriangleMesh;
-                //pObj->SetMaterial (pMat);
+                g_mesh = new rawray::TriangleMesh();
             }
           meshOptions '}'
             {
-                printf( "Adding mesh to scene\n" );
-                //if (pObj)
-                    //g_pScene->AddObject(pObj);
-                //pObj = 0;
+                g_scene->AddMesh( g_mesh );
+                rawray::AddTrianglesOfMesh();
             }
             
 	| MESH STRING '{'
             {
-                printf( "Creating new named mesh '%s'\n", $2 );
-                //pObj = new TriangleMesh;
-                //pObj->SetMaterial (pMat);
+                g_mesh = new rawray::TriangleMesh();
                 //g_objectMap[$2] = pObj;
             }
           meshOptions '}'
             {
-                printf( "Adding named mesh to scene\n" );
-                //if (pObj)
-                    //g_pScene->AddObject(pObj);
-                //pObj = 0;
+                g_scene->AddMesh( g_mesh );
+                rawray::AddTrianglesOfMesh();
             }
-            
 
 	| SPHERE '{'
             {
-                printf( "Creating new sphere\n" );
-                //pObj = new Sphere;
-                //pObj->SetMaterial (pMat);
+                g_obj = new rawray::Sphere( math::Vector3(0),
+                                            1.0f,
+                                            g_material );
             }
           sphereOptions '}'
             {
-                printf( "Adding sphere to scene\n" );
-                //if (pObj)
-                    //g_pScene->AddObject(pObj);
-                //pObj = 0;
+                g_scene->AddObject( g_obj );
+                g_obj = NULL;
             }
             
 	| SPHERE STRING '{'
             {
-                printf( "Creating new sphere named '%s'\n", $2 );
-                //pObj = new Sphere;
-                //pObj->SetMaterial (pMat);
-                //g_objectMap[$2] = pObj;
+                g_obj = new rawray::Sphere( math::Vector3(0),
+                                            1.0f,
+                                            g_material );
+                g_objectMap[$2] = g_obj;
             }
           sphereOptions '}'
             {
-                printf( "Adding sphere to scene\n" );
-                //if (pObj)
-                    //g_pScene->AddObject(pObj);
-                //pObj = 0;
+                g_scene->AddObject( g_obj );
+                g_obj = NULL;
             }
-            
 
 	| INSTANCE '{'
             {
-                printf( "Creating new instance\n" );
-                //pObj = new Instance;
-                //pObj->SetMaterial (pMat);
+                printf( "Instance not supported\n" );
             }
           instanceOptions '}'
             {
-                printf( "Adding instance to scene\n" );
-                //if (pObj)
-                    //g_pScene->AddObject(pObj);
-                //pObj = 0;
             }
             
 	| INSTANCE STRING '{'
             {
-                printf( "Creating new named instance '%s'\n", $2 );
-                //pObj = new Instance;
-                //pObj->SetMaterial (pMat);
-                //g_objectMap[$2] = pObj;
+                printf( "Named Instance not supported\n" );
             }
           instanceOptions '}'
             {
-                printf( "Adding named instance to scene\n" );
-                //if (pObj)
-                    //g_pScene->AddObject(pObj);
-                //pObj = 0;
             }
 ;
 
 triangleOptions: /* empty */
         | V1 rExp ',' rExp ',' rExp triangleOptions
-            { /*((TriangleMesh*)pObj)->SetV1(Vertex3($2, $4, $6));*/ }
+            { printf( "Triangles not supported" ); }
         | V2 rExp ',' rExp ',' rExp triangleOptions
-            {  }
+            { printf( "Triangles not supported" ); }
         | V3 rExp ',' rExp ',' rExp triangleOptions
-            {  }
+            { printf( "Triangles not supported" ); }
         | N1 rExp ',' rExp ',' rExp triangleOptions
-            {  }
+            { printf( "Triangles not supported" ); }
         | N2 rExp ',' rExp ',' rExp triangleOptions
-            {  }
+            { printf( "Triangles not supported" ); }
         | N3 rExp ',' rExp ',' rExp triangleOptions
-            {  }
+            { printf( "Triangles not supported" ); }
 ;
 
 sphereOptions: /* empty */
         | CENTER rExp ',' rExp ',' rExp sphereOptions
-            {  }
+            { ((rawray::Sphere*)g_obj)->SetCenter( math::Vector3($2,$4,$6) ); }
         | RADIUS rExp sphereOptions
-            {  }
+            { ((rawray::Sphere*)g_obj)->SetRadius( $2 ); }
 ;
 
 instanceOptions: /* empty */
@@ -327,34 +307,32 @@ transform:  PUSHMATRIX { /*PushMatrix();*/ }
             { /*Scale($2, $4, $6);*/ }
 ;
 
-lightTypes: POINTLIGHT '{' { /*pLight = new PointLight;*/ } lightOptions
+lightTypes: POINTLIGHT '{' { g_light = new rawray::Light(); } lightOptions
 ;
 
 lightOptions: /* empty */ 
         | POS rExp ',' rExp ',' rExp lightOptions
-            { /*pLight->SetPosition(Vertex3($2, $4, $6));*/ }
+            { g_light->SetPosition( math::Vector3($2,$4,$6) ); }
         | WATTAGE rExp lightOptions
-            { /*pLight->SetWattage($2);*/ }
+            { g_light->SetWattage( $2 ); }
         | COLOR rExp ',' rExp ',' rExp lightOptions
-            { /*pLight->SetColor(Vector3($2, $4, $6));*/ }
+            { g_light->SetColor( math::Vector3($2,$4,$6) ); }
 ;
-
 
 meshOptions: /* empty */
         | LOAD STRING
             {
                 $2[strlen($2)-1]=0;
-                printf( "Load Mesh: '%s'\n", $2+1 );
-                //if (!((TriangleMesh*)pObj)->Load(s, GetCTM()))
-                    //pObj = 0;
+                printf( "Loading Mesh: '%s'\n", $2+1 );
+                g_mesh->LoadOBJ( $2+1 );
             }
 ;
 
 globalOptions: /* empty */
         | HEIGHT iExp globalOptions
-            { rawray::options::global::win_height = $2; }
+            { g_image->Resize( g_image->GetWidth(), rawray::options::global::win_height = $2 ); }
         | WIDTH iExp globalOptions
-            { rawray::options::global::win_width = $2; }
+            { g_image->Resize( rawray::options::global::win_width = $2, g_image->GetHeight() ); }
         | GL_BGCOLOR rExp ',' rExp ',' rExp globalOptions
             { rawray::options::global::gl_bg_color = math::Vector3($2,$4,$6); }
         | IMG_BGCOLOR rExp ',' rExp ',' rExp globalOptions
@@ -381,15 +359,21 @@ globalOptions: /* empty */
 
 cameraOptions: /* empty */
         | POS rExp ',' rExp ',' rExp cameraOptions
-            { rawray::options::camera::eye = math::Vector3($2,$4,$6); }
+            { g_camera->SetEye( rawray::options::camera::eye = math::Vector3($2,$4,$6) ); }
         | DIR rExp ',' rExp ',' rExp cameraOptions
-            { rawray::options::camera::view = math::Vector3($2,$4,$6); }
+            { g_camera->SetViewDir( rawray::options::camera::view = math::Vector3($2,$4,$6) ); }
         | LOOKAT rExp ',' rExp ',' rExp cameraOptions
-            { rawray::options::camera::lookat = math::Vector3($2,$4,$6); }
+            { g_camera->SetLookAt( rawray::options::camera::lookat = math::Vector3($2,$4,$6) ); }
         | UP rExp ',' rExp ',' rExp cameraOptions
-            { rawray::options::camera::up = math::Vector3($2,$4,$6); }
+            { g_camera->SetUp( rawray::options::camera::up = math::Vector3($2,$4,$6) ); }
         | FOV rExp cameraOptions
-            { rawray::options::camera::fov = $2; }
+            { g_camera->SetFOV( rawray::options::camera::fov = $2 ); }
+        | ASPECT rExp cameraOptions
+            { g_camera->SetAspect( rawray::options::camera::aspect = $2 ); }
+        | MIN_DRAW rExp cameraOptions
+            { g_camera->SetMinDraw( rawray::options::camera::min_draw = $2 ); }
+        | MAX_DRAW rExp cameraOptions
+            { g_camera->SetMaxDraw( rawray::options::camera::max_draw = $2 ); }
 ;
 
 p0Options: /* empty */
@@ -477,17 +461,38 @@ iExp:     PARSE_INT             { $$ = $1; }
 %%
 //Additional C code
 
-
 namespace rawray {
 
-void ConfigParser(const char* filename) {
+void AddTrianglesOfMesh() {
+    printf( "Add Triangles Of Mesh\n" );
+    
+    for( uint32 i=0; i<g_mesh->GetNumTriangles(); ++i ) {
+        Triangle* t = new Triangle( *g_mesh, i, g_material );
+        g_scene->AddObject( t );
+    }
+    
+    g_mesh = NULL;
+}
+
+void SetConfigSources(Scene* scene, Camera* cam, Image* img) {
+    g_scene = scene;
+    g_camera = cam;
+    g_image = img;
+}
+
+bool ConfigParser(const char* filename) {
     // yydebug = 1;
     
+    if( !g_scene || !g_camera || !g_image )
+        return false;
+    
     yyin = fopen( filename, "r" );
-    if( yyin )
-        yyparse();
-        
+    if( !yyin )
+        return false;
+    
+    yyparse();
     fclose( yyin );
+    return true;
 }
 
 } // namespace rawray

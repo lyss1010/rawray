@@ -49,8 +49,8 @@ namespace camera {
 
     extern float fov;
     extern float aspect;
-    extern float minDraw;
-    extern float maxDraw;
+    extern float min_draw;
+    extern float max_draw;
 
 } // namespace camera
 

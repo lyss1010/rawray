@@ -1,40 +1,46 @@
 %{
 #ifdef WIN32
-#pragma warning(disable:4786)
+#pragma warning(disable:4244) // smaller type conversion warnings
 #endif
 
-#include <malloc.h>
 #include <stdlib.h>
 #include <math.h>
 #include <stack>
 #include <map>
 #include <string>
 #include <iostream>
-//#include "rawray/object.h"
-//#include "rawray/light.h"
-//#include "rawray/camera.h"
-//#include "math/vector3.h"
-#include "math/constants.h"
 
 #ifdef _DEBUG
 #define YYDEBUG 1
 #endif
 
-#define yyerror(x) printf( "Parser error on line %d: %s\n", yyline, x ); 
+#define yyerror(x) printf("Parser error on line %d: %s\n", yyline, x); 
 
 extern int yylex();
 extern int yyline;
 extern FILE *yyin, *yyout;
 
 // variables for adding objects, keeping track of variables
+//Object* pObj=0;
 //std::map<std::string, Object*> g_objectMap;
-//rawray::Object* g_object = NULL;
-//rawray::Light* g_light = NULL;
-//rawray::Camera* g_camera = NULL;
+//Material* pMat=new Material;
+// add more here
+
+//Vector3 __parse_temp_vector;
+//std::stack<Matrix4x4> g_kMatrixStack;
+//PointLight* pLight=0;
+
+//Vector3& Vertex3(const float& x, const float& y, const float& z);
+//Vector3& Vertex3(const Vector3& v);
+//void Translate(const float& x, const float& y, const float& z);
+//void Rotate(const float& angle, float x, float y, float z); // angle is in degrees
+//void Scale(const float& x, const float& y, const float& z);
+//Matrix4x4& GetCTM();
+//void PushMatrix();
+//void PopMatrix();
 
 %}
 // BISON Declarations
-
 %union
 {
     float real;
@@ -43,49 +49,72 @@ extern FILE *yyin, *yyout;
 }
 
 /* ----------------------- tokens ------------------------*/
-%token <real>  YY_SYM_REAL
-%token <integer>  YY_SYM_INT 
-%token <str>  YY_SYM_STRING
 
-%token YY_STATE_GLOBAL
-%token YY_SYM_GLOBAL_WIDTH
-%token YY_SYM_GLOBAL_HEIGHT
-%token YY_SYM_GLOBAL_GL_BG
-%token YY_SYM_GLOBAL_IMG_BG
+%token <real>       REAL
+%token <integer>    PARSE_INT 
+%token <str>        STRING
 
-%token YY_STATE_CAMERA
-%token YY_SYM_CAMERA_POS
-%token YY_SYM_CAMERA_VIEW_DIR
-%token YY_SYM_CAMERA_LOOK_AT
-%token YY_SYM_CAMERA_UP
-%token YY_SYM_CAMERA_FOV
+%token PARSE_TRUE
+%token PARSE_FALSE
+%token ENABLE
+%token DISABLE
+%token MATH_COS
+%token MATH_SIN
+%token MATH_TAN
+%token MATH_ACOS
+%token MATH_ASIN
+%token MATH_ATAN
+%token MATH_ATAN2
+%token MATH_LN
+%token MATH_LOG
+%token MATH_EXP
+%token MATH_SQRT
+%token MATH_E
+%token MATH_PI
 
-%token YY_STATE_LIGHT
-%token YY_SYM_LIGHT_POINTLIGHT
-%token YY_SYM_LIGHT_POS
-%token YY_SYM_LIGHT_COLOR
-%token YY_SYM_LIGHT_WATTAGE
+%token GLOBAL
+%token WIDTH
+%token HEIGHT
+%token GL_BGCOLOR
+%token IMG_BGCOLOR
 
-%token YY_STATE_MODEL
-%token YY_SYM_MODEL_LOAD
+%token CAMERA
+%token POS
+%token DIR
+%token LOOKAT
+%token UP
+%token FOV
 
-%token YY_STATE_SPHERE
-%token YY_SYM_SPHERE_POS
-%token YY_SYM_SPHERE_RADIUS
-%token YY_SYM_SPHERE_COLOR
+%token TRIANGLE
+%token V1
+%token V2
+%token V3
+%token N1
+%token N2
+%token N3
 
-%token YY_MATH_COS
-%token YY_MATH_SIN
-%token YY_MATH_TAN
-%token YY_MATH_ACOS
-%token YY_MATH_ASIN
-%token YY_MATH_ATAN
-%token YY_MATH_LN
-%token YY_MATH_LOG
-%token YY_MATH_EXP
-%token YY_MATH_SQRT
-%token YY_MATH_E
-%token YY_MATH_PI
+%token MESH
+%token LOAD
+
+%token INSTANCE
+%token GEOMETRY
+
+%token PUSHMATRIX
+%token POPMATRIX
+%token ROTATE
+%token TRANSLATE
+%token SCALE
+
+%token LIGHT
+%token POINTLIGHT
+%token WATTAGE
+%token COLOR
+
+%token SPHERE
+%token CENTER
+%token RADIUS
+
+// add more tokens here!
 
 %right '='
 %left '-' '+'
@@ -101,98 +130,229 @@ input:  /* empty */
         | input block
 ;
 
-block:    YY_STATE_GLOBAL '{' globalOptions '}'
-        | YY_STATE_CAMERA '{' cameraOptions '}'
+block:    GLOBAL '{' globalOptions '}'
+        | CAMERA '{' cameraOptions '}'
         | objectTypes 
-        | YY_STATE_LIGHT lightTypes '}' { printf( "Adding Light\n" ); /*g_pScene->AddLight(pLight); pLight = 0;*/ }
+        | LIGHT lightTypes '}'          { printf( "Adding Light\n" ); }
+        | transform
 ;
 
 objectTypes:
-	| YY_STATE_MODEL '{'
+          TRIANGLE '{'
             {
+                printf( "Creating Triangle\n" );
+                //pObj = new Triangle;
+                //pObj->SetMaterial (pMat);
+                //((TriangleMesh*)pObj)->CreateSingleTriangle();
+            }
+          triangleOptions '}'
+            {
+                printf( "Adding Triangle to Scene\n" );
+                //if (pObj)
+                    //g_pScene->AddObject(pObj);
+                //pObj = 0;
+            }
+
+        | TRIANGLE STRING '{'
+            {
+                printf( "Creating named triangle '%s'\n", $2 );
+                //pObj = new TriangleMesh;
+                //pObj->SetMaterial (pMat);
+                //g_objectMap[$2] = pObj;
+                //((TriangleMesh*)pObj)->CreateSingleTriangle();
+            }
+          triangleOptions '}'
+            {
+                printf( "Adding named Triangle to Scene\n" );
+                //if (pObj)
+                    //g_pScene->AddObject(pObj);
+                //pObj = 0;
+            }
+
+            
+	| MESH '{'
+            {
+                printf( "Creating new mesh\n" );
                 //pObj = new TriangleMesh;
                 //pObj->SetMaterial (pMat);
             }
           meshOptions '}'
             {
+                printf( "Adding mesh to scene\n" );
                 //if (pObj)
                     //g_pScene->AddObject(pObj);
                 //pObj = 0;
             }
-
-	| YY_STATE_SPHERE '{'
+            
+	| MESH STRING '{'
             {
+                printf( "Creating new named mesh '%s'\n", $2 );
+                //pObj = new TriangleMesh;
+                //pObj->SetMaterial (pMat);
+                //g_objectMap[$2] = pObj;
+            }
+          meshOptions '}'
+            {
+                printf( "Adding named mesh to scene\n" );
+                //if (pObj)
+                    //g_pScene->AddObject(pObj);
+                //pObj = 0;
+            }
+            
+
+	| SPHERE '{'
+            {
+                printf( "Creating new sphere\n" );
                 //pObj = new Sphere;
                 //pObj->SetMaterial (pMat);
             }
           sphereOptions '}'
             {
+                printf( "Adding sphere to scene\n" );
+                //if (pObj)
+                    //g_pScene->AddObject(pObj);
+                //pObj = 0;
+            }
+            
+	| SPHERE STRING '{'
+            {
+                printf( "Creating new sphere named '%s'\n", $2 );
+                //pObj = new Sphere;
+                //pObj->SetMaterial (pMat);
+                //g_objectMap[$2] = pObj;
+            }
+          sphereOptions '}'
+            {
+                printf( "Adding sphere to scene\n" );
+                //if (pObj)
+                    //g_pScene->AddObject(pObj);
+                //pObj = 0;
+            }
+            
+
+	| INSTANCE '{'
+            {
+                printf( "Creating new instance\n" );
+                //pObj = new Instance;
+                //pObj->SetMaterial (pMat);
+            }
+          instanceOptions '}'
+            {
+                printf( "Adding instance to scene\n" );
+                //if (pObj)
+                    //g_pScene->AddObject(pObj);
+                //pObj = 0;
+            }
+            
+	| INSTANCE STRING '{'
+            {
+                printf( "Creating new named instance '%s'\n", $2 );
+                //pObj = new Instance;
+                //pObj->SetMaterial (pMat);
+                //g_objectMap[$2] = pObj;
+            }
+          instanceOptions '}'
+            {
+                printf( "Adding named instance to scene\n" );
                 //if (pObj)
                     //g_pScene->AddObject(pObj);
                 //pObj = 0;
             }
 ;
 
-sphereOptions: /* empty */
-        | YY_SYM_SPHERE_POS rExp ',' rExp ',' rExp sphereOptions
-            { printf( "Sphere Pos: %d, %d, %d\n", $2, $4, $6 ); }
-        | YY_SYM_SPHERE_RADIUS rExp sphereOptions
-            { printf( "Sphere Radius: %d\n", $2 ); }
+triangleOptions: /* empty */
+        | V1 rExp ',' rExp ',' rExp triangleOptions
+            { /*((TriangleMesh*)pObj)->SetV1(Vertex3($2, $4, $6));*/ }
+        | V2 rExp ',' rExp ',' rExp triangleOptions
+            {  }
+        | V3 rExp ',' rExp ',' rExp triangleOptions
+            {  }
+        | N1 rExp ',' rExp ',' rExp triangleOptions
+            {  }
+        | N2 rExp ',' rExp ',' rExp triangleOptions
+            {  }
+        | N3 rExp ',' rExp ',' rExp triangleOptions
+            {  }
 ;
 
-lightTypes: YY_SYM_LIGHT_POINTLIGHT '{' { printf( "Creating Light\n" ); /*g_light = new rawray::Light();*/ } lightOptions
+sphereOptions: /* empty */
+        | CENTER rExp ',' rExp ',' rExp sphereOptions
+            {  }
+        | RADIUS rExp sphereOptions
+            {  }
+;
+
+instanceOptions: /* empty */
+        | GEOMETRY STRING sphereOptions
+            {
+                //std::map<std::string, Object*>::const_iterator it = g_objectMap.find ($2);
+                //if (it != g_objectMap.end ())
+                //{
+                    //((Instance*)pObj)->SetGeometry(it->second, GetCTM());
+                //}
+            }
+;
+
+transform:  PUSHMATRIX { /*PushMatrix();*/ }
+        | POPMATRIX
+            { /*PopMatrix();*/ }
+        | ROTATE rExp ',' rExp ',' rExp ',' rExp
+            { /*Rotate($2, $4, $6, $8);*/ }
+        | TRANSLATE rExp ',' rExp ',' rExp
+            { /*Translate($2, $4, $6);*/ }
+        | SCALE rExp ',' rExp ',' rExp
+            { /*Scale($2, $4, $6);*/ }
+;
+
+lightTypes: POINTLIGHT '{' { /*pLight = new PointLight;*/ } lightOptions
 ;
 
 lightOptions: /* empty */ 
-        | YY_SYM_LIGHT_POS rExp ',' rExp ',' rExp lightOptions
-            { printf( "Light Pos: %d %d %d\n", $2, $4, $6 ); }
-        | YY_SYM_LIGHT_WATTAGE rExp lightOptions
-            { printf( "Light Wattage: %d\n", $2 ); }
-        | YY_SYM_LIGHT_COLOR rExp ',' rExp ',' rExp lightOptions
-            { printf( "Light Color: %d %d %d\n", $2, $4, $6 ); }
+        | POS rExp ',' rExp ',' rExp lightOptions
+            { /*pLight->SetPosition(Vertex3($2, $4, $6));*/ }
+        | WATTAGE rExp lightOptions
+            { /*pLight->SetWattage($2);*/ }
+        | COLOR rExp ',' rExp ',' rExp lightOptions
+            { /*pLight->SetColor(Vector3($2, $4, $6));*/ }
 ;
 
 
 meshOptions: /* empty */
-        | YY_SYM_MODEL_LOAD YY_SYM_STRING
+        | LOAD STRING
             {
-                // Remove quotes
                 $2[strlen($2)-1]=0;
-                char* s = &$2[1];
-                
-                printf( "Loading Mesh: %s", s );
+                printf( "Load Mesh: '%s'", $2+1 );
                 //if (!((TriangleMesh*)pObj)->Load(s, GetCTM()))
                     //pObj = 0;
-                delete [] $2;
             }
 ;
 
 globalOptions: /* empty */
-        | YY_SYM_GLOBAL_HEIGHT iExp globalOptions
-            { printf( "Found height=%d", $2); }
-        | YY_SYM_GLOBAL_WIDTH iExp globalOptions
-            { printf( "Found width=%d", $2); }
-        | YY_SYM_GLOBAL_GL_BG rExp ',' rExp ',' rExp globalOptions
-            { printf( "Found GL BG=%d, %d, %d", $2, $4, $6); }
-        | YY_SYM_GLOBAL_IMG_BG rExp ',' rExp ',' rExp globalOptions
-            { printf( "Found IMG BG=%d, %d, %d", $2, $4, $6); }
+        | HEIGHT iExp globalOptions
+            { /*g_pImage->Resize(g_pImage->Width(), $2);*/ }
+        | WIDTH iExp globalOptions
+            { /*g_pImage->Resize($2, g_pImage->Height());*/ }
+        | GL_BGCOLOR rExp ',' rExp ',' rExp globalOptions
+            { /*g_pCamera->SetBGColor(Vector3($2, $4, $6));*/ }
+        | IMG_BGCOLOR rExp ',' rExp ',' rExp globalOptions
+            { /*g_pCamera->SetBGColor(Vector3($2, $4, $6));*/ }
 ;
 
 cameraOptions: /* empty */
-        | YY_SYM_CAMERA_POS rExp ',' rExp ',' rExp cameraOptions
-            { printf( "Camera Eye: %d, %d, %d", $2, $4, $6 ); }
-        | YY_SYM_CAMERA_VIEW_DIR rExp ',' rExp ',' rExp cameraOptions
-            { printf( "Camera View: %d, %d, %d", $2, $4, $6 ); }
-        | YY_SYM_CAMERA_LOOK_AT rExp ',' rExp ',' rExp cameraOptions
-            { printf( "Camera LookAt: %d, %d, %d", $2, $4, $6 ); }
-        | YY_SYM_CAMERA_UP rExp ',' rExp ',' rExp cameraOptions
-            { printf( "Camera Up: %d, %d, %d", $2, $4, $6 ); }
-        | YY_SYM_CAMERA_FOV rExp cameraOptions
-            { printf( "Camera FOV: %d", $2 ); }
+        | POS rExp ',' rExp ',' rExp cameraOptions
+            { /*g_pCamera->SetEye(Vector3($2, $4, $6));*/ }
+        | DIR rExp ',' rExp ',' rExp cameraOptions
+            { /*g_pCamera->SetViewDir(Vector3($2, $4, $6));*/ }
+        | LOOKAT rExp ',' rExp ',' rExp cameraOptions
+            { /*g_pCamera->SetLookAt(Vector3($2, $4, $6));*/ }
+        | UP rExp ',' rExp ',' rExp cameraOptions
+            { /*g_pCamera->SetUp(Vector3($2, $4, $6));*/ }
+        | FOV rExp cameraOptions
+            { /*g_pCamera->SetFOV($2);*/ }
 ;
 
-rExp:     YY_SYM_REAL          { $$ = $1; }
-        | iExp                 { $$ = (float)$1; }
+rExp:     REAL                 { $$ = $1; }
+        | iExp                 { $$ = $1; }
         | fExp                 { $$ = $1; }
         
         | rExp '+' rExp        { $$ = $1 + $3; }
@@ -220,35 +380,137 @@ rExp:     YY_SYM_REAL          { $$ = $1; }
         | constantExp
 ;
 
-fExp:      YY_MATH_SIN '(' rExp ')'     {$$ = sin($3); }
-        |  YY_MATH_COS '(' rExp ')'     {$$ = cos($3); }
-        |  YY_MATH_TAN '(' rExp ')'     {$$ = tan($3); }
-        |  YY_MATH_ASIN '(' rExp ')'    {$$ = asin($3); }
-        |  YY_MATH_ACOS '(' rExp ')'    {$$ = acos($3); }
-        |  YY_MATH_ATAN '(' rExp ')'    {$$ = atan($3); }
-        |  YY_MATH_LN '(' rExp ')'      {$$ = log($3); }
-        |  YY_MATH_LOG '(' rExp ')'     {$$ = log10($3); }
-        |  YY_MATH_EXP '(' rExp ')'     {$$ = exp($3); }
-        |  YY_MATH_SQRT '(' rExp ')'    {$$ = sqrt($3); }
+fExp:      MATH_SIN '(' rExp ')'    {$$ = sin($3); }
+        |  MATH_COS '(' rExp ')'    {$$ = cos($3); }
+        |  MATH_TAN '(' rExp ')'    {$$ = tan($3); }
+        |  MATH_ASIN '(' rExp ')'   {$$ = asin($3); }
+        |  MATH_ACOS '(' rExp ')'   {$$ = acos($3); }
+        |  MATH_ATAN '(' rExp ')'   {$$ = atan($3); }
+        |  MATH_LN '(' rExp ')'     {$$ = log($3); }
+        |  MATH_LOG '(' rExp ')'    {$$ = log10($3); }
+        |  MATH_EXP '(' rExp ')'    {$$ = exp($3); }
+        |  MATH_SQRT '(' rExp ')'   {$$ = sqrt($3); }
 ;
 
 constantExp:
-           YY_MATH_E { $$ = 2.718281828459f; }
-        |  YY_MATH_PI { $$ = math::PI; }
+           MATH_E { $$ = 2.718281828459f; }
+        |  MATH_PI { $$ = 3.141592653589793f; }
 ;
 
-iExp:     YY_SYM_INT            { $$ = $1; }
+iExp:     PARSE_INT             { $$ = $1; }
         | iExp '+' iExp         { $$ = $1 + $3; }
         | iExp '-' iExp         { $$ = $1 - $3; }
         | iExp '*' iExp         { $$ = $1 * $3; }
         | iExp '/' iExp         { $$ = $1 / $3; }
         | '-' iExp  %prec NEG   { $$ = -$2; }
-        | iExp '^' iExp         { $$ = (int)pow ($1, $3); }
+        | iExp '^' iExp         { $$ = (int)pow((float)$1, (float)$3); }
         | '(' iExp ')'          { $$ = $2; }
 ;
 
 // End of grammar
-
 %%
-
 //Additional C code
+
+/*
+Matrix4x4& GetCTM()
+{
+    return g_kMatrixStack.top();
+}
+
+void PushMatrix()
+{
+    g_kMatrixStack.push(g_kMatrixStack.top());
+}
+
+void PopMatrix()
+{
+    if(g_kMatrixStack.size() == 1)
+    {
+        Warning("Matrix stack empty!  Too many pops!\n");
+    }
+    else
+        g_kMatrixStack.pop();
+}
+
+void Translate(const float& x, const float& y, const float& z)
+{
+    Matrix4x4 m;
+    m.SetIdentity();
+    m.SetColumn4(Vector4(x, y, z, 1));
+
+    Matrix4x4& ctm = GetCTM();
+    ctm *= m;
+}
+
+void Scale(const float& x, const float& y, const float& z)
+{
+    Matrix4x4 m;
+    m.SetIdentity();
+    m.m11 = x;
+    m.m22 = y;
+    m.m33 = z;
+
+    Matrix4x4& ctm = GetCTM();
+    ctm *= m;
+}
+
+void Rotate(const float& angle, float x, float y, float z) // angle is in degrees
+{
+
+    float rad = angle*(PI/180.);
+
+    float x2 = x*x;
+    float y2 = y*y;
+    float z2 = z*z;
+    float c = cos(rad);
+    float cinv = 1-c;
+    float s = sin(rad);
+    float xy = x*y;
+    float xz = x*z;
+    float yz = y*z;
+    float xs = x*s;
+    float ys = y*s;
+    float zs = z*s;
+    float xzcinv = xz*cinv;
+    float xycinv = xy*cinv;
+    float yzcinv = yz*cinv;
+
+    Matrix4x4 m;
+    m.SetIdentity();
+    m.Set(x2 + c*(1-x2), xy*cinv+zs, xzcinv - ys, 0,
+          xycinv - zs, y2 + c*(1-y2), yzcinv + xs, 0,
+          xzcinv + ys, yzcinv - xs, z2 + c*(1-z2), 0,
+          0, 0, 0, 1);
+
+    g_kMatrixStack.top() *= m;
+}
+
+Vector3& Vertex3(const Vector3& v)
+{
+    __parse_temp_vector = v;
+    __parse_temp_vector = g_kMatrixStack.top()*__parse_temp_vector; // do transformation
+
+    return __parse_temp_vector;
+}
+
+Vector3& Vertex3(const float& x, const float& y, const float& z)
+{
+    __parse_temp_vector.Set(x, y, z);
+    __parse_temp_vector = g_kMatrixStack.top()*__parse_temp_vector; // do transformation
+
+    return __parse_temp_vector;
+}
+
+void ParseFile(FILE* fp)
+{
+    Matrix4x4 m;
+    m.SetIdentity();
+    g_kMatrixStack.push(m);
+
+    yyin = fp;
+    //yydebug = 1;
+    yyparse();
+    if (g_kMatrixStack.size() > 1)
+        Warning("There were more matrix pushes than pops!\n");
+}
+*/

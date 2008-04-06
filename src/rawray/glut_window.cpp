@@ -44,8 +44,8 @@ GlutWindow::GlutWindow(int* argc, char* argv[]) : cam_(), img_(), scene_(),
     InitCallbacks();
 
     //MakeSpiralScene();
-    //MakeBunnyScene();
-	MakeLorenzScene();
+    MakeBunnyScene();
+	//MakeLorenzScene();
 }
 
 GlutWindow::~GlutWindow() {

@@ -4,23 +4,34 @@
 #pragma warning(disable:4701) // variable used without being initialized
 #endif
 
+// If we are compiling to a DLL, this is how we export names
+#ifdef _USRDLL
+#define DllExport __declspec( dllexport )
+#else
+#define DllExport __declspec( dllimport )
+#endif
+
+
 #include <malloc.h>
 #include <stdlib.h>
 #include <math.h>
 #include <stack>
+#include <queue>
 #include <map>
 #include <string>
 #include <iostream>
 
-#ifdef _DEBUG
-#define YYDEBUG 1
-#endif
+//#define YYDEBUG 1
+
 
 #define yyerror(x) printf("Parser error on line %d: %s\n", yyline, x); 
 
 extern int yylex();
 extern int yyline;
 extern FILE *yyin, *yyout;
+
+// For including multiple files
+std::queue<const char*> g_fileQueue;
 
 // variables for adding objects, keeping track of variables
 //Object* pObj=0;
@@ -323,7 +334,7 @@ meshOptions: /* empty */
         | LOAD STRING
             {
                 $2[strlen($2)-1]=0;
-                printf( "Load Mesh: '%s'", $2+1 );
+                printf( "Load Mesh: '%s'\n", $2+1 );
                 //if (!((TriangleMesh*)pObj)->Load(s, GetCTM()))
                     //pObj = 0;
             }
@@ -516,3 +527,28 @@ void ParseFile(FILE* fp)
         Warning("There were more matrix pushes than pops!\n");
 }
 */
+
+void ParseConfigFile(FILE* fp) {
+    // yydebug = 1;
+    if( fp ) {
+        yyin = fp;
+        yyparse();
+    }
+}
+
+namespace tools {
+    
+DllExport void ConfigParser(const char* filename) {
+    g_fileQueue.push( filename );
+    
+    bool success = true;
+    while( !g_fileQueue.empty() ) {
+        FILE* fp = fopen( g_fileQueue.front(), "r" );
+        g_fileQueue.pop();
+        
+        if( fp )
+            ParseConfigFile(fp);
+    }
+}
+
+} // namespace tools

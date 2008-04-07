@@ -45,8 +45,8 @@ GlutWindow::GlutWindow(int* argc, char* argv[]) : cam_(), img_(), scene_(),
     InitCallbacks();
     SetConfigSources(&scene_, &cam_, &img_);
 
-    //MakeSpiralScene();
-    MakeBunnyScene();
+    MakeSpiralScene();
+    //MakeBunnyScene();
 	//MakeLorenzScene();
 }
 
@@ -203,13 +203,19 @@ void GlutWindow::Motion(int x, int y) {
     int dx = x - mouseX_;
     int dy = y - mouseY_;
 
-    if (renderGL_ && activeButton_ & MOUSE_LEFT) {
-        Vector3 viewDir = cam_.GetViewDir();
-        Vector3 right = math::Cross(viewDir, cam_.GetUp());
+	if (renderGL_) {
+		if( activeButton_ & MOUSE_LEFT ) {
+			Vector3 viewDir = cam_.GetViewDir();
+			Vector3 right = math::Cross(viewDir, cam_.GetUp());
 
-        viewDir.Rotate( -mouseYSpeed_*dy*math::DEG_TO_RAD, right );
-        viewDir.Rotate( -mouseXSpeed_*dx*math::DEG_TO_RAD, cam_.GetUp() );
-        cam_.SetViewDir(viewDir);
+			viewDir.Rotate( -mouseYSpeed_*dy*math::DEG_TO_RAD, right );
+			viewDir.Rotate( -mouseXSpeed_*dx*math::DEG_TO_RAD, cam_.GetUp() );
+			cam_.SetViewDir(viewDir);
+		} else if( activeButton_ & MOUSE_RIGHT ) {
+			Vector3 up = cam_.GetUp();
+			up.Rotate( mouseXSpeed_*dx*math::DEG_TO_RAD, cam_.GetViewDir() );
+			cam_.SetUp(up);
+		}
 
         glutPostRedisplay();
     }

@@ -184,66 +184,6 @@
 			Name="Resource Files"
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
-			<File
-				RelativePath=".\bison.hairy">
-			</File>
-			<File
-				RelativePath=".\bison.simple">
-			</File>
-			<File
-				RelativePath=".\lexer.lex">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="Creating Lexer with FLEX"
-						CommandLine="&quot;$(InputDir)flex.exe&quot; $(InputFileName)"
-						Outputs="lexer.yy.cc"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="Creating Lexer with FLEX"
-						CommandLine="&quot;$(InputDir)flex.exe&quot; $(InputFileName)
-"
-						Outputs="lexer.yy.c"/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\parser.y">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="Creating Parser with BISON"
-						CommandLine="&quot;$(InputDir)bison.exe&quot; -d -oparser.yy.cc $(InputFileName)
-"
-						Outputs="parser.yy.cc"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="Creating Parser with BISON"
-						CommandLine="&quot;$(InputDir)bison.exe&quot; -d -oparser.yy.cc $(InputFileName)
-"
-						Outputs="parser.yy.cc"/>
-				</FileConfiguration>
-			</File>
-			<Filter
-				Name="generated"
-				Filter="">
-				<File
-					RelativePath=".\lexer.yy.cc">
-				</File>
-				<File
-					RelativePath=".\parser.yy.cc">
-				</File>
-				<File
-					RelativePath=".\parser.yy.cc.h">
-				</File>
-			</Filter>
 		</Filter>
 		<File
 			RelativePath=".\ReadMe.txt">

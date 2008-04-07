@@ -47,7 +47,7 @@ rawray::TriangleMesh*                   g_mesh = NULL;
 
 math::Vector3                           g_vector;
 std::map<std::string, rawray::Object*>  g_objectMap;
-//std::stack<Matrix4x4>                 g_matrixStack;
+std::stack<math::Matrix4x4>             g_matrixStack;
 
 %}
 // BISON Declarations
@@ -166,38 +166,37 @@ input:  /* empty */
         | input block
 ;
 
-block:    GLOBAL '{' globalOptions '}'
-        | CAMERA '{' cameraOptions '}'
-        | LIGHT lightTypes '}'          { printf( "Adding Light\n" ); }
-        | P0 '{' p0Options '}'
-        | objectTypes 
-        | transform
+block:    GLOBAL '{' globalOptions '}'  { printf("\n"); }
+        | CAMERA '{' cameraOptions '}'  { printf("\n"); }
+        | LIGHT lightTypes '}'          { printf("\n"); g_scene->AddLight( g_light ); g_light = NULL; }
+        | P0 '{' p0Options '}'          { printf("\n"); }
+        | objectTypes                   { printf("\n"); }
+        | transform                     { printf("\n"); }
 ;
 
 objectTypes:
           TRIANGLE '{'
             {
-                //pObj = new Triangle();
-                //pObj->SetMaterial (pMat);
+                g_mesh = new rawray::TriangleMesh();
                 //((TriangleMesh*)pObj)->CreateSingleTriangle();
             }
           triangleOptions '}'
             {
-                g_scene->AddObject( g_obj );
-                g_obj = NULL;
+                g_scene->AddMesh( g_mesh );
+                rawray::AddTrianglesOfMesh();
             }
 
         | TRIANGLE STRING '{'
             {
-                //pObj = new TriangleMesh;
-                //pObj->SetMaterial (pMat);
+                g_mesh = new rawray::TriangleMesh();
+                
                 //g_objectMap[$2] = pObj;
                 //((TriangleMesh*)pObj)->CreateSingleTriangle();
             }
           triangleOptions '}'
             {
-                g_scene->AddObject( g_obj );
-                g_obj = NULL;
+                g_scene->AddMesh( g_mesh );
+                rawray::AddTrianglesOfMesh();
             }
             
 	| MESH '{'
@@ -307,16 +306,16 @@ transform:  PUSHMATRIX { /*PushMatrix();*/ }
             { /*Scale($2, $4, $6);*/ }
 ;
 
-lightTypes: POINTLIGHT '{' { g_light = new rawray::Light(); } lightOptions
+lightTypes: POINTLIGHT '{' { printf( "new light\n" ); g_light = new rawray::Light(); } lightOptions
 ;
 
 lightOptions: /* empty */ 
         | POS rExp ',' rExp ',' rExp lightOptions
-            { g_light->SetPosition( math::Vector3($2,$4,$6) ); }
+            { printf( "pos = %f, %f, %f\n", $2, $4, $6 ); g_light->SetPosition( math::Vector3($2,$4,$6) ); }
         | WATTAGE rExp lightOptions
-            { g_light->SetWattage( $2 ); }
+            { printf( "wattage = %f\n", $2 ); g_light->SetWattage( $2 ); }
         | COLOR rExp ',' rExp ',' rExp lightOptions
-            { g_light->SetColor( math::Vector3($2,$4,$6) ); }
+            { printf( "color = %f, %f, %f\n", $2, $4, $6 ); g_light->SetColor( math::Vector3($2,$4,$6) ); }
 ;
 
 meshOptions: /* empty */
@@ -330,75 +329,75 @@ meshOptions: /* empty */
 
 globalOptions: /* empty */
         | HEIGHT iExp globalOptions
-            { g_image->Resize( g_image->GetWidth(), rawray::options::global::win_height = $2 ); }
+            { printf( "height = %d\n", $2 ); g_image->Resize( g_image->GetWidth(), rawray::options::global::win_height = $2 ); }
         | WIDTH iExp globalOptions
-            { g_image->Resize( rawray::options::global::win_width = $2, g_image->GetHeight() ); }
+            { printf( "width = %d\n", $2 ); g_image->Resize( rawray::options::global::win_width = $2, g_image->GetHeight() ); }
         | GL_BGCOLOR rExp ',' rExp ',' rExp globalOptions
-            { rawray::options::global::gl_bg_color = math::Vector3($2,$4,$6); }
+            { printf( "gl bg color = %f, %f, %f\n", $2, $4, $6 ); rawray::options::global::gl_bg_color = math::Vector3($2,$4,$6); }
         | IMG_BGCOLOR rExp ',' rExp ',' rExp globalOptions
-            { rawray::options::global::img_bg_color = math::Vector3($2,$4,$6); }
+            { printf( "img bg color = %f, %f, %f\n", $2, $4, $6 ); rawray::options::global::img_bg_color = math::Vector3($2,$4,$6); }
         | GL_SPHERE_SECTIONS iExp globalOptions
-            { rawray::options::global::gl_sphere_sections = $2; }
+            { printf( "gl sphere sections = %d\n", rawray::options::global::gl_sphere_sections = $2 ); }
         | NUM_THREADS iExp globalOptions
-            { rawray::options::global::num_threads = $2; }
+            { printf( "num threads = %d\n", rawray::options::global::num_threads = $2 ); }
         | RENDER_X_BLOCK iExp globalOptions
-            { rawray::options::global::render_x_block = $2; }
+            { printf( "render x block = %d\n", rawray::options::global::render_x_block = $2 ); }
         | RENDER_Y_BLOCK iExp globalOptions
-            { rawray::options::global::render_y_block = $2; }
+            { printf( "render y block = %d\n", rawray::options::global::render_y_block = $2 ); }
         | RENDER_HANDLER_SLEEP iExp globalOptions
-            { rawray::options::global::render_handler_sleep = $2; }
+            { printf( "render handler sleep = %d\n", rawray::options::global::render_handler_sleep = $2 ); }
         | RENDER_THREAD_SLEEP iExp globalOptions
-            { rawray::options::global::render_thread_sleep = $2; }
+            { printf( "render thread sleep = %d\n", rawray::options::global::render_thread_sleep = $2 ); }
         | RENDER_SPINLOCK_SLEEP iExp globalOptions
-            { rawray::options::global::render_spinlock_sleep = $2; }
-        | GAUSSIAN_BLUR_MAX iExp globalOptions
-            { rawray::options::global::gaussian_blur_max = $2; }
-        | GAUSSIAN_BLUR_SIGMA iExp globalOptions
-            { rawray::options::global::gaussian_blur_sigma = $2; }
+            { printf( "render spinlock sleep = %d\n", rawray::options::global::render_spinlock_sleep = $2 ); }
+        | GAUSSIAN_BLUR_MAX rExp globalOptions
+            { printf( "gaussian blur max = %f\n", rawray::options::global::gaussian_blur_max = $2 ); }
+        | GAUSSIAN_BLUR_SIGMA rExp globalOptions
+            { printf( "gaussian blur sigma = %f\n", rawray::options::global::gaussian_blur_sigma = $2 ); }
 ;
 
 cameraOptions: /* empty */
         | POS rExp ',' rExp ',' rExp cameraOptions
-            { g_camera->SetEye( rawray::options::camera::eye = math::Vector3($2,$4,$6) ); }
+            { printf( "camera pos = %f, %f, %f\n", $2, $4, $6 ); g_camera->SetEye( rawray::options::camera::eye = math::Vector3($2,$4,$6) ); }
         | DIR rExp ',' rExp ',' rExp cameraOptions
-            { g_camera->SetViewDir( rawray::options::camera::view = math::Vector3($2,$4,$6) ); }
+            { printf( "camera dir = %f, %f, %f\n", $2, $4, $6 ); g_camera->SetViewDir( rawray::options::camera::view = math::Vector3($2,$4,$6) ); }
         | LOOKAT rExp ',' rExp ',' rExp cameraOptions
-            { g_camera->SetLookAt( rawray::options::camera::lookat = math::Vector3($2,$4,$6) ); }
+            { printf( "camera look at = %f, %f, %f\n", $2, $4, $6 ); g_camera->SetLookAt( rawray::options::camera::lookat = math::Vector3($2,$4,$6) ); }
         | UP rExp ',' rExp ',' rExp cameraOptions
-            { g_camera->SetUp( rawray::options::camera::up = math::Vector3($2,$4,$6) ); }
+            { printf( "camera up = %f, %f, %f\n", $2, $4, $6 ); g_camera->SetUp( rawray::options::camera::up = math::Vector3($2,$4,$6) ); }
         | FOV rExp cameraOptions
-            { g_camera->SetFOV( rawray::options::camera::fov = $2 ); }
+            { printf( "camera fov = %f\n", $2 ); g_camera->SetFOV( rawray::options::camera::fov = $2 ); }
         | ASPECT rExp cameraOptions
-            { g_camera->SetAspect( rawray::options::camera::aspect = $2 ); }
+            { printf( "camera aspect ratio = %f\n", $2 ); g_camera->SetAspect( rawray::options::camera::aspect = $2 ); }
         | MIN_DRAW rExp cameraOptions
-            { g_camera->SetMinDraw( rawray::options::camera::min_draw = $2 ); }
+            { printf( "camera min draw = %f\n", $2 ); g_camera->SetMinDraw( rawray::options::camera::min_draw = $2 ); }
         | MAX_DRAW rExp cameraOptions
-            { g_camera->SetMaxDraw( rawray::options::camera::max_draw = $2 ); }
+            { printf( "camera max draw = %f\n", $2 ); g_camera->SetMaxDraw( rawray::options::camera::max_draw = $2 ); }
 ;
 
 p0Options: /* empty */
         | SPIRAL_NUM_SPHERES iExp p0Options
-            { rawray::options::p0::spiral_num_spheres = $2; }
+            { printf( "spiral num spheres = %d\n", rawray::options::p0::spiral_num_spheres = $2 ); }
         | SPIRAL_RADIUS rExp p0Options
-            { rawray::options::p0::spiral_radius = $2; }
+            { printf( "spiral radius = %f\n", rawray::options::p0::spiral_radius = $2 ); }
         | LORENZ_DT rExp p0Options
-            { rawray::options::p0::lorenz_dt = $2; }
+            { printf( "lorenz dt = %f\n", rawray::options::p0::lorenz_dt = $2 ); }
         | LORENZ_MIN_DISTANCE rExp p0Options
-            { rawray::options::p0::lorenz_min_distance = $2; }
+            { printf( "lorenz min distance = %f\n", rawray::options::p0::lorenz_min_distance = $2 ); }
         | LORENZ_MAX_DISTANCE rExp p0Options
-            { rawray::options::p0::lorenz_max_distance = $2; }
+            { printf( "lorenz max distance = %f\n", rawray::options::p0::lorenz_max_distance = $2 ); }
         | LORENZ_SIGMA rExp p0Options
-            { rawray::options::p0::lorenz_sigma = $2; }
+            { printf( "lorenz sigma = %f\n", rawray::options::p0::lorenz_sigma = $2 ); }
         | LORENZ_RHO rExp p0Options
-            { rawray::options::p0::lorenz_rho = $2; }
+            { printf( "lorenz rho = %f\n", rawray::options::p0::lorenz_rho = $2 ); }
         | LORENZ_BETA rExp p0Options
-            { rawray::options::p0::lorenz_beta = $2; }
+            { printf( "lorenz beta = %f\n", rawray::options::p0::lorenz_beta = $2 ); }
         | LORENZ_RADIUS rExp p0Options
-            { rawray::options::p0::lorenz_radius = $2; }
+            { printf( "lorenz radius = %f\n", rawray::options::p0::lorenz_radius = $2 ); }
         | LORENZ_NUM_SPHERES iExp p0Options
-            { rawray::options::p0::lorenz_num_spheres = $2; }
+            { printf( "lorenz num spheres = %d\n", rawray::options::p0::lorenz_num_spheres = $2 ); }
         | LORENZ_START rExp ',' rExp ',' rExp p0Options
-            { rawray::options::p0::lorenz_start = math::Vector3($2,$4,$6); }
+            { printf( "lorenz start = %f, %f, %f\n", $2, $4, $6 ); rawray::options::p0::lorenz_start = math::Vector3($2,$4,$6); }
 ;
 
 rExp:     REAL                 { $$ = $1; }
@@ -464,8 +463,6 @@ iExp:     PARSE_INT             { $$ = $1; }
 namespace rawray {
 
 void AddTrianglesOfMesh() {
-    printf( "Add Triangles Of Mesh\n" );
-    
     for( uint32 i=0; i<g_mesh->GetNumTriangles(); ++i ) {
         Triangle* t = new Triangle( *g_mesh, i, g_material );
         g_scene->AddObject( t );
@@ -481,7 +478,7 @@ void SetConfigSources(Scene* scene, Camera* cam, Image* img) {
 }
 
 bool ConfigParser(const char* filename) {
-    // yydebug = 1;
+    //yydebug = 1;
     
     if( !g_scene || !g_camera || !g_image )
         return false;
@@ -492,6 +489,8 @@ bool ConfigParser(const char* filename) {
     
     yyparse();
     fclose( yyin );
+    printf( "Parse of '%s' success\n", filename );
+    
     return true;
 }
 

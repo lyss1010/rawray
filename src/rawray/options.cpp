@@ -94,19 +94,6 @@ void init() {
     camera::aspect = 1.0f;
     camera::min_draw = 0.01f;
     camera::max_draw = 10000.0f;
-
-    p0::spiral_num_spheres = 100;
-	p0::spiral_radius = 0.15f;
-
-	p0::lorenz_dt = 0.0040f;
-	p0::lorenz_min_distance = 0.35f;
-	p0::lorenz_max_distance = 2.5f;
-	p0::lorenz_sigma = 5.7f;
-	p0::lorenz_rho = 32;
-	p0::lorenz_beta = 2.0f;
-	p0::lorenz_radius = 0.131f;
-	p0::lorenz_num_spheres = 30000;
-	p0::lorenz_start = Vector3(0.0f, 1.0f, 0.0f);
 }
 
 } // namespace rawray::options

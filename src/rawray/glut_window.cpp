@@ -34,7 +34,7 @@ void GlutWindow::Create(int* argc, char* argv[]) {
 }
 
 GlutWindow::GlutWindow(int* argc, char* argv[]) : cam_(), img_(), scene_(),
-    renderGL_(true), keySpeed_(0.1f), mouseXSpeed_(0.1f), mouseYSpeed_(0.03f),
+    renderGL_(true), keySpeed_(0.03f), mouseXSpeed_(0.08f), mouseYSpeed_(0.025f),
     activeButton_(0), mouseX_(0), mouseY_(0), render_(NULL)
     
 {
@@ -45,9 +45,9 @@ GlutWindow::GlutWindow(int* argc, char* argv[]) : cam_(), img_(), scene_(),
     InitCallbacks();
     SetConfigSources(&scene_, &cam_, &img_);
 
-    MakeSpiralScene();
+    //MakeSpiralScene();
     //MakeBunnyScene();
-	//MakeLorenzScene();
+	MakeLorenzScene();
 }
 
 GlutWindow::~GlutWindow() {

@@ -14,21 +14,9 @@
 namespace rawray {
 
 void GlutWindow::MakeSpiralScene() {
-    cam_.SetEye( Vector3(2.33f, -1.03f, -4.24f) );
-	cam_.SetViewDir( Vector3(-2.47f, 0.72f, 4.43f) );
-    cam_.SetUp( Vector3(0, 1, 0) );
-    cam_.SetFOV( 45 );
+    ConfigParser( "./../res/scenes/spiral.cfg" );
+    ReInitGL();
 
-    scene_.AddLight( new Light( 
-						Vector3(3, -15, -3),
-						Vector3(1, 1, 1),
-						700 ) );
-
-	scene_.AddLight( new Light( 
-						Vector3(-3, 15, 3),
-						Vector3(1, 1, 1),
-						700 ) );
-    
     const float dt = 1.0f / options::p0::spiral_num_spheres;
     const float a = options::p0::spiral_radius;
     for (int i=0; i<options::p0::spiral_num_spheres; ++i ) {
@@ -53,46 +41,8 @@ void GlutWindow::MakeSpiralScene() {
 }
 
 void GlutWindow::MakeLorenzScene() {
-	//cam_.SetEye( Vector3(-63.8f, -30.3f, -1.6f) );
-	//cam_.SetViewDir( Vector3(5.65f, 2.23f, 2.58f) );
-	cam_.SetEye( Vector3(-33.78f, -37.13f, 47.70f) );
-	cam_.SetViewDir( Vector3(6.52f, 7.42f, -3.58f) );
-
-    cam_.SetUp( Vector3(0, 1, 0) );
-    cam_.SetFOV( 45 );
-    
-    options::global::gl_sphere_sections = 2;
-
-    scene_.AddLight( new Light( 
-						Vector3(3, 5, -6),
-						Vector3(1),
-						900 ) );
-
-    scene_.AddLight( new Light( 
-						Vector3(0, 1, 50),
-						Vector3(1),
-						900 ) );
-
-    scene_.AddLight( new Light( 
-					    Vector3(-5, 9, 28),
-					    Vector3(1),
-					    900 ) );
-
-    scene_.AddLight( new Light( 
-					    Vector3(15, 11, 31),
-					    Vector3(1),
-					    900 ) );
-
-
-    scene_.AddLight( new Light( 
-			            Vector3(0, -10, 29),
-			            Vector3(1),
-			            900 ) );
-
-    scene_.AddLight( new Light( 
-			            Vector3(-10, -5, 32),
-			            Vector3(1),
-			            900 ) );
+    ConfigParser( "./../res/scenes/lorenz.cfg" );
+    ReInitGL();
 
     float base_dt = options::p0::lorenz_dt;
 	float min_dist = options::p0::lorenz_min_distance;
@@ -115,6 +65,7 @@ void GlutWindow::MakeLorenzScene() {
 	// MAX ==  18.90   31.80  58.20
     for (int i=0; i<options::p0::lorenz_num_spheres; ++i ) {
 		float dt = base_dt;
+        uint8 num_tries = 0;
 
 		do {
 			delta.x = sigma * ( l.y - l.x );
@@ -129,7 +80,7 @@ void GlutWindow::MakeLorenzScene() {
 				dt /= 1.5f;
 			else
 				break;
-		} while( true );
+		} while( num_tries++ < 8 );
 
 		l += delta;
 

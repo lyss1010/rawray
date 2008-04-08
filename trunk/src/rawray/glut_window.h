@@ -43,6 +43,7 @@ private:
     void CreateGlutWindow();
     void ToggleRenderGL();
 
+    void MakeEmptyScene();
     void MakeSpiralScene();
     void MakeLorenzScene();
     void MakeBunnyScene();

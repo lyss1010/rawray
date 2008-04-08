@@ -14,6 +14,7 @@ namespace rawray {
 class DllExport Light
 {
 public:
+    ~Light() { std::cout << "Delete light: " << this << std::endl; }
     Light() : position_(Vector3()), color_(Vector3()), wattage_(0) { }
     Light(const Vector3& position, const Vector3& color, float wattage) : position_(position), color_(color), wattage_(wattage) { }
 

@@ -10,7 +10,7 @@
 namespace rawray {
 
 Scene::~Scene() {
-	for( size_t i=0; i<lights_.size(); ++i )
+    for( size_t i=0; i<lights_.size(); ++i )
 		delete lights_[i];
 	lights_.clear();
 

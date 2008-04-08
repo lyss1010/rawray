@@ -36,19 +36,37 @@ void GlutWindow::Create(int* argc, char* argv[]) {
 GlutWindow::GlutWindow(int* argc, char* argv[]) : cam_(), img_(), scene_(),
     renderGL_(true), keySpeed_(0.03f), mouseXSpeed_(0.08f), mouseYSpeed_(0.025f),
     activeButton_(0), mouseX_(0), mouseY_(0), render_(NULL)
-    
 {
-    glutInit(argc, argv);
-
-    CreateGlutWindow();
-    InitGL();
-    InitCallbacks();
     SetConfigSources(&scene_, &cam_, &img_);
 
     //MakeEmptyScene();
-    MakeSpiralScene();
+    //MakeSpiralScene();
     //MakeBunnyScene();
-	//MakeLorenzScene();
+	MakeLorenzScene();
+
+    if( options::global::headless ) {
+        // Begin render immediately w/o user interaction
+        ToggleRenderGL();
+
+        if( !render_ )
+            std::cout << "ERROR: Could not create render job" << std::endl;
+        else {
+            while( !render_->IsDone() ) {
+                std::cout << "Progress: " << render_->Progress() << "\r";
+                Sleep( 1000 );
+            }
+
+            std::cout << std::endl;
+        }
+
+    } else {
+        // Initialize GLUT and begin GL Rendering
+        glutInit(argc, argv);
+
+        CreateGlutWindow();
+        InitGL();
+        InitCallbacks();
+    }
 }
 
 GlutWindow::~GlutWindow() {
@@ -56,7 +74,11 @@ GlutWindow::~GlutWindow() {
 }
 
 void GlutWindow::MainLoop() {
-    glutMainLoop(); // This will never return
+    if( options::global::headless )
+        return;
+
+    // This will never return
+    glutMainLoop(); 
 	assert( 0 );
 }
 
@@ -299,7 +321,8 @@ void GlutWindow::ToggleRenderGL() {
         render_->Run();
     }
 
-    glutPostRedisplay();
+    if( !options::global::headless )
+        glutPostRedisplay();
 }
 
 } // namespace rawray

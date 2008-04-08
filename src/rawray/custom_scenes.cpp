@@ -15,14 +15,11 @@ namespace rawray {
 
 void GlutWindow::MakeEmptyScene() {
     ConfigParser( "./../res/scenes/spiral.cfg" );
-    ReInitGL();
-
     scene_.PreCalc();
 }
 
 void GlutWindow::MakeSpiralScene() {
     ConfigParser( "./../res/scenes/spiral.cfg" );
-    ReInitGL();
 
     const float dt = 1.0f / options::p0::spiral_num_spheres;
     const float a = options::p0::spiral_radius;
@@ -49,7 +46,6 @@ void GlutWindow::MakeSpiralScene() {
 
 void GlutWindow::MakeLorenzScene() {
     ConfigParser( "./../res/scenes/lorenz.cfg" );
-    ReInitGL();
 
     float base_dt = options::p0::lorenz_dt;
 	float min_dist = options::p0::lorenz_min_distance;
@@ -103,12 +99,8 @@ void GlutWindow::MakeLorenzScene() {
     scene_.PreCalc();
 }
 
-
-
-
 void GlutWindow::MakeBunnyScene() {
     ConfigParser( "./../res/scenes/bunny.cfg" );
-    ReInitGL();
 
     scene_.PreCalc();
 }

@@ -12,7 +12,7 @@
 /////////////////////////////////////////////////////////////////////////////
 namespace rawray {
 
-typedef math::Tuple3<uint8> Pixel;
+typedef math::Vector3			Vector3;
 
 class DllExport Image
 {
@@ -23,10 +23,10 @@ public:
 
     int Resize(uint32 width, uint32 height);
     void SetPixel(uint32 x, uint32 y, const Vector3& color);
-    void SetPixel(uint32 x, uint32 y, const Pixel& color);
+	void SetPixel(uint32 x, uint32 y, const math::Tuple3<uint8>& color);
 
     void Clear(const Vector3& color);
-    void Clear(const Pixel& color);
+    void Clear(const math::Tuple3<uint8>& color);
     void ScreenShot();
     bool GaussianBlur(float sigma);
     
@@ -36,16 +36,19 @@ public:
 	void WritePPM();
     void WritePPM(clock_t rendertime);
     void WritePPM(const char* filename);
-    void WritePPM(const char* filename, uint8* data, uint32 width, uint32 height);
 
-    Pixel* GetPixels() { return pixels_; }
-    uint32 GetWidth() const { return width_; }
-    uint32 GetHeight() const { return height_; }
+	Vector3& GetPixel(int x, int y) { return pixels_[y*width_ + x]; }
+    Vector3* GetPixels() { return pixels_; }
+    uint32  GetWidth() const { return width_; }
+    uint32  GetHeight() const { return height_; }
 
 private:
-    Pixel* pixels_;
+    Vector3* pixels_;
     uint32 width_;
     uint32 height_;
+
+    void WritePPM(const char* filename, uint8* data, uint32 width, uint32 height);
+
 
 }; // class Image
 

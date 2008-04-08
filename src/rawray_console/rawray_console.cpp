@@ -10,19 +10,18 @@
 // Exit point
 void exit_cleanup(void) {
 	rawray::GlutWindow::Destroy();
+    _CrtDumpMemoryLeaks();
 }
 
 // Console Entry point
 int _tmain( int argc, _TCHAR* argv[] )
 {
 	// Enable memory leak messages on exit
-	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
-	//_CrtSetBreakAlloc( 139 );
+	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF );
+	_CrtSetBreakAlloc( 128 );
 
     // Initialize options defaults
     rawray::options::init();
-
-    // TODO: Read in options
 
     // Open GLUT window and begin rendering
 	atexit( exit_cleanup );

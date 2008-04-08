@@ -178,6 +178,9 @@ objectTypes:
           TRIANGLE '{'
             {
                 g_mesh = new rawray::TriangleMesh();
+                #ifdef VERBOSE_NEW
+                printf( "MESH: %x", g_mesh );
+                #endif
                 //((TriangleMesh*)pObj)->CreateSingleTriangle();
             }
           triangleOptions '}'
@@ -189,6 +192,9 @@ objectTypes:
         | TRIANGLE STRING '{'
             {
                 g_mesh = new rawray::TriangleMesh();
+                #ifdef VERBOSE_NEW
+                printf( "MESH: %x", g_mesh );
+                #endif
                 
                 //g_objectMap[$2] = pObj;
                 //((TriangleMesh*)pObj)->CreateSingleTriangle();
@@ -202,6 +208,9 @@ objectTypes:
 	| MESH '{'
             {
                 g_mesh = new rawray::TriangleMesh();
+                #ifdef VERBOSE_NEW
+                printf( "MESH: %x", g_mesh );
+                #endif
             }
           meshOptions '}'
             {
@@ -212,6 +221,10 @@ objectTypes:
 	| MESH STRING '{'
             {
                 g_mesh = new rawray::TriangleMesh();
+                #ifdef VERBOSE_NEW
+                printf( "MESH: %x", g_mesh );
+                #endif
+                
                 //g_objectMap[$2] = pObj;
             }
           meshOptions '}'
@@ -225,6 +238,10 @@ objectTypes:
                 g_obj = new rawray::Sphere( math::Vector3(0),
                                             1.0f,
                                             g_material );
+                                            
+                #ifdef VERBOSE_NEW
+                printf( "SPHERE: %x", g_obj );
+                #endif
             }
           sphereOptions '}'
             {
@@ -237,6 +254,11 @@ objectTypes:
                 g_obj = new rawray::Sphere( math::Vector3(0),
                                             1.0f,
                                             g_material );
+                
+                #ifdef VERBOSE_NEW
+                printf( "SPHERE: %x", g_obj );
+                #endif
+                
                 g_objectMap[$2] = g_obj;
             }
           sphereOptions '}'
@@ -306,7 +328,17 @@ transform:  PUSHMATRIX { /*PushMatrix();*/ }
             { /*Scale($2, $4, $6);*/ }
 ;
 
-lightTypes: POINTLIGHT '{' { printf( "new light\n" ); g_light = new rawray::Light(); } lightOptions
+lightTypes: POINTLIGHT '{' 
+            {
+                printf( "new light\n" ); 
+                g_light = new rawray::Light();
+                
+                #ifdef VERBOSE_NEW
+                printf( "LIGHT: %x\n", g_light );
+                #endif
+            }
+        lightOptions
+                
 ;
 
 lightOptions: /* empty */ 
@@ -466,6 +498,10 @@ void AddTrianglesOfMesh() {
     for( uint32 i=0; i<g_mesh->GetNumTriangles(); ++i ) {
         Triangle* t = new Triangle( *g_mesh, i, g_material );
         g_scene->AddObject( t );
+        
+        #ifdef VERBOSE_NEW
+        printf( "TRIANGLE: %x\n", t );
+        #endif
     }
     
     g_mesh = NULL;
@@ -489,6 +525,8 @@ bool ConfigParser(const char* filename) {
     
     yyparse();
     fclose( yyin );
+
+
     printf( "Parse of '%s' success\n", filename );
     
     return true;

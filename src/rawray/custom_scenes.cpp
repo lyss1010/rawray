@@ -13,6 +13,13 @@
 
 namespace rawray {
 
+void GlutWindow::MakeEmptyScene() {
+    ConfigParser( "./../res/scenes/spiral.cfg" );
+    ReInitGL();
+
+    scene_.PreCalc();
+}
+
 void GlutWindow::MakeSpiralScene() {
     ConfigParser( "./../res/scenes/spiral.cfg" );
     ReInitGL();

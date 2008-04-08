@@ -187,7 +187,9 @@ void Image::WritePPM(const char* filename, uint8* data, uint32 width, uint32 hei
             fwrite( data + stride*i, stride, 1, fp );
 
         fclose(fp);
-    }
+        std::cout << "\nWrote image to file: " << filename << std::endl;
+    } else
+        std::cout << "\nFailed to write image to file: " << filename << std::endl;
 }
 
 } // namespace rawray

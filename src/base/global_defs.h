@@ -39,7 +39,7 @@
 // For memory leak detection
 #ifdef _DEBUG
 #define _CRTDBG_MAP_ALLOC
-#define _INC_MALLOC
+//#define VERBOSE_NEW
 #endif
 
 // Null pointer

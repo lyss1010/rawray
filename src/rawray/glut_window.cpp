@@ -45,8 +45,8 @@ GlutWindow::GlutWindow(int* argc, char* argv[]) : cam_(), img_(), scene_(),
     InitCallbacks();
     SetConfigSources(&scene_, &cam_, &img_);
 
-    MakeEmptyScene();
-    //MakeSpiralScene();
+    //MakeEmptyScene();
+    MakeSpiralScene();
     //MakeBunnyScene();
 	//MakeLorenzScene();
 }
@@ -258,7 +258,9 @@ void GlutWindow::InitGL() {
 }
 
 void GlutWindow::ReInitGL() {
-    glutReshapeWindow( img_.GetWidth(), img_.GetHeight() );
+	if( img_.GetWidth() > 0 && img_.GetHeight() > 0 )
+		glutReshapeWindow( img_.GetWidth(), img_.GetHeight() );
+
     glClearColor( options::global::gl_bg_color.x, 
                   options::global::gl_bg_color.y, 
                   options::global::gl_bg_color.z, 

@@ -166,7 +166,7 @@ input:  /* empty */
         | input block
 ;
 
-block:    GLOBAL '{' globalOptions '}'  { printf("\n"); }
+block:    GLOBAL '{' globalOptions '}'  { memmove( &yyval, &yyval, sizeof(yyval) ); printf("\n"); }
         | CAMERA '{' cameraOptions '}'  { printf("\n"); }
         | LIGHT lightTypes '}'          { printf("\n"); g_scene->AddLight( g_light ); g_light = NULL; }
         | P0 '{' p0Options '}'          { printf("\n"); }
@@ -522,13 +522,11 @@ bool ConfigParser(const char* filename) {
     yyin = fopen( filename, "r" );
     if( !yyin )
         return false;
-    
+
     yyparse();
     fclose( yyin );
 
-
     printf( "Parse of '%s' success\n", filename );
-    
     return true;
 }
 

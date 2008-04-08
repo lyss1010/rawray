@@ -25,7 +25,7 @@
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)inc&quot;;&quot;$(SolutionDir)src&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;RAWRAY_EXPORTS"
 				MinimalRebuild="TRUE"
-				BasicRuntimeChecks="3"
+				BasicRuntimeChecks="1"
 				SmallerTypeCheck="TRUE"
 				RuntimeLibrary="3"
 				BufferSecurityCheck="TRUE"
@@ -322,7 +322,8 @@
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="Generating Lexer"
-							CommandLine="&quot;$(InputDir)flex++.exe&quot; $(InputFileName)"
+							CommandLine="&quot;$(InputDir)flex++.exe&quot; $(InputFileName)
+"
 							AdditionalDependencies="$(InputDir)parser.yy.cc.h"
 							Outputs="lexer.yy.cc"/>
 					</FileConfiguration>
@@ -331,7 +332,8 @@
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="Generating Lexer"
-							CommandLine="&quot;$(InputDir)flex++.exe&quot; $(InputFileName)"
+							CommandLine="&quot;$(InputDir)flex++.exe&quot; $(InputFileName)
+"
 							AdditionalDependencies="parser.yy.cc.h"
 							Outputs="lexer.yy.cc"/>
 					</FileConfiguration>
@@ -346,7 +348,8 @@
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="Generating Parser"
-							CommandLine="&quot;$(InputDir)bison.exe&quot; -d -oparser.yy.cc $(InputFileName)"
+							CommandLine="&quot;$(InputDir)bison.exe&quot; -d -oparser.yy.cc $(InputFileName)
+"
 							AdditionalDependencies=""
 							Outputs="parser.yy.cc"/>
 					</FileConfiguration>
@@ -355,7 +358,8 @@
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="Generating Parser"
-							CommandLine="&quot;$(InputDir)bison.exe&quot; -d -oparser.yy.cc $(InputFileName)"
+							CommandLine="&quot;$(InputDir)bison.exe&quot; -d -oparser.yy.cc $(InputFileName)
+"
 							AdditionalDependencies="parser.yy.cc"
 							Outputs="parser.yy.cc"/>
 					</FileConfiguration>

@@ -1139,7 +1139,7 @@ yyreduce:
 
 case 3:
 #line 169 "parser.y"
-{ printf("\n"); ;
+{ memmove( &yyval, &yyval, sizeof(yyval) ); printf("\n"); ;
     break;}
 case 4:
 #line 170 "parser.y"
@@ -1906,13 +1906,11 @@ bool ConfigParser(const char* filename) {
     yyin = fopen( filename, "r" );
     if( !yyin )
         return false;
-    
+
     yyparse();
     fclose( yyin );
 
-
     printf( "Parse of '%s' success\n", filename );
-    
     return true;
 }
 

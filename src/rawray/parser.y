@@ -97,6 +97,7 @@ std::stack<math::Matrix4x4>             g_matrixStack;
 %token RENDER_SPINLOCK_SLEEP
 %token GAUSSIAN_BLUR_MAX
 %token GAUSSIAN_BLUR_SIGMA
+%token GL_RENDER_LIGHTS
 
 %token CAMERA
 %token POS
@@ -386,6 +387,10 @@ globalOptions: /* empty */
             { printf( "gaussian blur max = %f\n", rawray::options::global::gaussian_blur_max = $2 ); }
         | GAUSSIAN_BLUR_SIGMA rExp globalOptions
             { printf( "gaussian blur sigma = %f\n", rawray::options::global::gaussian_blur_sigma = $2 ); }
+        | ENABLE GL_RENDER_LIGHTS
+			{ printf( "enabling rendering of lights in gl\n" ); rawray::options::global::gl_render_lights = true; }
+		| DISABLE GL_RENDER_LIGHTS
+			{ printf( "disabling rendering of lights in gl\n" ); rawray::options::global::gl_render_lights = false; }
 ;
 
 cameraOptions: /* empty */

@@ -39,24 +39,24 @@ int Image::Resize(uint32 width, uint32 height) {
     if( numPixels <= 0 ) return 0;
     
     SAFE_DELETE_ARRAY( pixels_ );
-    pixels_ = new Pixel[ numPixels ];
-    memset( pixels_, 0, sizeof(Pixel)*numPixels );
+    pixels_ = new Vector3[ numPixels ];
+    memset( pixels_, 0, sizeof( *pixels_ )*numPixels );
 
     return numPixels;
 }
 
 void Image::SetPixel(uint32 x, uint32 y, const Vector3& color) {
-    if( x < width_ && y < height_ ) {
-        Pixel* pixel = pixels_ + y*width_ + x;
-        pixel->x = base::FloatToByte(color.x);
-        pixel->y = base::FloatToByte(color.y);
-        pixel->z = base::FloatToByte(color.z);
-    }
+    if( x < width_ && y < height_ )
+		GetPixel(x, y) = color;
 }
 
-void Image::SetPixel(uint32 x, uint32 y, const Pixel& color) {
-    if( x < width_ && y < height_ )
-        pixels_[ y*width_ + x ] = color;
+void Image::SetPixel(uint32 x, uint32 y, const math::Tuple3<uint8>& color) {
+	if( x < width_ && y < height_ ) {
+		Vector3& pixel = GetPixel(x, y);
+		pixel.x = base::ByteToFloat(color.x);
+		pixel.y = base::ByteToFloat(color.y);
+		pixel.z = base::ByteToFloat(color.z);
+	}
 }
 
 void Image::Clear(const Vector3 &color) {
@@ -65,7 +65,7 @@ void Image::Clear(const Vector3 &color) {
             SetPixel( x, y, color );
 }
 
-void Image::Clear(const Pixel &color) {
+void Image::Clear(const math::Tuple3<uint8> &color) {
     for(uint32 y=0; y<height_; y++)
         for(uint32 x=0; x<width_; x++)
             SetPixel( x, y, color );
@@ -78,7 +78,7 @@ void Image::ScreenShot() {
     glPushClientAttrib( GL_CLIENT_PIXEL_STORE_BIT );
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
     
-    glReadPixels( 0, 0, width_, height_, GL_RGB, GL_UNSIGNED_BYTE, pixels_ );
+    glReadPixels( 0, 0, width_, height_, GL_RGB, GL_FLOAT, pixels_ );
 
     // Enable the default packing
     glPopClientAttrib();
@@ -110,7 +110,7 @@ bool Image::GaussianBlur(float sigma) {
     // Loop over all pixels
     for( int y=0; y<height_; ++y ) {
         for( int x=0; x<width_; ++x ) {
-            Pixel sum = Pixel(0,0,0);
+            Vector3 sum = Vector3(0,0,0);
             int left = x - half_matrix_size;
             int top = y - half_matrix_size;
 
@@ -126,12 +126,12 @@ bool Image::GaussianBlur(float sigma) {
                     if( posX < 0 || posX >= width_ )
                         continue;
 
-                    Pixel* pixel = pixels_ + posY*width_ + posX;
+                    Vector3& pixel = GetPixel(posX, posY);
                     float weight = weights[ i + matrix_size*j ];
 
-                    sum.x += pixel->x * weight;
-                    sum.y += pixel->y * weight;
-                    sum.z += pixel->z * weight;
+                    sum.x += pixel.x * weight;
+                    sum.y += pixel.y * weight;
+                    sum.z += pixel.z * weight;
                 }
             }
 
@@ -150,7 +150,7 @@ void Image::RenderGL() {
 
 void Image::RenderScanlineGL(uint32 y) {
     glRasterPos2f(-1, -1 + 2*y / float(height_));
-    glDrawPixels(width_, 1, GL_RGB, GL_UNSIGNED_BYTE, &pixels_[y*width_]);
+    glDrawPixels(width_, 1, GL_RGB, GL_FLOAT, &pixels_[y*width_]);
 }
 
 void Image::WritePPM( ) {
@@ -168,9 +168,21 @@ void Image::WritePPM( clock_t rendertime ) {
 }
 
 void Image::WritePPM(const char* filename) {
-    WritePPM(filename, 
-             static_cast<uint8*>( &((*pixels_).x) ), 
-             width_, height_);
+	math::Tuple3<uint8>* data = new math::Tuple3<uint8>[ width_ * height_ ];
+
+	for(uint32 y=0; y<height_; y++) {
+		int yOffset = y*width_;
+		for(uint32 x=0; x<width_; x++) {
+			Vector3* p = pixels_ + yOffset + x;
+			math::Tuple3<uint8>* d = data    + yOffset + x;
+
+			d->x = base::FloatToByte( p->x );
+			d->y = base::FloatToByte( p->y );
+			d->z = base::FloatToByte( p->z );
+		}
+	}
+
+    WritePPM(filename, static_cast<uint8*>( &((*data).x) ), width_, height_);
 }
 
 void Image::WritePPM(const char* filename, uint8* data, uint32 width, uint32 height) {

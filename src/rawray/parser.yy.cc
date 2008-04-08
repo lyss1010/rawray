@@ -291,19 +291,19 @@ static const short yyrhs[] = {    -1,
 
 #if YYDEBUG != 0
 static const short yyrline[] = { 0,
-   165,   166,   169,   170,   171,   172,   173,   174,   177,   183,
-   189,   196,   202,   206,   212,   217,   223,   229,   235,   242,
-   248,   252,   256,   260,   265,   266,   268,   270,   272,   274,
-   276,   280,   281,   283,   287,   288,   298,   299,   301,   303,
-   305,   309,   310,   312,   313,   315,   317,   321,   322,   330,
-   331,   333,   335,   337,   339,   341,   343,   345,   347,   349,
-   351,   353,   355,   359,   360,   362,   364,   366,   368,   370,
-   372,   374,   378,   379,   381,   383,   385,   387,   389,   391,
-   393,   395,   397,   399,   403,   404,   405,   407,   408,   409,
-   411,   412,   413,   415,   416,   417,   419,   420,   421,   423,
-   424,   425,   427,   428,   429,   432,   433,   434,   435,   436,
-   437,   438,   439,   440,   441,   444,   446,   449,   450,   451,
-   452,   453,   454,   455,   456
+   165,   166,   169,   170,   171,   172,   173,   174,   177,   186,
+   192,   202,   208,   215,   221,   230,   236,   246,   252,   264,
+   270,   274,   278,   282,   287,   288,   290,   292,   294,   296,
+   298,   302,   303,   305,   309,   310,   320,   321,   323,   325,
+   327,   331,   342,   344,   345,   347,   349,   353,   354,   362,
+   363,   365,   367,   369,   371,   373,   375,   377,   379,   381,
+   383,   385,   387,   391,   392,   394,   396,   398,   400,   402,
+   404,   406,   410,   411,   413,   415,   417,   419,   421,   423,
+   425,   427,   429,   431,   435,   436,   437,   439,   440,   441,
+   443,   444,   445,   447,   448,   449,   451,   452,   453,   455,
+   456,   457,   459,   460,   461,   464,   465,   466,   467,   468,
+   469,   470,   471,   472,   473,   476,   478,   481,   482,   483,
+   484,   485,   486,   487,   488
 };
 
 static const char * const yytname[] = {   "$","error","$undefined.","REAL","PARSE_INT",
@@ -1165,146 +1165,168 @@ case 9:
 #line 179 "parser.y"
 {
                 g_mesh = new rawray::TriangleMesh();
+                #ifdef VERBOSE_NEW
+                printf( "MESH: %x", g_mesh );
+                #endif
                 //((TriangleMesh*)pObj)->CreateSingleTriangle();
             ;
     break;}
 case 10:
-#line 184 "parser.y"
+#line 187 "parser.y"
 {
                 g_scene->AddMesh( g_mesh );
                 rawray::AddTrianglesOfMesh();
             ;
     break;}
 case 11:
-#line 190 "parser.y"
+#line 193 "parser.y"
 {
                 g_mesh = new rawray::TriangleMesh();
+                #ifdef VERBOSE_NEW
+                printf( "MESH: %x", g_mesh );
+                #endif
                 
                 //g_objectMap[$2] = pObj;
                 //((TriangleMesh*)pObj)->CreateSingleTriangle();
             ;
     break;}
 case 12:
-#line 197 "parser.y"
+#line 203 "parser.y"
 {
                 g_scene->AddMesh( g_mesh );
                 rawray::AddTrianglesOfMesh();
             ;
     break;}
 case 13:
-#line 203 "parser.y"
+#line 209 "parser.y"
 {
                 g_mesh = new rawray::TriangleMesh();
+                #ifdef VERBOSE_NEW
+                printf( "MESH: %x", g_mesh );
+                #endif
             ;
     break;}
 case 14:
-#line 207 "parser.y"
+#line 216 "parser.y"
 {
                 g_scene->AddMesh( g_mesh );
                 rawray::AddTrianglesOfMesh();
             ;
     break;}
 case 15:
-#line 213 "parser.y"
+#line 222 "parser.y"
 {
                 g_mesh = new rawray::TriangleMesh();
+                #ifdef VERBOSE_NEW
+                printf( "MESH: %x", g_mesh );
+                #endif
+                
                 //g_objectMap[$2] = pObj;
             ;
     break;}
 case 16:
-#line 218 "parser.y"
+#line 231 "parser.y"
 {
                 g_scene->AddMesh( g_mesh );
                 rawray::AddTrianglesOfMesh();
             ;
     break;}
 case 17:
-#line 224 "parser.y"
+#line 237 "parser.y"
 {
                 g_obj = new rawray::Sphere( math::Vector3(0),
                                             1.0f,
                                             g_material );
+                                            
+                #ifdef VERBOSE_NEW
+                printf( "SPHERE: %x", g_obj );
+                #endif
             ;
     break;}
 case 18:
-#line 230 "parser.y"
+#line 247 "parser.y"
 {
                 g_scene->AddObject( g_obj );
                 g_obj = NULL;
             ;
     break;}
 case 19:
-#line 236 "parser.y"
+#line 253 "parser.y"
 {
                 g_obj = new rawray::Sphere( math::Vector3(0),
                                             1.0f,
                                             g_material );
+                
+                #ifdef VERBOSE_NEW
+                printf( "SPHERE: %x", g_obj );
+                #endif
+                
                 g_objectMap[yyvsp[-1].str] = g_obj;
             ;
     break;}
 case 20:
-#line 243 "parser.y"
+#line 265 "parser.y"
 {
                 g_scene->AddObject( g_obj );
                 g_obj = NULL;
             ;
     break;}
 case 21:
-#line 249 "parser.y"
+#line 271 "parser.y"
 {
                 printf( "Instance not supported\n" );
             ;
     break;}
 case 22:
-#line 253 "parser.y"
+#line 275 "parser.y"
 {
             ;
     break;}
 case 23:
-#line 257 "parser.y"
+#line 279 "parser.y"
 {
                 printf( "Named Instance not supported\n" );
             ;
     break;}
 case 24:
-#line 261 "parser.y"
+#line 283 "parser.y"
 {
             ;
     break;}
 case 26:
-#line 267 "parser.y"
+#line 289 "parser.y"
 { printf( "Triangles not supported" ); ;
     break;}
 case 27:
-#line 269 "parser.y"
+#line 291 "parser.y"
 { printf( "Triangles not supported" ); ;
     break;}
 case 28:
-#line 271 "parser.y"
+#line 293 "parser.y"
 { printf( "Triangles not supported" ); ;
     break;}
 case 29:
-#line 273 "parser.y"
+#line 295 "parser.y"
 { printf( "Triangles not supported" ); ;
     break;}
 case 30:
-#line 275 "parser.y"
+#line 297 "parser.y"
 { printf( "Triangles not supported" ); ;
     break;}
 case 31:
-#line 277 "parser.y"
+#line 299 "parser.y"
 { printf( "Triangles not supported" ); ;
     break;}
 case 33:
-#line 282 "parser.y"
+#line 304 "parser.y"
 { ((rawray::Sphere*)g_obj)->SetCenter( math::Vector3(yyvsp[-5].real,yyvsp[-3].real,yyvsp[-1].real) ); ;
     break;}
 case 34:
-#line 284 "parser.y"
+#line 306 "parser.y"
 { ((rawray::Sphere*)g_obj)->SetRadius( yyvsp[-1].real ); ;
     break;}
 case 36:
-#line 289 "parser.y"
+#line 311 "parser.y"
 {
                 //std::map<std::string, Object*>::const_iterator it = g_objectMap.find ($2);
                 //if (it != g_objectMap.end ())
@@ -1314,43 +1336,50 @@ case 36:
             ;
     break;}
 case 37:
-#line 298 "parser.y"
+#line 320 "parser.y"
 { /*PushMatrix();*/ ;
     break;}
 case 38:
-#line 300 "parser.y"
+#line 322 "parser.y"
 { /*PopMatrix();*/ ;
     break;}
 case 39:
-#line 302 "parser.y"
+#line 324 "parser.y"
 { /*Rotate($2, $4, $6, $8);*/ ;
     break;}
 case 40:
-#line 304 "parser.y"
+#line 326 "parser.y"
 { /*Translate($2, $4, $6);*/ ;
     break;}
 case 41:
-#line 306 "parser.y"
+#line 328 "parser.y"
 { /*Scale($2, $4, $6);*/ ;
     break;}
 case 42:
-#line 309 "parser.y"
-{ printf( "new light\n" ); g_light = new rawray::Light(); ;
+#line 332 "parser.y"
+{
+                printf( "new light\n" ); 
+                g_light = new rawray::Light();
+                
+                #ifdef VERBOSE_NEW
+                printf( "LIGHT: %x\n", g_light );
+                #endif
+            ;
     break;}
 case 45:
-#line 314 "parser.y"
+#line 346 "parser.y"
 { printf( "pos = %f, %f, %f\n", yyvsp[-5].real, yyvsp[-3].real, yyvsp[-1].real ); g_light->SetPosition( math::Vector3(yyvsp[-5].real,yyvsp[-3].real,yyvsp[-1].real) ); ;
     break;}
 case 46:
-#line 316 "parser.y"
+#line 348 "parser.y"
 { printf( "wattage = %f\n", yyvsp[-1].real ); g_light->SetWattage( yyvsp[-1].real ); ;
     break;}
 case 47:
-#line 318 "parser.y"
+#line 350 "parser.y"
 { printf( "color = %f, %f, %f\n", yyvsp[-5].real, yyvsp[-3].real, yyvsp[-1].real ); g_light->SetColor( math::Vector3(yyvsp[-5].real,yyvsp[-3].real,yyvsp[-1].real) ); ;
     break;}
 case 49:
-#line 323 "parser.y"
+#line 355 "parser.y"
 {
                 yyvsp[0].str[strlen(yyvsp[0].str)-1]=0;
                 printf( "Loading Mesh: '%s'\n", yyvsp[0].str+1 );
@@ -1358,291 +1387,291 @@ case 49:
             ;
     break;}
 case 51:
-#line 332 "parser.y"
+#line 364 "parser.y"
 { printf( "height = %d\n", yyvsp[-1].integer ); g_image->Resize( g_image->GetWidth(), rawray::options::global::win_height = yyvsp[-1].integer ); ;
     break;}
 case 52:
-#line 334 "parser.y"
+#line 366 "parser.y"
 { printf( "width = %d\n", yyvsp[-1].integer ); g_image->Resize( rawray::options::global::win_width = yyvsp[-1].integer, g_image->GetHeight() ); ;
     break;}
 case 53:
-#line 336 "parser.y"
+#line 368 "parser.y"
 { printf( "gl bg color = %f, %f, %f\n", yyvsp[-5].real, yyvsp[-3].real, yyvsp[-1].real ); rawray::options::global::gl_bg_color = math::Vector3(yyvsp[-5].real,yyvsp[-3].real,yyvsp[-1].real); ;
     break;}
 case 54:
-#line 338 "parser.y"
+#line 370 "parser.y"
 { printf( "img bg color = %f, %f, %f\n", yyvsp[-5].real, yyvsp[-3].real, yyvsp[-1].real ); rawray::options::global::img_bg_color = math::Vector3(yyvsp[-5].real,yyvsp[-3].real,yyvsp[-1].real); ;
     break;}
 case 55:
-#line 340 "parser.y"
+#line 372 "parser.y"
 { printf( "gl sphere sections = %d\n", rawray::options::global::gl_sphere_sections = yyvsp[-1].integer ); ;
     break;}
 case 56:
-#line 342 "parser.y"
+#line 374 "parser.y"
 { printf( "num threads = %d\n", rawray::options::global::num_threads = yyvsp[-1].integer ); ;
     break;}
 case 57:
-#line 344 "parser.y"
+#line 376 "parser.y"
 { printf( "render x block = %d\n", rawray::options::global::render_x_block = yyvsp[-1].integer ); ;
     break;}
 case 58:
-#line 346 "parser.y"
+#line 378 "parser.y"
 { printf( "render y block = %d\n", rawray::options::global::render_y_block = yyvsp[-1].integer ); ;
     break;}
 case 59:
-#line 348 "parser.y"
+#line 380 "parser.y"
 { printf( "render handler sleep = %d\n", rawray::options::global::render_handler_sleep = yyvsp[-1].integer ); ;
     break;}
 case 60:
-#line 350 "parser.y"
+#line 382 "parser.y"
 { printf( "render thread sleep = %d\n", rawray::options::global::render_thread_sleep = yyvsp[-1].integer ); ;
     break;}
 case 61:
-#line 352 "parser.y"
+#line 384 "parser.y"
 { printf( "render spinlock sleep = %d\n", rawray::options::global::render_spinlock_sleep = yyvsp[-1].integer ); ;
     break;}
 case 62:
-#line 354 "parser.y"
+#line 386 "parser.y"
 { printf( "gaussian blur max = %f\n", rawray::options::global::gaussian_blur_max = yyvsp[-1].real ); ;
     break;}
 case 63:
-#line 356 "parser.y"
+#line 388 "parser.y"
 { printf( "gaussian blur sigma = %f\n", rawray::options::global::gaussian_blur_sigma = yyvsp[-1].real ); ;
     break;}
 case 65:
-#line 361 "parser.y"
+#line 393 "parser.y"
 { printf( "camera pos = %f, %f, %f\n", yyvsp[-5].real, yyvsp[-3].real, yyvsp[-1].real ); g_camera->SetEye( rawray::options::camera::eye = math::Vector3(yyvsp[-5].real,yyvsp[-3].real,yyvsp[-1].real) ); ;
     break;}
 case 66:
-#line 363 "parser.y"
+#line 395 "parser.y"
 { printf( "camera dir = %f, %f, %f\n", yyvsp[-5].real, yyvsp[-3].real, yyvsp[-1].real ); g_camera->SetViewDir( rawray::options::camera::view = math::Vector3(yyvsp[-5].real,yyvsp[-3].real,yyvsp[-1].real) ); ;
     break;}
 case 67:
-#line 365 "parser.y"
+#line 397 "parser.y"
 { printf( "camera look at = %f, %f, %f\n", yyvsp[-5].real, yyvsp[-3].real, yyvsp[-1].real ); g_camera->SetLookAt( rawray::options::camera::lookat = math::Vector3(yyvsp[-5].real,yyvsp[-3].real,yyvsp[-1].real) ); ;
     break;}
 case 68:
-#line 367 "parser.y"
+#line 399 "parser.y"
 { printf( "camera up = %f, %f, %f\n", yyvsp[-5].real, yyvsp[-3].real, yyvsp[-1].real ); g_camera->SetUp( rawray::options::camera::up = math::Vector3(yyvsp[-5].real,yyvsp[-3].real,yyvsp[-1].real) ); ;
     break;}
 case 69:
-#line 369 "parser.y"
+#line 401 "parser.y"
 { printf( "camera fov = %f\n", yyvsp[-1].real ); g_camera->SetFOV( rawray::options::camera::fov = yyvsp[-1].real ); ;
     break;}
 case 70:
-#line 371 "parser.y"
+#line 403 "parser.y"
 { printf( "camera aspect ratio = %f\n", yyvsp[-1].real ); g_camera->SetAspect( rawray::options::camera::aspect = yyvsp[-1].real ); ;
     break;}
 case 71:
-#line 373 "parser.y"
+#line 405 "parser.y"
 { printf( "camera min draw = %f\n", yyvsp[-1].real ); g_camera->SetMinDraw( rawray::options::camera::min_draw = yyvsp[-1].real ); ;
     break;}
 case 72:
-#line 375 "parser.y"
+#line 407 "parser.y"
 { printf( "camera max draw = %f\n", yyvsp[-1].real ); g_camera->SetMaxDraw( rawray::options::camera::max_draw = yyvsp[-1].real ); ;
     break;}
 case 74:
-#line 380 "parser.y"
+#line 412 "parser.y"
 { printf( "spiral num spheres = %d\n", rawray::options::p0::spiral_num_spheres = yyvsp[-1].integer ); ;
     break;}
 case 75:
-#line 382 "parser.y"
+#line 414 "parser.y"
 { printf( "spiral radius = %f\n", rawray::options::p0::spiral_radius = yyvsp[-1].real ); ;
     break;}
 case 76:
-#line 384 "parser.y"
+#line 416 "parser.y"
 { printf( "lorenz dt = %f\n", rawray::options::p0::lorenz_dt = yyvsp[-1].real ); ;
     break;}
 case 77:
-#line 386 "parser.y"
+#line 418 "parser.y"
 { printf( "lorenz min distance = %f\n", rawray::options::p0::lorenz_min_distance = yyvsp[-1].real ); ;
     break;}
 case 78:
-#line 388 "parser.y"
+#line 420 "parser.y"
 { printf( "lorenz max distance = %f\n", rawray::options::p0::lorenz_max_distance = yyvsp[-1].real ); ;
     break;}
 case 79:
-#line 390 "parser.y"
+#line 422 "parser.y"
 { printf( "lorenz sigma = %f\n", rawray::options::p0::lorenz_sigma = yyvsp[-1].real ); ;
     break;}
 case 80:
-#line 392 "parser.y"
+#line 424 "parser.y"
 { printf( "lorenz rho = %f\n", rawray::options::p0::lorenz_rho = yyvsp[-1].real ); ;
     break;}
 case 81:
-#line 394 "parser.y"
+#line 426 "parser.y"
 { printf( "lorenz beta = %f\n", rawray::options::p0::lorenz_beta = yyvsp[-1].real ); ;
     break;}
 case 82:
-#line 396 "parser.y"
+#line 428 "parser.y"
 { printf( "lorenz radius = %f\n", rawray::options::p0::lorenz_radius = yyvsp[-1].real ); ;
     break;}
 case 83:
-#line 398 "parser.y"
+#line 430 "parser.y"
 { printf( "lorenz num spheres = %d\n", rawray::options::p0::lorenz_num_spheres = yyvsp[-1].integer ); ;
     break;}
 case 84:
-#line 400 "parser.y"
+#line 432 "parser.y"
 { printf( "lorenz start = %f, %f, %f\n", yyvsp[-5].real, yyvsp[-3].real, yyvsp[-1].real ); rawray::options::p0::lorenz_start = math::Vector3(yyvsp[-5].real,yyvsp[-3].real,yyvsp[-1].real); ;
     break;}
 case 85:
-#line 403 "parser.y"
+#line 435 "parser.y"
 { yyval.real = yyvsp[0].real; ;
     break;}
 case 86:
-#line 404 "parser.y"
+#line 436 "parser.y"
 { yyval.real = yyvsp[0].integer; ;
     break;}
 case 87:
-#line 405 "parser.y"
+#line 437 "parser.y"
 { yyval.real = yyvsp[0].real; ;
     break;}
 case 88:
-#line 407 "parser.y"
+#line 439 "parser.y"
 { yyval.real = yyvsp[-2].real + yyvsp[0].real; ;
     break;}
 case 89:
-#line 408 "parser.y"
+#line 440 "parser.y"
 { yyval.real = yyvsp[-2].integer + yyvsp[0].real; ;
     break;}
 case 90:
-#line 409 "parser.y"
+#line 441 "parser.y"
 { yyval.real = yyvsp[-2].real + yyvsp[0].integer; ;
     break;}
 case 91:
-#line 411 "parser.y"
+#line 443 "parser.y"
 { yyval.real = yyvsp[-2].real - yyvsp[0].real; ;
     break;}
 case 92:
-#line 412 "parser.y"
+#line 444 "parser.y"
 { yyval.real = yyvsp[-2].integer - yyvsp[0].real; ;
     break;}
 case 93:
-#line 413 "parser.y"
+#line 445 "parser.y"
 { yyval.real = yyvsp[-2].real - yyvsp[0].integer; ;
     break;}
 case 94:
-#line 415 "parser.y"
+#line 447 "parser.y"
 { yyval.real = yyvsp[-2].real * yyvsp[0].real; ;
     break;}
 case 95:
-#line 416 "parser.y"
+#line 448 "parser.y"
 { yyval.real = yyvsp[-2].integer * yyvsp[0].real; ;
     break;}
 case 96:
-#line 417 "parser.y"
+#line 449 "parser.y"
 { yyval.real = yyvsp[-2].real * yyvsp[0].integer; ;
     break;}
 case 97:
-#line 419 "parser.y"
+#line 451 "parser.y"
 { yyval.real = yyvsp[-2].real / yyvsp[0].real; ;
     break;}
 case 98:
-#line 420 "parser.y"
+#line 452 "parser.y"
 { yyval.real = yyvsp[-2].integer / yyvsp[0].real; ;
     break;}
 case 99:
-#line 421 "parser.y"
+#line 453 "parser.y"
 { yyval.real = yyvsp[-2].real / yyvsp[0].integer; ;
     break;}
 case 100:
-#line 423 "parser.y"
+#line 455 "parser.y"
 { yyval.real = pow (float (yyvsp[-2].real), float (yyvsp[0].real)); ;
     break;}
 case 101:
-#line 424 "parser.y"
+#line 456 "parser.y"
 { yyval.real = pow (float (yyvsp[-2].integer), float (yyvsp[0].real)); ;
     break;}
 case 102:
-#line 425 "parser.y"
+#line 457 "parser.y"
 { yyval.real = pow (float (yyvsp[-2].real), float (yyvsp[0].integer)); ;
     break;}
 case 103:
-#line 427 "parser.y"
+#line 459 "parser.y"
 { yyval.real = -yyvsp[0].real; ;
     break;}
 case 104:
-#line 428 "parser.y"
+#line 460 "parser.y"
 { yyval.real = yyvsp[-1].real; ;
     break;}
 case 106:
-#line 432 "parser.y"
+#line 464 "parser.y"
 {yyval.real = sin(yyvsp[-1].real); ;
     break;}
 case 107:
-#line 433 "parser.y"
+#line 465 "parser.y"
 {yyval.real = cos(yyvsp[-1].real); ;
     break;}
 case 108:
-#line 434 "parser.y"
+#line 466 "parser.y"
 {yyval.real = tan(yyvsp[-1].real); ;
     break;}
 case 109:
-#line 435 "parser.y"
+#line 467 "parser.y"
 {yyval.real = asin(yyvsp[-1].real); ;
     break;}
 case 110:
-#line 436 "parser.y"
+#line 468 "parser.y"
 {yyval.real = acos(yyvsp[-1].real); ;
     break;}
 case 111:
-#line 437 "parser.y"
+#line 469 "parser.y"
 {yyval.real = atan(yyvsp[-1].real); ;
     break;}
 case 112:
-#line 438 "parser.y"
+#line 470 "parser.y"
 {yyval.real = log(yyvsp[-1].real); ;
     break;}
 case 113:
-#line 439 "parser.y"
+#line 471 "parser.y"
 {yyval.real = log10(yyvsp[-1].real); ;
     break;}
 case 114:
-#line 440 "parser.y"
+#line 472 "parser.y"
 {yyval.real = exp(yyvsp[-1].real); ;
     break;}
 case 115:
-#line 441 "parser.y"
+#line 473 "parser.y"
 {yyval.real = sqrt(yyvsp[-1].real); ;
     break;}
 case 116:
-#line 445 "parser.y"
+#line 477 "parser.y"
 { yyval.real = 2.718281828459f; ;
     break;}
 case 117:
-#line 446 "parser.y"
+#line 478 "parser.y"
 { yyval.real = 3.141592653589793f; ;
     break;}
 case 118:
-#line 449 "parser.y"
+#line 481 "parser.y"
 { yyval.integer = yyvsp[0].integer; ;
     break;}
 case 119:
-#line 450 "parser.y"
+#line 482 "parser.y"
 { yyval.integer = yyvsp[-2].integer + yyvsp[0].integer; ;
     break;}
 case 120:
-#line 451 "parser.y"
+#line 483 "parser.y"
 { yyval.integer = yyvsp[-2].integer - yyvsp[0].integer; ;
     break;}
 case 121:
-#line 452 "parser.y"
+#line 484 "parser.y"
 { yyval.integer = yyvsp[-2].integer * yyvsp[0].integer; ;
     break;}
 case 122:
-#line 453 "parser.y"
+#line 485 "parser.y"
 { yyval.integer = yyvsp[-2].integer / yyvsp[0].integer; ;
     break;}
 case 123:
-#line 454 "parser.y"
+#line 486 "parser.y"
 { yyval.integer = -yyvsp[0].integer; ;
     break;}
 case 124:
-#line 455 "parser.y"
+#line 487 "parser.y"
 { yyval.integer = (int)pow((float)yyvsp[-2].integer, (float)yyvsp[0].integer); ;
     break;}
 case 125:
-#line 456 "parser.y"
+#line 488 "parser.y"
 { yyval.integer = yyvsp[-1].integer; ;
     break;}
 }
@@ -1843,7 +1872,7 @@ yyerrhandle:
   yystate = yyn;
   goto yynewstate;
 }
-#line 460 "parser.y"
+#line 492 "parser.y"
 
 //Additional C code
 
@@ -1853,6 +1882,10 @@ void AddTrianglesOfMesh() {
     for( uint32 i=0; i<g_mesh->GetNumTriangles(); ++i ) {
         Triangle* t = new Triangle( *g_mesh, i, g_material );
         g_scene->AddObject( t );
+        
+        #ifdef VERBOSE_NEW
+        printf( "TRIANGLE: %x\n", t );
+        #endif
     }
     
     g_mesh = NULL;
@@ -1876,6 +1909,8 @@ bool ConfigParser(const char* filename) {
     
     yyparse();
     fclose( yyin );
+
+
     printf( "Parse of '%s' success\n", filename );
     
     return true;

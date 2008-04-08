@@ -322,8 +322,8 @@
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="Generating Lexer"
-							CommandLine="$(InputDir)flex.exe $(InputFileName)"
-							AdditionalDependencies="parser.yy.cc.h"
+							CommandLine="&quot;$(InputDir)flex++.exe&quot; $(InputFileName)"
+							AdditionalDependencies="$(InputDir)parser.yy.cc.h"
 							Outputs="lexer.yy.cc"/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -331,7 +331,7 @@
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="Generating Lexer"
-							CommandLine="$(InputDir)flex.exe $(InputFileName)"
+							CommandLine="&quot;$(InputDir)flex++.exe&quot; $(InputFileName)"
 							AdditionalDependencies="parser.yy.cc.h"
 							Outputs="lexer.yy.cc"/>
 					</FileConfiguration>
@@ -346,7 +346,7 @@
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="Generating Parser"
-							CommandLine="$(InputDir)bison.exe -d -oparser.yy.cc $(InputFileName)"
+							CommandLine="&quot;$(InputDir)bison.exe&quot; -d -oparser.yy.cc $(InputFileName)"
 							AdditionalDependencies=""
 							Outputs="parser.yy.cc"/>
 					</FileConfiguration>
@@ -355,7 +355,7 @@
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="Generating Parser"
-							CommandLine="$(InputDir)bison.exe -d -oparser.yy.cc $(InputFileName)"
+							CommandLine="&quot;$(InputDir)bison.exe&quot; -d -oparser.yy.cc $(InputFileName)"
 							AdditionalDependencies="parser.yy.cc"
 							Outputs="parser.yy.cc"/>
 					</FileConfiguration>

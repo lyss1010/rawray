@@ -79,6 +79,7 @@ STRING      '([^']*)'|\"([^\"]*)\"
 <global>gaussian{WS}blur{WS}max     { return GAUSSIAN_BLUR_MAX; }
 <global>gaussian{WS}blur{WS}sigma   { return GAUSSIAN_BLUR_SIGMA; }
 <global>gl{WS}render{WS}lights		{ return GL_RENDER_LIGHTS; }
+<global>headless{WS}                { return HEADLESS; }
 
 <INITIAL>camera{WS}                 { yy_push_state(camera); return CAMERA; }
 <camera>pos{WS}                     { return POS; }

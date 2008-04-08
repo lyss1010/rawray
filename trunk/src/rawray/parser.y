@@ -26,7 +26,7 @@
 #include "triangle_mesh.h"
 #include "sphere.h"
 
-//#define YYDEBUG 1
+#define YYDEBUG 1
 
 #define yyerror(x) printf("Parser error on line %d: %s\n", yyline, x); 
 
@@ -97,7 +97,9 @@ std::stack<math::Matrix4x4>             g_matrixStack;
 %token RENDER_SPINLOCK_SLEEP
 %token GAUSSIAN_BLUR_MAX
 %token GAUSSIAN_BLUR_SIGMA
+
 %token GL_RENDER_LIGHTS
+%token HEADLESS
 
 %token CAMERA
 %token POS
@@ -387,10 +389,14 @@ globalOptions: /* empty */
             { printf( "gaussian blur max = %f\n", rawray::options::global::gaussian_blur_max = $2 ); }
         | GAUSSIAN_BLUR_SIGMA rExp globalOptions
             { printf( "gaussian blur sigma = %f\n", rawray::options::global::gaussian_blur_sigma = $2 ); }
-        | ENABLE GL_RENDER_LIGHTS
+        | ENABLE GL_RENDER_LIGHTS globalOptions
 			{ printf( "enabling rendering of lights in gl\n" ); rawray::options::global::gl_render_lights = true; }
-		| DISABLE GL_RENDER_LIGHTS
+		| DISABLE GL_RENDER_LIGHTS globalOptions
 			{ printf( "disabling rendering of lights in gl\n" ); rawray::options::global::gl_render_lights = false; }
+		| ENABLE HEADLESS globalOptions
+		    { printf( "enabling headless mode\n" ); rawray::options::global::headless = true; }
+		| DISABLE HEADLESS globalOptions
+		    { printf( "disabling headless mode\n" ); rawray::options::global::headless = false; }
 ;
 
 cameraOptions: /* empty */
@@ -519,7 +525,7 @@ void SetConfigSources(Scene* scene, Camera* cam, Image* img) {
 }
 
 bool ConfigParser(const char* filename) {
-    //yydebug = 1;
+    yydebug = 1;
     
     if( !g_scene || !g_camera || !g_image )
         return false;

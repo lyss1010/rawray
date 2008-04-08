@@ -18,6 +18,7 @@ namespace global {
     math::Vector3 gl_bg_color;
     uint32 gl_sphere_sections;
 	bool gl_render_lights;
+    bool headless;
 
     TriangleIntersection triangle_intersection_algorithm;
 
@@ -88,6 +89,7 @@ void init() {
 	global::gaussian_blur_sigma = 1.0f;
 	global::gl_sphere_sections = 8;
 	global::gl_render_lights = false;
+    global::headless = false;
 
     camera::eye = Vector3(0);
     camera::view = Vector3(0.0f, 0.0f, -1.0f);

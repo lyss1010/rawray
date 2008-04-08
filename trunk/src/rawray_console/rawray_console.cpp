@@ -18,7 +18,7 @@ int _tmain( int argc, _TCHAR* argv[] )
 {
 	// Enable memory leak messages on exit
 	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF );
-	_CrtSetBreakAlloc( 128 );
+	//_CrtSetBreakAlloc( 438 );
 
     // Initialize options defaults
     rawray::options::init();
@@ -26,8 +26,9 @@ int _tmain( int argc, _TCHAR* argv[] )
     // Open GLUT window and begin rendering
 	atexit( exit_cleanup );
 	rawray::GlutWindow::Create(&argc, argv);
-	rawray::g_window->MainLoop(); // never returns
 
-	assert( 0 );
+    // This will only return if we are in headless mode
+	rawray::g_window->MainLoop();
+
 	return 0;
 }

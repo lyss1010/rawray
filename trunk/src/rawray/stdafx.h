@@ -10,6 +10,8 @@
 
 // Windows Includes
 #include <Windows.h>
+#include <winsock.h>
+
 
 // STD Includes
 #pragma warning(push)

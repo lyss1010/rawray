@@ -7,5 +7,4 @@
 #include "stdafx.h"
 
 
-
 #endif // RAWRAY_DISTRIBUTED_CLIENT_DISTRIBUTED_SERVER_H

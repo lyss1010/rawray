@@ -30,6 +30,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "distributed_server", "src\d
 		{223E68B7-30C0-4701-ADBF-7FE459ADBBEC} = {223E68B7-30C0-4701-ADBF-7FE459ADBBEC}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "distributed_client", "src\distributed_client\distributed_client.vcproj", "{4D8E89AA-38F4-4108-AD72-F49EFBC51C36}"
+	ProjectSection(ProjectDependencies) = postProject
+		{223E68B7-30C0-4701-ADBF-7FE459ADBBEC} = {223E68B7-30C0-4701-ADBF-7FE459ADBBEC}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -62,6 +67,10 @@ Global
 		{38A11840-A1C0-420C-B077-FF8224F39F85}.Debug.Build.0 = Debug|Win32
 		{38A11840-A1C0-420C-B077-FF8224F39F85}.Release.ActiveCfg = Release|Win32
 		{38A11840-A1C0-420C-B077-FF8224F39F85}.Release.Build.0 = Release|Win32
+		{4D8E89AA-38F4-4108-AD72-F49EFBC51C36}.Debug.ActiveCfg = Debug|Win32
+		{4D8E89AA-38F4-4108-AD72-F49EFBC51C36}.Debug.Build.0 = Debug|Win32
+		{4D8E89AA-38F4-4108-AD72-F49EFBC51C36}.Release.ActiveCfg = Release|Win32
+		{4D8E89AA-38F4-4108-AD72-F49EFBC51C36}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

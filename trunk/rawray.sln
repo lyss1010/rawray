@@ -29,10 +29,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rawray_distributed", "src\r
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "parsers", "src\parsers\parsers.vcproj", "{4413522F-4FB1-4689-B4D2-5ADD9B6A7384}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -65,10 +61,6 @@ Global
 		{070505BF-8437-428F-86A7-2F33C538C029}.Debug.Build.0 = Debug|Win32
 		{070505BF-8437-428F-86A7-2F33C538C029}.Release.ActiveCfg = Release|Win32
 		{070505BF-8437-428F-86A7-2F33C538C029}.Release.Build.0 = Release|Win32
-		{4413522F-4FB1-4689-B4D2-5ADD9B6A7384}.Debug.ActiveCfg = Debug|Win32
-		{4413522F-4FB1-4689-B4D2-5ADD9B6A7384}.Debug.Build.0 = Debug|Win32
-		{4413522F-4FB1-4689-B4D2-5ADD9B6A7384}.Release.ActiveCfg = Release|Win32
-		{4413522F-4FB1-4689-B4D2-5ADD9B6A7384}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

@@ -1,14 +1,19 @@
 /////////////////////////////////////////////////////////////////////////////
-// Distributed Console Entry Point : rawray_distributed.cpp
+// Console Entry Point : rawray_distributed.cpp
 //
 /////////////////////////////////////////////////////////////////////////////
 #include "rawray_distributed.h"
+#include "rawray/glut_window.h"
 #include "rawray/options.h"
+#include "distributed_node.h"
 
+// Global vars
+DistributedNode* g_distributedNode = NULL;
 
 
 // Exit point
 void exit_cleanup(void) {
+	delete g_distributedNode;
     _CrtDumpMemoryLeaks();
 }
 
@@ -19,13 +24,36 @@ int _tmain( int argc, _TCHAR* argv[] )
 	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF );
 	//_CrtSetBreakAlloc( 438 );
 
-    std::cout << "Distributed Server..." << std::endl;
+    // Initialize options defaults
+    rawray::options::init();
 
-    if( ListenForTasks( 42000, 10 ) ) {
-        std::cout << "OK :)" << std::endl;
-    } else {
-        std::cout << "FAILED :(" << std::endl;
-    }
+    // Open GLUT window and begin rendering
+	atexit( exit_cleanup );
+
+	char c = 0;
+	while( c != 's' && c != 'S' && c != 'c' && c != 'C' ) {
+		std::cout << "Do you wish to run a (S)erver or (C)lient? " << std::flush;
+		std::cin >> c;
+		std::cout << std::endl;
+	}
+
+	switch( c ) {
+		case 'c':
+		case 'C':
+			g_distributedNode = new DistributedNode(false);
+			break;
+
+		case 's':
+		case 'S':
+			g_distributedNode = new DistributedNode(true);
+			break;
+	}
+
+	g_distributedNode->Run();
+	while( true ) {
+		std::cout << ".";
+		Sleep( 1000 );
+	}
 
 	return 0;
 }

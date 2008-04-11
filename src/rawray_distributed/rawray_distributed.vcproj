@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="math"
-	ProjectGUID="{4A8FBD98-06B3-47A9-B8AE-FAA4E958DFF8}"
+	Name="rawray_distributed"
+	ProjectGUID="{070505BF-8437-428F-86A7-2F33C538C029}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -12,50 +12,44 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)lib"
+			OutputDirectory="$(SolutionDir)bin\"
 			IntermediateDirectory="build"
-			ConfigurationType="2"
-			CharacterSet="2"
-			DeleteExtensionsOnClean="*.ilk;*.map;*.pch; *.obj;*.ilk;*.pdb;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.bat;$(TargetPath)">
+			ConfigurationType="1"
+			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				InlineFunctionExpansion="0"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)inc&quot;;&quot;$(SolutionDir)src&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;MATH_EXPORTS"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CONSOLE"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				SmallerTypeCheck="TRUE"
 				RuntimeLibrary="3"
-				BufferSecurityCheck="TRUE"
 				ForceConformanceInForLoopScope="TRUE"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="2"
-				BrowseInformation="0"
 				BrowseInformationFile="$(IntDir)"
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="FALSE"
-				DebugInformationFormat="3"/>
+				DebugInformationFormat="3"
+				DisableSpecificWarnings="4251"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				ShowProgress="0"
-				OutputFile="$(OutDir)/d_$(ProjectName).dll"
+				OutputFile="$(OutDir)/rawray_distributed.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="$(SolutionDir)lib"
-				ForceSymbolReferences="__DllMainCRTStartup@12"
 				GenerateDebugInformation="TRUE"
 				AssemblyDebug="1"
+				ProgramDatabaseFile="$(OutDir)/rawray_distributed.pdb"
 				GenerateMapFile="FALSE"
 				MapFileName="$(OutDir)/$(ProjectName).map"
 				MapExports="TRUE"
-				MapLines="FALSE"
+				SubSystem="1"
 				OptimizeReferences="1"
 				EnableCOMDATFolding="1"
-				OptimizeForWindows98="0"
-				ResourceOnlyDLL="TRUE"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -80,11 +74,10 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)lib"
+			OutputDirectory="$(SolutionDir)bin\"
 			IntermediateDirectory="build"
-			ConfigurationType="2"
-			CharacterSet="2"
-			DeleteExtensionsOnClean="*.ilk;*.map;*.pch; *.obj;*.ilk;*.pdb;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.bat;$(TargetPath)">
+			ConfigurationType="1"
+			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
 				InlineFunctionExpansion="2"
@@ -93,33 +86,29 @@
 				OptimizeForProcessor="3"
 				OptimizeForWindowsApplication="TRUE"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)inc&quot;;&quot;$(SolutionDir)src&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;MATH_EXPORTS"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CONSOLE"
 				StringPooling="TRUE"
-				MinimalRebuild="FALSE"
-				BasicRuntimeChecks="0"
-				SmallerTypeCheck="FALSE"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="FALSE"
 				EnableEnhancedInstructionSet="2"
 				ForceConformanceInForLoopScope="TRUE"
 				UsePrecompiledHeader="2"
-				BrowseInformation="0"
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="FALSE"
-				DebugInformationFormat="0"/>
+				DebugInformationFormat="0"
+				DisableSpecificWarnings="4251"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				ShowProgress="0"
+				OutputFile="$(OutDir)/rawray_distributed.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="$(SolutionDir)lib"
-				ForceSymbolReferences="__DllMainCRTStartup@12"
+				GenerateDebugInformation="FALSE"
+				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				OptimizeForWindows98="0"
-				ResourceOnlyDLL="TRUE"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -151,40 +140,10 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath=".\basic_math.cpp">
-			</File>
-			<File
-				RelativePath=".\matrix4x4.cpp">
+				RelativePath=".\rawray_distributed.cpp">
 			</File>
 			<File
 				RelativePath=".\stdafx.cpp">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\tuple2.cpp">
-			</File>
-			<File
-				RelativePath=".\tuple3.cpp">
-			</File>
-			<File
-				RelativePath=".\vector2.cpp">
-			</File>
-			<File
-				RelativePath=".\vector3.cpp">
-			</File>
-			<File
-				RelativePath=".\vector4.cpp">
 			</File>
 		</Filter>
 		<Filter
@@ -192,28 +151,10 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
-				RelativePath=".\basic_math.h">
-			</File>
-			<File
-				RelativePath=".\matrix4x4.h">
+				RelativePath=".\rawray_distributed.h">
 			</File>
 			<File
 				RelativePath=".\stdafx.h">
-			</File>
-			<File
-				RelativePath=".\tuple2.h">
-			</File>
-			<File
-				RelativePath=".\tuple3.h">
-			</File>
-			<File
-				RelativePath=".\vector2.h">
-			</File>
-			<File
-				RelativePath=".\vector3.h">
-			</File>
-			<File
-				RelativePath=".\vector4.h">
 			</File>
 		</Filter>
 		<Filter

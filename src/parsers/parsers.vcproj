@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="math"
-	ProjectGUID="{4A8FBD98-06B3-47A9-B8AE-FAA4E958DFF8}"
+	Name="parsers"
+	ProjectGUID="{4413522F-4FB1-4689-B4D2-5ADD9B6A7384}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -15,24 +15,19 @@
 			OutputDirectory="$(SolutionDir)lib"
 			IntermediateDirectory="build"
 			ConfigurationType="2"
-			CharacterSet="2"
-			DeleteExtensionsOnClean="*.ilk;*.map;*.pch; *.obj;*.ilk;*.pdb;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.bat;$(TargetPath)">
+			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				InlineFunctionExpansion="0"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)inc&quot;;&quot;$(SolutionDir)src&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;MATH_EXPORTS"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;PARSERS_EXPORTS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				SmallerTypeCheck="TRUE"
 				RuntimeLibrary="3"
-				BufferSecurityCheck="TRUE"
 				ForceConformanceInForLoopScope="TRUE"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="2"
-				BrowseInformation="0"
-				BrowseInformationFile="$(IntDir)"
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="3"/>
@@ -48,14 +43,13 @@
 				ForceSymbolReferences="__DllMainCRTStartup@12"
 				GenerateDebugInformation="TRUE"
 				AssemblyDebug="1"
+				ProgramDatabaseFile="$(OutDir)/$(ProjectName).pdb"
 				GenerateMapFile="FALSE"
 				MapFileName="$(OutDir)/$(ProjectName).map"
 				MapExports="TRUE"
-				MapLines="FALSE"
-				OptimizeReferences="1"
-				EnableCOMDATFolding="1"
-				OptimizeForWindows98="0"
+				SubSystem="0"
 				ResourceOnlyDLL="TRUE"
+				ImportLibrary="$(OutDir)/$(TargetName).lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -83,8 +77,7 @@
 			OutputDirectory="$(SolutionDir)lib"
 			IntermediateDirectory="build"
 			ConfigurationType="2"
-			CharacterSet="2"
-			DeleteExtensionsOnClean="*.ilk;*.map;*.pch; *.obj;*.ilk;*.pdb;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.bat;$(TargetPath)">
+			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
 				InlineFunctionExpansion="2"
@@ -93,17 +86,13 @@
 				OptimizeForProcessor="3"
 				OptimizeForWindowsApplication="TRUE"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)inc&quot;;&quot;$(SolutionDir)src&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;MATH_EXPORTS"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;PARSERS_EXPORTS"
 				StringPooling="TRUE"
-				MinimalRebuild="FALSE"
-				BasicRuntimeChecks="0"
-				SmallerTypeCheck="FALSE"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="FALSE"
 				EnableEnhancedInstructionSet="2"
 				ForceConformanceInForLoopScope="TRUE"
 				UsePrecompiledHeader="2"
-				BrowseInformation="0"
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="0"/>
@@ -112,14 +101,17 @@
 			<Tool
 				Name="VCLinkerTool"
 				ShowProgress="0"
+				OutputFile="$(OutDir)/$(ProjectName).dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="$(SolutionDir)lib"
 				ForceSymbolReferences="__DllMainCRTStartup@12"
+				GenerateDebugInformation="FALSE"
+				SubSystem="0"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				OptimizeForWindows98="0"
 				ResourceOnlyDLL="TRUE"
+				ImportLibrary="$(OutDir)/$(TargetName).lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -151,10 +143,7 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath=".\basic_math.cpp">
-			</File>
-			<File
-				RelativePath=".\matrix4x4.cpp">
+				RelativePath=".\parsers.cpp">
 			</File>
 			<File
 				RelativePath=".\stdafx.cpp">
@@ -171,49 +160,16 @@
 						UsePrecompiledHeader="1"/>
 				</FileConfiguration>
 			</File>
-			<File
-				RelativePath=".\tuple2.cpp">
-			</File>
-			<File
-				RelativePath=".\tuple3.cpp">
-			</File>
-			<File
-				RelativePath=".\vector2.cpp">
-			</File>
-			<File
-				RelativePath=".\vector3.cpp">
-			</File>
-			<File
-				RelativePath=".\vector4.cpp">
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
-				RelativePath=".\basic_math.h">
-			</File>
-			<File
-				RelativePath=".\matrix4x4.h">
+				RelativePath=".\parsers.h">
 			</File>
 			<File
 				RelativePath=".\stdafx.h">
-			</File>
-			<File
-				RelativePath=".\tuple2.h">
-			</File>
-			<File
-				RelativePath=".\tuple3.h">
-			</File>
-			<File
-				RelativePath=".\vector2.h">
-			</File>
-			<File
-				RelativePath=".\vector3.h">
-			</File>
-			<File
-				RelativePath=".\vector4.h">
 			</File>
 		</Filter>
 		<Filter

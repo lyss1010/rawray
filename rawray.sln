@@ -27,6 +27,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rawray_console", "src\rawra
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rawray_distributed", "src\rawray_distributed\rawray_distributed.vcproj", "{070505BF-8437-428F-86A7-2F33C538C029}"
 	ProjectSection(ProjectDependencies) = postProject
+		{223E68B7-30C0-4701-ADBF-7FE459ADBBEC} = {223E68B7-30C0-4701-ADBF-7FE459ADBBEC}
 	EndProjectSection
 EndProject
 Global

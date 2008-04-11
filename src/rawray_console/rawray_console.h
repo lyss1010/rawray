@@ -7,5 +7,4 @@
 #include "stdafx.h"
 
 
-
 #endif // RAWRAY_RAWRAY_CONSOLE_RAWRAY_CONSOLE_H

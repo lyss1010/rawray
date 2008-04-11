@@ -1,21 +1,39 @@
-
-/*
 /////////////////////////////////////////////////////////////////////////////
-// Console Entry Point : distributed_server.cpp
+// Distributed Console Entry Point : rawray_distributed.cpp
 //
 /////////////////////////////////////////////////////////////////////////////
-#include "distributed_server.h"
+#include "rawray_distributed.h"
 #include "rawray/options.h"
+
+
 
 // Exit point
 void exit_cleanup(void) {
     _CrtDumpMemoryLeaks();
 }
 
+// Console Entry point
+int _tmain( int argc, _TCHAR* argv[] )
+{
+	// Enable memory leak messages on exit
+	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF );
+	//_CrtSetBreakAlloc( 438 );
+
+    std::cout << "Distributed Server..." << std::endl;
+
+    if( ListenForTasks( 42000, 10 ) ) {
+        std::cout << "OK :)" << std::endl;
+    } else {
+        std::cout << "FAILED :(" << std::endl;
+    }
+
+	return 0;
+}
+
 
 // Client loop
-int ConnectToServer(uint16 port) {
-    return NETWORK_ERROR;
+bool ConnectToServer(uint16 port) {
+    return false;
 //	int err;
 //	WORD sockVersion = MAKEWORD(1, 1);
 //
@@ -76,8 +94,8 @@ int ConnectToServer(uint16 port) {
 
 
 // Server loop
-int ListenForTasks(uint16 port, int numSockets) {
-    return NETWORK_ERROR;
+bool ListenForTasks(uint16 port, int numSockets) {
+    return false;
 //    int err;
 //	WORD sockVersion = MAKEWORD(1, 1); // WinSock 1.1
 //
@@ -147,24 +165,3 @@ int ListenForTasks(uint16 port, int numSockets) {
 //	WSACleanup();
 //	return NETWORK_OK;
 }
-
-
-// Console Entry point
-int _tmain( int argc, _TCHAR* argv[] )
-{
-	// Enable memory leak messages on exit
-	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF );
-	//_CrtSetBreakAlloc( 438 );
-
-    std::cout << "Distributed Server..." << std::endl;
-
-    int err = ListenForTasks( 42000, 10 );
-    if( err == NETWORK_OK ) {
-        std::cout << "OK :)" << std::endl;
-    } else {
-        std::cout << "FAILED :(" << std::endl;
-    }
-
-	return 0;
-}
-*/

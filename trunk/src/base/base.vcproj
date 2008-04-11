@@ -14,7 +14,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)lib"
-			IntermediateDirectory="Debug"
+			IntermediateDirectory="build"
 			ConfigurationType="2"
 			CharacterSet="2"
 			DeleteExtensionsOnClean="*.ilk;*.map;*.pch; *.obj;*.ilk;*.pdb;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.bat;$(TargetPath)">
@@ -82,7 +82,7 @@
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)lib"
-			IntermediateDirectory="Release"
+			IntermediateDirectory="build"
 			ConfigurationType="2"
 			CharacterSet="2"
 			DeleteExtensionsOnClean="*.ilk;*.map;*.pch; *.obj;*.ilk;*.pdb;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.bat;$(TargetPath)">

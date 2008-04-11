@@ -1,16 +1,11 @@
 /////////////////////////////////////////////////////////////////////////////
 // Precompiled Header : stdafx.h
 //
-// Common includes and definitions of rawray_distributed project
+// Common includes and definitions of rawray_console project
 /////////////////////////////////////////////////////////////////////////////
-#ifndef RAWRAY_RAWRAY_DISTRIBUTED_STDAFX_H
-#define RAWRAY_RAWRAY_DISTRIBUTED_STDAFX_H
+#ifndef RAWRAY_RAWRAY_CONSOLE_STDAFX_H
+#define RAWRAY_RAWRAY_CONSOLE_STDAFX_H
 #include "base/global_defs.h"
-
-
-// Windows Includes
-#include <Windows.h>
-#include <Winsock2.h>
 
 
 // Memory leak detection
@@ -23,4 +18,4 @@
 #include <tchar.h>
 
 
-#endif // RAWRAY_RAWRAY_DISTRIBUTED_STDAFX_H
+#endif // RAWRAY_RAWRAY_CONSOLE_STDAFX_H

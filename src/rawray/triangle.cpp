@@ -104,16 +104,16 @@ bool Triangle::IntersectBarycentric(HitInfo& hit, const Ray& ray, float minDista
     const float d = v0.x - v2.x;
     const float e = v0.y - v2.y;
     const float f = v0.z - v2.z;
-    const float g = -ray.direction.x;
-    const float h = -ray.direction.y;
-    const float i = -ray.direction.z;
+	//			g = -ray.direction.x
+	//			h = -ray.direction.y
+	//			i = -ray.direction.z
     const float j = v0.x - ray.origin.x;
     const float k = v0.y - ray.origin.y;
     const float l = v0.z - ray.origin.z;
 
-    const float ei_minus_hf = e*i - h*f;
-    const float gf_minus_di = g*f - d*i;
-    const float dh_minus_eg = d*h - e*g;
+    const float ei_minus_hf = ray.direction.y*f - e*ray.direction.z;
+    const float gf_minus_di = d*ray.direction.z - ray.direction.x*f;
+    const float dh_minus_eg = e*ray.direction.x - d*ray.direction.y;
 
     const float denominator = a*ei_minus_hf + b*gf_minus_di + c*dh_minus_eg;
     if( denominator == 0.0f ) return false;
@@ -126,7 +126,7 @@ bool Triangle::IntersectBarycentric(HitInfo& hit, const Ray& ray, float minDista
     const float t = (f*ak_minus_jb + e*jc_minux_al + d*bl_minux_kc) * denominatorMul;
     if( t < minDistance || t > maxDistance ) return false;
 
-    const float gamma = (i*ak_minus_jb + h*jc_minux_al + g*bl_minux_kc) * denominatorMul;
+    const float gamma = (-ray.direction.z*ak_minus_jb - ray.direction.y*jc_minux_al - ray.direction.x*bl_minux_kc) * denominatorMul;
     if( gamma < 0.0f || gamma > 1.0f ) return false;
 
     const float beta = (j*ei_minus_hf + k*gf_minus_di + l*dh_minus_eg) * denominatorMul;
@@ -150,7 +150,7 @@ void Triangle::PreCalcBarycentricProjection() {
     const Vector3& v2 = mesh_.GetVertices()[ vertexIndices.z ];
 
     SAFE_DELETE(n_);
-    n_ = new Vector3( math::Cross( v1-v0, v2-v0 ).Normalize() );
+    n_ = new Vector3( math::Cross( v2-v0, v1-v0 ).Normalize() );
 }
 
 // TODO: This seems to translate the triangles by some amount =(
@@ -161,7 +161,7 @@ bool Triangle::IntersectBarycentricProjection(HitInfo& hit, const Ray& ray, floa
     const Vector3& v1 = mesh_.GetVertices()[ vertexIndices.y ];
     const Vector3& v2 = mesh_.GetVertices()[ vertexIndices.z ];
 
-    // Edges of triangle
+	// Edges of triangle
     const Vector3& b = v2 - v0;
     const Vector3& c = v1 - v0;
 
@@ -174,9 +174,9 @@ bool Triangle::IntersectBarycentricProjection(HitInfo& hit, const Ray& ray, floa
     if( distance < minDistance || distance > maxDistance ) return false;
 
     // Determine dominant axis
-    const float absNX = abs(n_->x);
-    const float absNY = abs(n_->y);
-    const float absNZ = abs(n_->z);
+    const float absNX = fabs(n_->x);
+    const float absNY = fabs(n_->y);
+    const float absNZ = fabs(n_->z);
 
     uint8 axis; // 0=x, 1=y, 2=z
     if( absNX > absNY )
@@ -188,7 +188,7 @@ bool Triangle::IntersectBarycentricProjection(HitInfo& hit, const Ray& ray, floa
     const uint8 v = (axis+2)%3;
 
     // Compute the point on the plane where we intersect
-    const Vector3& h = (ray.direction * distance) + ray.origin;
+    const Vector3& h = (ray.direction * distance) + ray.origin - v0;
 
     denominator = b[u] * c[v] - b[v] * c[u];
     if( denominator == 0.0f ) return false;
@@ -212,15 +212,42 @@ bool Triangle::IntersectBarycentricProjection(HitInfo& hit, const Ray& ray, floa
 
 
 // Moller triangle intersection test
+// See: http://ompf.org/forum/viewtopic.php?t=165
+// TODO: Does not work
 void Triangle::PreCalcMoller() { }
 bool Triangle::IntersectMoller(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance) {
-    UNREFERENCED_PARAMETER(hit);
-    UNREFERENCED_PARAMETER(ray);
-    UNREFERENCED_PARAMETER(minDistance);
-    UNREFERENCED_PARAMETER(maxDistance);
-    
-    // TODO: Write algorithm
-    return false;
+	const Tuple3I vertexIndices = mesh_.GetVertexIndices()[ index_ ];
+    const Vector3& v0 = mesh_.GetVertices()[ vertexIndices.x ];
+    const Vector3& v1 = mesh_.GetVertices()[ vertexIndices.y ];
+    const Vector3& v2 = mesh_.GetVertices()[ vertexIndices.z ];
+
+	const Vector3& e0 = v1 - v0;
+	const Vector3& e1 = v2 - v0;
+
+	const Vector3& pvec = math::Cross( ray.direction, e1 );
+	float det = math::Dot( e0, pvec );
+	if( det == 0.0f ) return false;
+
+	float inv_det = 1.0f / det;
+	const Vector3& tvec = ray.origin - v0;
+
+	float u = math::Dot( tvec, pvec ) * inv_det;
+	if( u < 0.0f || u > 1.0f ) return false;
+
+	const Vector3& qvec = math::Cross( tvec, e0 );
+
+	float v = math::Dot( e1, qvec ) * inv_det;
+	if( v < 0.0f || (u+v) > 1.0f ) return false;
+
+	float t = math::Dot( e1, qvec ) * inv_det;
+	if( t < minDistance || t > maxDistance ) return false;
+
+	hit.point = ray.origin + t * ray.direction;
+    hit.distance = t;
+    hit.material = material_;
+    Interpolate(hit, 1-u-v, u, v);
+
+    return true;
 }
 
 
@@ -313,87 +340,3 @@ void Triangle::Interpolate(HitInfo& hit, float alpha, float beta, float gamma) {
 } // namespace rawray
 
 
-
-
-/*
-    Vec3f b = p2 - p0;
-    Vec3f c = p1 - p0;
-    Vec3f N = cross(c,b);
-    float t = -dot((ray.org - p0),N) / dot(ray.dir,N);
-
-    if(t < tmin || t >= tmax)
-      continue;
-
-    int k = 0;
-
-    if(fabs(N[0]) > fabs(N[1]))
-    {
-      if(fabs(N[0]) > fabs(N[2]))
-        k = 0;
-      else
-        k = 2;
-    }
-    else
-    {
-      if(fabs(N[1]) > fabs(N[2]))
-        k = 1;
-      else
-        k = 2;
-    }
-
-    int iu = (k+1) % 3;
-    int iv = (k+2) % 3;
-
-    Vec3f H;
-    H[iu] = ray.org[iu] + t * ray.dir[iu] - p0[iu];
-    H[iv] = ray_.org[iv] + t * ray.dir[iv] - p0[iv];
-
-    float u = ((b[iu] * H[iv]) - (b[iv] * H[iu])) / (b[iu] * c[iv] - b[iv] * c[iu]);
-    if(u < 0.0) continue;
-
-    float v = ((c[iv] * H[iu]) - (c[iu] * H[iv])) / (b[iu] * c[iv] - b[iv] * c[iu]);
-    if(v < 0.0) continue;
-    if(u + v > 1.0) continue;
-
-
-	*/
-
-
-/*
-
-//// Moller-Trumbore:
-    Vec3f edge0,edge1;
-
-    edge0 = p1 - p0;
-    edge1 = p2 - p0;
-
-    Vec3f pvec = cross(ray.dir, edge1);
-
-    float det = dot(edge0,pvec);
-
-    if(det > -C_EPSILON && det < C_EPSILON)
-      continue; // no hit
-
-    float inv_det = 1.0 / det;
-
-    Vec3f tvec = ray.org - p0;
-
-    float u = dot(tvec,pvec) * inv_det;
-
-    if(u < 0.0 || u > 1.0)
-      continue;
-
-    Vec3f qvec = cross(tvec,edge0);
-
-    float v = dot(ray.dir,qvec) * inv_det;
-
-    if(v < 0.0 || (u+v) > 1.0)
-      continue;
-
-    float t = dot(edge1,qvec) * inv_det;
-
-    if(t < tmin || t >= tmax_t)
-      continue;
-
-
-*/

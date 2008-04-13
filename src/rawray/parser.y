@@ -486,7 +486,7 @@ p0Options: /* empty */
             { printf( "lorenz start = %f, %f, %f\n", $2, $4, $6 ); rawray::options::p0::lorenz_start = math::Vector3($2,$4,$6); }
 ;
 
-rExp:     YY_REAL                 { $$ = $1; }
+rExp:     YY_REAL              { $$ = $1; }
         | iExp                 { $$ = $1; }
         | fExp                 { $$ = $1; }
         
@@ -532,7 +532,7 @@ constantExp:
         |  YY_MATH_PI { $$ = 3.141592653589793f; }
 ;
 
-iExp:     YY_PARSE_INT             { $$ = $1; }
+iExp:     YY_PARSE_INT          { $$ = $1; }
         | iExp '+' iExp         { $$ = $1 + $3; }
         | iExp '-' iExp         { $$ = $1 - $3; }
         | iExp '*' iExp         { $$ = $1 * $3; }

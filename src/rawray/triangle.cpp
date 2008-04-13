@@ -82,7 +82,7 @@ void Triangle::RenderGL() {
 }
 
 void Triangle::PreCalc() {
-    return ((*this).*preCalc_)();
+    ((*this).*preCalc_)();
 }
 
 bool Triangle::Intersect(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance) {
@@ -153,7 +153,7 @@ void Triangle::PreCalcBarycentricProjection() {
     n_ = new Vector3( math::Cross( v2-v0, v1-v0 ).Normalize() );
 }
 
-// TODO: This seems to translate the triangles by some amount =(
+// TODO: The normal interpolation is incorrect
 bool Triangle::IntersectBarycentricProjection(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance) {
     assert( n_ );
 	const Tuple3I vertexIndices = mesh_.GetVertexIndices()[ index_ ];
@@ -271,7 +271,6 @@ void Triangle::PreCalcPlucker() {
     pluckC_ = new PluckerCoord( v1-v0, v0 );
 }
 
-// TODO: This seems to rotate the triangles by some amount =(
 bool Triangle::IntersectPlucker(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance) {
     assert(pluckA_); assert(pluckB_); assert(pluckC_);
 
@@ -338,5 +337,4 @@ void Triangle::Interpolate(HitInfo& hit, float alpha, float beta, float gamma) {
 }
 
 } // namespace rawray
-
 

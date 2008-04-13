@@ -13,13 +13,26 @@
 /////////////////////////////////////////////////////////////////////////////
 namespace rawray {
 
+class Triangle;
+typedef bool (Triangle::*TriangleIntersectFunc)(HitInfo&, const Ray&, float, float);
+typedef void (Triangle::*TrianglePreCalcFunc)();
+
+class PluckerCoord {
+public:
+    PluckerCoord(const Vector3& direction, const Vector3& point);
+    float GetOrientation(const PluckerCoord& p);
+
+private:
+    Vector3 u_, v_;
+
+    DISALLOW_IMPLICIT_CONSTRUCTORS(PluckerCoord);
+};
+
 class DllExport Triangle : public Object
 {
 public:
-    Triangle(TriangleMesh& mesh, uint32 index, const Material* material)
-            : Object(material), mesh_(mesh), index_(index) { }
-
-    virtual ~Triangle() { }
+    Triangle(TriangleMesh& mesh, uint32 index, const Material* material);
+    virtual ~Triangle();
 
     TriangleMesh& GetMesh() { return mesh_; }
     uint32 GetIndex() const { return index_; }
@@ -34,19 +47,32 @@ public:
 
 private:
     // Supported intersection algorithms
-    bool Barycentric(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance);
-    bool BarycentricProjection(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance);
-    bool Moller(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance);
-    bool Plucker(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance);
+    bool IntersectBarycentric(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance);
+    bool IntersectBarycentricProjection(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance);
+    bool IntersectMoller(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance);
+    bool IntersectPlucker(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance);
 
-    void Interpolate(HitInfo& hit, float alpha, float beta);
+    // Precalc for each intersection algorithm
+    void PreCalcBarycentric();
+    void PreCalcBarycentricProjection();
+    void PreCalcMoller();
+    void PreCalcPlucker();
+
+    void Interpolate(HitInfo& hit, float alpha, float beta, float gamma);
+
+    TriangleIntersectFunc intersect_;
+    TrianglePreCalcFunc preCalc_;
 
     TriangleMesh& mesh_;
     uint32 index_;
 
-    // Precomputed data
-    Vector3 n_;         // Normal of the plane this triangle lines on
-    
+    // Defined only if using BarycentricProjection intersections
+    Vector3* n_;
+
+    // Defined only if using Plucker intersections
+    PluckerCoord* pluckA_;
+    PluckerCoord* pluckB_;
+    PluckerCoord* pluckC_;
 
     DISALLOW_IMPLICIT_CONSTRUCTORS(Triangle);
 

@@ -39,10 +39,11 @@ GlutWindow::GlutWindow(int* argc, char* argv[]) : cam_(), img_(), scene_(),
 {
     SetConfigSources(&scene_, &cam_, &img_);
 
-    //MakeEmptyScene();
     //MakeSpiralScene();
     //MakeBunnyScene();
-	MakeLorenzScene();
+	//MakeLorenzScene();
+    //MakeTeapotScene();
+    MakeTriangleScene();
 
     if( options::global::headless ) {
         // Begin render immediately w/o user interaction
@@ -273,7 +274,7 @@ void GlutWindow::InitGL() {
     glFrontFace( GL_FRONT );
     //glEnable( GL_CULL_FACE );
 
-	glPolygonMode( GL_FRONT, GL_POINT );
+	glPolygonMode( GL_FRONT, GL_FILL );
     glPolygonMode( GL_BACK, GL_POINT );
 
     glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );

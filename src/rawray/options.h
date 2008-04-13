@@ -23,6 +23,7 @@ namespace global {
     extern uint32 win_posX;
     extern uint32 win_posY;
 
+    extern math::Vector3 img_fg_color;
     extern math::Vector3 img_bg_color;
     extern math::Vector3 gl_bg_color;
     extern uint32 gl_sphere_sections;

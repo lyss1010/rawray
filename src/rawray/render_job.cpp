@@ -8,8 +8,17 @@
 namespace rawray {
 
 /////////////////////////////////////////////////////////////////////////////
-bool RenderTask::Run(Scene& scene, const Camera& cam, Image& img) {
-    scene.Raytrace(cam, img, x_, y_, width_, height_);
+bool RenderTask::Run(Scene& scene, const Camera& cam, Image& img, float* progress) {
+    if( height_ == 0 || width_ == 0 )
+        return false;
+
+    const float delta = 100.0f / height_;
+    for( uint32 row=y_; row<y_+height_; ++row ) {
+        *progress = float(row) * delta;
+        scene.Raytrace(cam, img, x_, row, width_, 1);
+    }
+    
+    *progress = 100.0f;
     return true;
 }
 
@@ -17,7 +26,7 @@ bool RenderTask::Run(Scene& scene, const Camera& cam, Image& img) {
 /////////////////////////////////////////////////////////////////////////////
 RenderThread::RenderThread(Scene& scene, const Camera& cam, Image& img) :
         scene_(scene), cam_(cam), img_(img), currentTask_(NULL),
-        threadID_(NULL), threadHandle_(NULL), abort_(false), isDone_(false) {
+        threadID_(NULL), threadHandle_(NULL), abort_(false), isDone_(false), progress_(0.0f) {
 
     threadHandle_ = CreateThread(
                     0,                              // No security params
@@ -26,6 +35,7 @@ RenderThread::RenderThread(Scene& scene, const Camera& cam, Image& img) :
                     this,                           // Start routine param
                     0,                              // No extra options (start immediately)
                     &threadID_ );                   // Save threadID_
+
     SetThreadPriority( threadHandle_, THREAD_PRIORITY_LOWEST );
 }
 
@@ -55,7 +65,8 @@ DWORD RenderThread::ThreadRoutine() {
         Sleep( sleepDuration );
 
         if( currentTask_ != NULL ) {
-            currentTask_->Run( scene_, cam_, img_ );
+            progress_ = 0.0f;
+            currentTask_->Run( scene_, cam_, img_, &progress_ );
             currentTask_ = NULL;
         }
     }
@@ -99,7 +110,15 @@ float RenderJob::Progress() {
     if( num_total == 0 || num_assigned <= numThreads_ )
         return 0.0f;
 
-    return 100.0f * float(num_assigned - numThreads_) / num_total;
+    // Progress of completed tasks
+    const float delta = 1.0f / num_total;
+    float progress = 100.0f * float(num_assigned - numThreads_) * delta;
+
+    // Progress of running tasks
+    //for( std::list<RenderThread*>::iterator thread = threads_.begin(); thread != threads_.end(); ++thread )
+    //    progress += delta * (*thread)->Progress();
+
+    return progress;
 }
 
 bool RenderJob::Run() {

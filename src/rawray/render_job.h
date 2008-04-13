@@ -20,7 +20,7 @@ public:
 
     ~RenderTask() { }
 
-    bool Run( Scene& scene, const Camera& cam, Image& img );
+    bool Run( Scene& scene, const Camera& cam, Image& img, float* progress );
 
 private:
     uint32 x_, y_;
@@ -39,6 +39,7 @@ public:
 
     bool IsIdle() { return currentTask_==NULL; }
     bool IsDone() { return isDone_; }
+    float Progress() { return progress_; }
     void SetCurrentTask(RenderTask* task) { if( !abort_ ) currentTask_ = task; }
     void Abort();
 
@@ -53,6 +54,7 @@ private:
     DWORD threadID_;
     bool abort_;
     bool isDone_;
+    float progress_;
 
     DISALLOW_IMPLICIT_CONSTRUCTORS(RenderThread);
 };

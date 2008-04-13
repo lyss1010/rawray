@@ -83,9 +83,9 @@ void init() {
     global::num_threads = 4;
     global::render_x_block = 32;
     global::render_y_block = 32;
-    global::render_handler_sleep = 50;
-    global::render_thread_sleep = 10;
-    global::render_spinlock_sleep = 10;
+    global::render_handler_sleep = 256;
+    global::render_thread_sleep = 256;
+    global::render_spinlock_sleep = 256;
 
     global::gaussian_blur_max = 2.0f;
 	global::gaussian_blur_sigma = 1.0f;

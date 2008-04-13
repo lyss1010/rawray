@@ -13,6 +13,15 @@
 
 namespace rawray {
 
+void GlutWindow::MakeScene(int* argc, char* argv[]) {
+    for(int i=1; i<*argc; ++i ) {
+        std::cout << "Loading config file '" << argv[i] << "'..." << std::endl;
+        if( !ConfigParser( argv[i] ) )
+            std::cout << "Loading config file '" << argv[i] << "'... FAILED" << std::endl;
+    }
+}
+
+
 void GlutWindow::MakeSpiralScene() {
     ConfigParser( "./../res/scenes/spiral.cfg" );
 
@@ -35,8 +44,6 @@ void GlutWindow::MakeSpiralScene() {
         rawray::Sphere* sphere = new Sphere( Vector3(x,y,z), r/10, mat );
         scene_.AddObject(sphere);
     }
-
-    scene_.PreCalc();
 }
 
 void GlutWindow::MakeLorenzScene() {
@@ -90,23 +97,6 @@ void GlutWindow::MakeLorenzScene() {
         rawray::Sphere* sphere = new Sphere( l, r, mat );
         scene_.AddObject(sphere);
     }
-
-    scene_.PreCalc();
-}
-
-void GlutWindow::MakeBunnyScene() {
-    ConfigParser( "./../res/scenes/bunny.cfg" );
-    scene_.PreCalc();
-}
-
-void GlutWindow::MakeTeapotScene() {
-    ConfigParser( "./../res/scenes/teapot.cfg" );
-    scene_.PreCalc();
-}
-
-void GlutWindow::MakeTriangleScene() {
-    ConfigParser( "./../res/scenes/triangle.cfg" );
-    scene_.PreCalc();
 }
 
 } // namespace rawray

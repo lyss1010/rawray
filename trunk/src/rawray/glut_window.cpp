@@ -39,11 +39,10 @@ GlutWindow::GlutWindow(int* argc, char* argv[]) : cam_(), img_(), scene_(),
 {
     SetConfigSources(&scene_, &cam_, &img_);
 
+    //MakeLorenzScene();
     //MakeSpiralScene();
-    //MakeBunnyScene();
-	//MakeLorenzScene();
-    //MakeTeapotScene();
-    MakeTriangleScene();
+    MakeScene(argc,argv);
+    scene_.PreCalc();
 
     if( options::global::headless ) {
         // Begin render immediately w/o user interaction

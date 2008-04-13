@@ -10,12 +10,11 @@ namespace rawray {
 
 PluckerCoord::PluckerCoord(const Vector3& direction, const Vector3& point) {
     u_ = direction;
-    v_ = direction; v_.Cross(point);
+	v_ = math::Cross(direction,point);
 }
 
 float PluckerCoord::GetOrientation(const PluckerCoord& p) {
-    //        L1*M6      -    L2*M5      +     L3*M4     +    L4*M3      -    L5*M2      +    L6*M1
-    return (u_.x*p.v_.z) - (u_.y*p.v_.y) + (u_.z*p.v_.x) + (v_.x*p.u_.z) - (v_.y*p.u_.y) + (v_.z*p.u_.x);
+	return u_.Dot(p.v_) + v_.Dot(p.u_);
 }
 
 Triangle::Triangle(TriangleMesh& mesh, uint32 index, const Material* material)
@@ -61,12 +60,23 @@ void Triangle::RenderGL() {
     const Vector3& v0 = mesh_.GetVertices()[ indicies.x ];
     const Vector3& v1 = mesh_.GetVertices()[ indicies.y ];
     const Vector3& v2 = mesh_.GetVertices()[ indicies.z ];
+
+	indicies = mesh_.GetNormalIndices()[ index_ ];
+	const Vector3& n0 = mesh_.GetNormals()[ indicies.x ];
+	const Vector3& n1 = mesh_.GetNormals()[ indicies.y ];
+	const Vector3& n2 = mesh_.GetNormals()[ indicies.z ];
+
     const Vector3& color = material_ ? material_->BaseColor() : Vector3(1);
 
     glBegin(GL_TRIANGLES);
         glColor3f( color.x, color.y, color.z );
+		glNormal3f(n0.x, n0.y, n0.z);
         glVertex3f(v0.x, v0.y, v0.z);
+
+		glNormal3f(n0.x, n1.y, n1.z);
         glVertex3f(v1.x, v1.y, v1.z);
+
+		glNormal3f(n2.x, n2.y, n2.z);
         glVertex3f(v2.x, v2.y, v2.z);
     glEnd();
 }
@@ -229,33 +239,32 @@ void Triangle::PreCalcPlucker() {
     SAFE_DELETE(pluckC_);
 
     // Edge A corresponds to the edge opposite of vertex A (v0)
-    pluckA_ = new PluckerCoord( v1-v2, v2 );
-    pluckB_ = new PluckerCoord( v2-v0, v0 );
-    pluckC_ = new PluckerCoord( v0-v1, v1 );
+    pluckA_ = new PluckerCoord( v2-v1, v1 );
+    pluckB_ = new PluckerCoord( v0-v2, v2 );
+    pluckC_ = new PluckerCoord( v1-v0, v0 );
 }
 
 // TODO: This seems to rotate the triangles by some amount =(
 bool Triangle::IntersectPlucker(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance) {
-    assert(pluckA_);
-    assert(pluckB_);
-    assert(pluckC_);
+    assert(pluckA_); assert(pluckB_); assert(pluckC_);
 
     PluckerCoord pluckRay( ray.direction, ray.origin );
     float dirA = pluckA_->GetOrientation( pluckRay );
     float dirB = pluckB_->GetOrientation( pluckRay );
     float dirC = pluckC_->GetOrientation( pluckRay );
 
-    // TODO: Intersection directly with edge = failure?
-    if( dirA == 0.0f || dirB == 0.0f || dirC == 0.0f )
-        return false;
+	// We treat hits on the exact edge as misses
+	if( dirA == 0.0f || dirB == 0.0f || dirC == 0.0f )
+		return false;
 
-    if( dirA < 0.0f ) {
-        if( dirB > 0.0f || dirC > 0.0f )
-            return false;
-    } else { // if( dirA > 0.0f )
-        if( dirB < 0.0f || dirC < 0.0f )
-            return false;
-    }
+	// Make sure all orientations are the same direction
+	if( dirA < 0.0f ) {
+		if( dirB > 0.0f || dirC > 0.0f )
+			return false;
+	} else {
+		if( dirB < 0.0f || dirC < 0.0f )
+			return false;
+	}
 
     const float norm = 1.0f / (dirA + dirB + dirC);
     const float alpha = dirA*norm;
@@ -267,9 +276,6 @@ bool Triangle::IntersectPlucker(HitInfo& hit, const Ray& ray, float minDistance,
     const Vector3& v1 = mesh_.GetVertices()[ vertexIndices.y ];
     const Vector3& v2 = mesh_.GetVertices()[ vertexIndices.z ];
 
-    HitInfo hit2;
-    IntersectBarycentric(hit2, ray, minDistance, maxDistance);
-
     // Use the computed orientation data as unnormalized barycentric coords
     hit.point = alpha*v0 + beta*v1 + gamma*v2;
     hit.distance = (hit.point - ray.origin).Length();
@@ -277,8 +283,7 @@ bool Triangle::IntersectPlucker(HitInfo& hit, const Ray& ray, float minDistance,
         return false;
 
     hit.material = material_;
-
-    Interpolate(hit, beta, gamma, alpha);
+    Interpolate(hit, alpha, beta, gamma);
 
     return true;
 }
@@ -306,3 +311,89 @@ void Triangle::Interpolate(HitInfo& hit, float alpha, float beta, float gamma) {
 }
 
 } // namespace rawray
+
+
+
+
+/*
+    Vec3f b = p2 - p0;
+    Vec3f c = p1 - p0;
+    Vec3f N = cross(c,b);
+    float t = -dot((ray.org - p0),N) / dot(ray.dir,N);
+
+    if(t < tmin || t >= tmax)
+      continue;
+
+    int k = 0;
+
+    if(fabs(N[0]) > fabs(N[1]))
+    {
+      if(fabs(N[0]) > fabs(N[2]))
+        k = 0;
+      else
+        k = 2;
+    }
+    else
+    {
+      if(fabs(N[1]) > fabs(N[2]))
+        k = 1;
+      else
+        k = 2;
+    }
+
+    int iu = (k+1) % 3;
+    int iv = (k+2) % 3;
+
+    Vec3f H;
+    H[iu] = ray.org[iu] + t * ray.dir[iu] - p0[iu];
+    H[iv] = ray_.org[iv] + t * ray.dir[iv] - p0[iv];
+
+    float u = ((b[iu] * H[iv]) - (b[iv] * H[iu])) / (b[iu] * c[iv] - b[iv] * c[iu]);
+    if(u < 0.0) continue;
+
+    float v = ((c[iv] * H[iu]) - (c[iu] * H[iv])) / (b[iu] * c[iv] - b[iv] * c[iu]);
+    if(v < 0.0) continue;
+    if(u + v > 1.0) continue;
+
+
+	*/
+
+
+/*
+
+//// Moller-Trumbore:
+    Vec3f edge0,edge1;
+
+    edge0 = p1 - p0;
+    edge1 = p2 - p0;
+
+    Vec3f pvec = cross(ray.dir, edge1);
+
+    float det = dot(edge0,pvec);
+
+    if(det > -C_EPSILON && det < C_EPSILON)
+      continue; // no hit
+
+    float inv_det = 1.0 / det;
+
+    Vec3f tvec = ray.org - p0;
+
+    float u = dot(tvec,pvec) * inv_det;
+
+    if(u < 0.0 || u > 1.0)
+      continue;
+
+    Vec3f qvec = cross(tvec,edge0);
+
+    float v = dot(ray.dir,qvec) * inv_det;
+
+    if(v < 0.0 || (u+v) > 1.0)
+      continue;
+
+    float t = dot(edge1,qvec) * inv_det;
+
+    if(t < tmin || t >= tmax_t)
+      continue;
+
+
+*/

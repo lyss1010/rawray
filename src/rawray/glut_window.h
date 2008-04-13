@@ -43,11 +43,9 @@ private:
     void CreateGlutWindow();
     void ToggleRenderGL();
 
+    void MakeScene(int* argc, char* argv[]);
     void MakeSpiralScene();
     void MakeLorenzScene();
-    void MakeBunnyScene();
-    void MakeTeapotScene();
-    void MakeTriangleScene();
     
     Scene scene_;
     Camera cam_;

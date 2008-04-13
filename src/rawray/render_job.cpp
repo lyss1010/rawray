@@ -136,15 +136,16 @@ bool RenderJob::Run() {
     const uint32 yChunk = options::global::render_y_block;
     
 	// Create the rendering tasks in a temporary vector
-	std::vector<RenderTask*> unshuffled_tasks;
+	//std::vector<RenderTask*> unshuffled_tasks;
     for( uint32 y=0; y<imgHeight; y+=yChunk )
         for( uint32 x=0; x<imgWidth; x+=xChunk )
-            unshuffled_tasks.push_back( new RenderTask(x, y, xChunk, yChunk) );
+            tasks_.push( new RenderTask(x, y, xChunk, yChunk) );
+            //unshuffled_tasks.push_back( new RenderTask(x, y, xChunk, yChunk) );
 
 	// Randomize the rendering tasks :)
-	std::random_shuffle( unshuffled_tasks.begin(), unshuffled_tasks.end() );
-	for( size_t i=0; i<unshuffled_tasks.size(); ++i )
-		tasks_.push( unshuffled_tasks[i] );
+	//std::random_shuffle( unshuffled_tasks.begin(), unshuffled_tasks.end() );
+	//for( size_t i=0; i<unshuffled_tasks.size(); ++i )
+	//	tasks_.push( unshuffled_tasks[i] );
 
     // Create the user specified number of threads
     for( uint32 thread=0; thread<numThreads_; ++thread )

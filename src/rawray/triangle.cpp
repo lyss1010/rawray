@@ -293,24 +293,24 @@ bool Triangle::IntersectPlucker(HitInfo& hit, const Ray& ray, float minDistance,
 			return false;
 	}
 
-    const float norm = 1.0f / (dirA + dirB + dirC);
-    const float alpha = dirA*norm;
-    const float beta = dirB*norm;
-    const float gamma = dirC*norm;
+    //const float norm = 1.0f / (dirA + dirB + dirC);
+    //const float alpha = dirA*norm;
+    //const float beta = dirB*norm;
+    //const float gamma = dirC*norm;
 
-    const Tuple3I vertexIndices = mesh_.GetVertexIndices()[ index_ ];
-    const Vector3& v0 = mesh_.GetVertices()[ vertexIndices.x ];
-    const Vector3& v1 = mesh_.GetVertices()[ vertexIndices.y ];
-    const Vector3& v2 = mesh_.GetVertices()[ vertexIndices.z ];
+    //const Tuple3I vertexIndices = mesh_.GetVertexIndices()[ index_ ];
+    //const Vector3& v0 = mesh_.GetVertices()[ vertexIndices.x ];
+    //const Vector3& v1 = mesh_.GetVertices()[ vertexIndices.y ];
+    //const Vector3& v2 = mesh_.GetVertices()[ vertexIndices.z ];
 
-    // Use the computed orientation data as unnormalized barycentric coords
-    hit.point = alpha*v0 + beta*v1 + gamma*v2;
-    hit.distance = (hit.point - ray.origin).Length();
-    if( hit.distance < minDistance || hit.distance > maxDistance )
-        return false;
+    //// Use the computed orientation data as unnormalized barycentric coords
+    //hit.point = alpha*v0 + beta*v1 + gamma*v2;
+    //hit.distance = (hit.point - ray.origin).Length();
+    //if( hit.distance < minDistance || hit.distance > maxDistance )
+    //    return false;
 
-    hit.material = material_;
-    Interpolate(hit, alpha, beta, gamma);
+    hit.material = NULL;
+    //Interpolate(hit, alpha, beta, gamma);
 
     return true;
 }

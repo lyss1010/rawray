@@ -412,6 +412,9 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\..\res\scenes\sphere_smooth.cfg">
+				</File>
+				<File
 					RelativePath="..\..\res\scenes\spiral.cfg">
 					<FileConfiguration
 						Name="Debug|Win32"

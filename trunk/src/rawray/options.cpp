@@ -14,6 +14,7 @@ namespace global {
     uint32 win_posX;
     uint32 win_posY;
 
+    math::Vector3 img_fg_color;
     math::Vector3 img_bg_color;
     math::Vector3 gl_bg_color;
     uint32 gl_sphere_sections;
@@ -71,7 +72,8 @@ void init() {
     epsilon = 0.00001f;
 
     global::triangle_intersection_algorithm = BARYCENTRIC;
-    global::img_bg_color = Vector3(1);
+    global::img_fg_color = Vector3(1);
+    global::img_bg_color = Vector3(0);
     global::gl_bg_color = Vector3(0);
     global::win_width  = 800;
     global::win_height = 800;

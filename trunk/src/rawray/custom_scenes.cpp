@@ -13,11 +13,6 @@
 
 namespace rawray {
 
-void GlutWindow::MakeEmptyScene() {
-    ConfigParser( "./../res/scenes/spiral.cfg" );
-    scene_.PreCalc();
-}
-
 void GlutWindow::MakeSpiralScene() {
     ConfigParser( "./../res/scenes/spiral.cfg" );
 
@@ -101,7 +96,16 @@ void GlutWindow::MakeLorenzScene() {
 
 void GlutWindow::MakeBunnyScene() {
     ConfigParser( "./../res/scenes/bunny.cfg" );
+    scene_.PreCalc();
+}
 
+void GlutWindow::MakeTeapotScene() {
+    ConfigParser( "./../res/scenes/teapot.cfg" );
+    scene_.PreCalc();
+}
+
+void GlutWindow::MakeTriangleScene() {
+    ConfigParser( "./../res/scenes/triangle.cfg" );
     scene_.PreCalc();
 }
 

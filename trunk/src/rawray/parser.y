@@ -17,6 +17,7 @@
 #include "math/matrix4x4.h"
 #include "object.h"
 #include "material.h"
+#include "lambert.h"
 #include "light.h"
 #include "options.h"
 #include "scene.h"
@@ -26,7 +27,7 @@
 #include "triangle_mesh.h"
 #include "sphere.h"
 
-#define YYDEBUG 1
+//#define YYDEBUG 1
 
 #define yyerror(x) printf("Parser error on line %d: %s\n", yyline, x); 
 
@@ -60,98 +61,109 @@ std::stack<math::Matrix4x4>             g_matrixStack;
 
 /* ----------------------- tokens ------------------------*/
 
-%token <real>       REAL
-%token <integer>    PARSE_INT 
-%token <str>        STRING
+%token <real>       YY_REAL
+%token <integer>    YY_PARSE_INT 
+%token <str>        YY_STRING
 
-%token PARSE_TRUE
-%token PARSE_FALSE
-%token ENABLE
-%token DISABLE
-%token MATH_COS
-%token MATH_SIN
-%token MATH_TAN
-%token MATH_ACOS
-%token MATH_ASIN
-%token MATH_ATAN
-%token MATH_ATAN2
-%token MATH_LN
-%token MATH_LOG
-%token MATH_EXP
-%token MATH_SQRT
-%token MATH_E
-%token MATH_PI
+%token YY_PARSE_TRUE
+%token YY_PARSE_FALSE
+%token YY_ENABLE
+%token YY_DISABLE
+%token YY_MATH_COS
+%token YY_MATH_SIN
+%token YY_MATH_TAN
+%token YY_MATH_ACOS
+%token YY_MATH_ASIN
+%token YY_MATH_ATAN
+%token YY_MATH_ATAN2
+%token YY_MATH_LN
+%token YY_MATH_LOG
+%token YY_MATH_EXP
+%token YY_MATH_SQRT
+%token YY_MATH_E
+%token YY_MATH_PI
 
-%token GLOBAL
-%token WIDTH
-%token HEIGHT
-%token POS
-%token IMG_BGCOLOR
-%token GL_BGCOLOR
-%token GL_SPHERE_SECTIONS
-%token NUM_THREADS
-%token RENDER_X_BLOCK
-%token RENDER_Y_BLOCK
-%token RENDER_HANDLER_SLEEP
-%token RENDER_THREAD_SLEEP
-%token RENDER_SPINLOCK_SLEEP
-%token GAUSSIAN_BLUR_MAX
-%token GAUSSIAN_BLUR_SIGMA
+%token YY_GLOBAL
+%token YY_WIDTH
+%token YY_HEIGHT
+%token YY_POS
+%token YY_IMG_BGCOLOR
+%token YY_IMG_FGCOLOR
+%token YY_GL_BGCOLOR
+%token YY_GL_SPHERE_SECTIONS
+%token YY_NUM_THREADS
+%token YY_RENDER_X_BLOCK
+%token YY_RENDER_Y_BLOCK
+%token YY_RENDER_HANDLER_SLEEP
+%token YY_RENDER_THREAD_SLEEP
+%token YY_RENDER_SPINLOCK_SLEEP
+%token YY_GAUSSIAN_BLUR_MAX
+%token YY_GAUSSIAN_BLUR_SIGMA
+%token YY_TRIANGLE_TEST
+%token YY_BARYCENTRIC
+%token YY_PROJECTION
+%token YY_PLUCKER
+%token YY_MOLLER
 
-%token GL_RENDER_LIGHTS
-%token HEADLESS
+%token YY_GL_RENDER_LIGHTS
+%token YY_HEADLESS
 
-%token CAMERA
-%token POS
-%token DIR
-%token LOOKAT
-%token UP
-%token FOV
-%token ASPECT
-%token MIN_DRAW
-%token MAX_DRAW
+%token YY_CAMERA
+%token YY_POS
+%token YY_DIR
+%token YY_LOOKAT
+%token YY_UP
+%token YY_FOV
+%token YY_ASPECT
+%token YY_MIN_DRAW
+%token YY_MAX_DRAW
 
-%token P0
-%token SPIRAL_NUM_SPHERES
-%token SPIRAL_RADIUS
-%token LORENZ_DT
-%token LORENZ_MIN_DISTANCE
-%token LORENZ_MAX_DISTANCE
-%token LORENZ_SIGMA
-%token LORENZ_RHO
-%token LORENZ_BETA
-%token LORENZ_RADIUS
-%token LORENZ_NUM_SPHERES
-%token LORENZ_START
+%token YY_P0
+%token YY_SPIRAL_NUM_SPHERES
+%token YY_SPIRAL_RADIUS
+%token YY_LORENZ_DT
+%token YY_LORENZ_MIN_DISTANCE
+%token YY_LORENZ_MAX_DISTANCE
+%token YY_LORENZ_SIGMA
+%token YY_LORENZ_RHO
+%token YY_LORENZ_BETA
+%token YY_LORENZ_RADIUS
+%token YY_LORENZ_NUM_SPHERES
+%token YY_LORENZ_START
 
-%token TRIANGLE
-%token V1
-%token V2
-%token V3
-%token N1
-%token N2
-%token N3
+%token YY_TRIANGLE
+%token YY_V1
+%token YY_V2
+%token YY_V3
+%token YY_N1
+%token YY_N2
+%token YY_N3
 
-%token MESH
-%token LOAD
+%token YY_MESH
+%token YY_LOAD
 
-%token INSTANCE
-%token GEOMETRY
+%token YY_INSTANCE
+%token YY_GEOMETRY
 
-%token PUSHMATRIX
-%token POPMATRIX
-%token ROTATE
-%token TRANSLATE
-%token SCALE
+%token YY_PUSHMATRIX
+%token YY_POPMATRIX
+%token YY_ROTATE
+%token YY_TRANSLATE
+%token YY_SCALE
 
-%token LIGHT
-%token POINTLIGHT
-%token WATTAGE
-%token COLOR
+%token YY_LIGHT
+%token YY_POINTLIGHT
+%token YY_WATTAGE
+%token YY_COLOR
 
-%token SPHERE
-%token CENTER
-%token RADIUS
+%token YY_MATERIAL
+%token YY_LAMBERT
+%token YY_DIFFUSE
+%token YY_AMBIENT
+
+%token YY_SPHERE
+%token YY_CENTER
+%token YY_RADIUS
 
 // add more tokens here!
 
@@ -169,16 +181,17 @@ input:  /* empty */
         | input block
 ;
 
-block:    GLOBAL '{' globalOptions '}'  { memmove( &yyval, &yyval, sizeof(yyval) ); printf("\n"); }
-        | CAMERA '{' cameraOptions '}'  { printf("\n"); }
-        | LIGHT lightTypes '}'          { printf("\n"); g_scene->AddLight( g_light ); g_light = NULL; }
-        | P0 '{' p0Options '}'          { printf("\n"); }
-        | objectTypes                   { printf("\n"); }
-        | transform                     { printf("\n"); }
+block:    YY_GLOBAL '{' globalOptions '}'   { memmove( &yyval, &yyval, sizeof(yyval) ); printf("\n"); }
+        | YY_CAMERA '{' cameraOptions '}'   { printf("\n"); }
+        | YY_LIGHT lightTypes '}'           { printf("\n"); g_scene->AddLight( g_light ); g_light = NULL; }
+        | YY_MATERIAL materialTypes '}'     { printf("\n"); g_scene->AddMaterial( g_material ); }
+        | YY_P0 '{' p0Options '}'           { printf("\n"); }
+        | objectTypes                       { printf("\n"); }
+        | transform                         { printf("\n"); }
 ;
 
 objectTypes:
-          TRIANGLE '{'
+          YY_TRIANGLE '{'
             {
                 g_mesh = new rawray::TriangleMesh();
                 #ifdef VERBOSE_NEW
@@ -192,7 +205,7 @@ objectTypes:
                 rawray::AddTrianglesOfMesh();
             }
 
-        | TRIANGLE STRING '{'
+        | YY_TRIANGLE YY_STRING '{'
             {
                 g_mesh = new rawray::TriangleMesh();
                 #ifdef VERBOSE_NEW
@@ -208,7 +221,7 @@ objectTypes:
                 rawray::AddTrianglesOfMesh();
             }
             
-	| MESH '{'
+	| YY_MESH '{'
             {
                 g_mesh = new rawray::TriangleMesh();
                 #ifdef VERBOSE_NEW
@@ -221,7 +234,7 @@ objectTypes:
                 rawray::AddTrianglesOfMesh();
             }
             
-	| MESH STRING '{'
+	| YY_MESH YY_STRING '{'
             {
                 g_mesh = new rawray::TriangleMesh();
                 #ifdef VERBOSE_NEW
@@ -236,7 +249,7 @@ objectTypes:
                 rawray::AddTrianglesOfMesh();
             }
 
-	| SPHERE '{'
+	| YY_SPHERE '{'
             {
                 g_obj = new rawray::Sphere( math::Vector3(0),
                                             1.0f,
@@ -252,7 +265,7 @@ objectTypes:
                 g_obj = NULL;
             }
             
-	| SPHERE STRING '{'
+	| YY_SPHERE YY_STRING '{'
             {
                 g_obj = new rawray::Sphere( math::Vector3(0),
                                             1.0f,
@@ -270,7 +283,7 @@ objectTypes:
                 g_obj = NULL;
             }
 
-	| INSTANCE '{'
+	| YY_INSTANCE '{'
             {
                 printf( "Instance not supported\n" );
             }
@@ -278,7 +291,7 @@ objectTypes:
             {
             }
             
-	| INSTANCE STRING '{'
+	| YY_INSTANCE YY_STRING '{'
             {
                 printf( "Named Instance not supported\n" );
             }
@@ -288,29 +301,29 @@ objectTypes:
 ;
 
 triangleOptions: /* empty */
-        | V1 rExp ',' rExp ',' rExp triangleOptions
+        | YY_V1 rExp ',' rExp ',' rExp triangleOptions
             { printf( "Triangles not supported" ); }
-        | V2 rExp ',' rExp ',' rExp triangleOptions
+        | YY_V2 rExp ',' rExp ',' rExp triangleOptions
             { printf( "Triangles not supported" ); }
-        | V3 rExp ',' rExp ',' rExp triangleOptions
+        | YY_V3 rExp ',' rExp ',' rExp triangleOptions
             { printf( "Triangles not supported" ); }
-        | N1 rExp ',' rExp ',' rExp triangleOptions
+        | YY_N1 rExp ',' rExp ',' rExp triangleOptions
             { printf( "Triangles not supported" ); }
-        | N2 rExp ',' rExp ',' rExp triangleOptions
+        | YY_N2 rExp ',' rExp ',' rExp triangleOptions
             { printf( "Triangles not supported" ); }
-        | N3 rExp ',' rExp ',' rExp triangleOptions
+        | YY_N3 rExp ',' rExp ',' rExp triangleOptions
             { printf( "Triangles not supported" ); }
 ;
 
 sphereOptions: /* empty */
-        | CENTER rExp ',' rExp ',' rExp sphereOptions
+        | YY_CENTER rExp ',' rExp ',' rExp sphereOptions
             { ((rawray::Sphere*)g_obj)->SetCenter( math::Vector3($2,$4,$6) ); }
-        | RADIUS rExp sphereOptions
+        | YY_RADIUS rExp sphereOptions
             { ((rawray::Sphere*)g_obj)->SetRadius( $2 ); }
 ;
 
 instanceOptions: /* empty */
-        | GEOMETRY STRING sphereOptions
+        | YY_GEOMETRY YY_STRING sphereOptions
             {
                 //std::map<std::string, Object*>::const_iterator it = g_objectMap.find ($2);
                 //if (it != g_objectMap.end ())
@@ -320,20 +333,20 @@ instanceOptions: /* empty */
             }
 ;
 
-transform:  PUSHMATRIX { /*PushMatrix();*/ }
-        | POPMATRIX
+transform:  YY_PUSHMATRIX { /*PushMatrix();*/ }
+        | YY_POPMATRIX
             { /*PopMatrix();*/ }
-        | ROTATE rExp ',' rExp ',' rExp ',' rExp
+        | YY_ROTATE rExp ',' rExp ',' rExp ',' rExp
             { /*Rotate($2, $4, $6, $8);*/ }
-        | TRANSLATE rExp ',' rExp ',' rExp
+        | YY_TRANSLATE rExp ',' rExp ',' rExp
             { /*Translate($2, $4, $6);*/ }
-        | SCALE rExp ',' rExp ',' rExp
+        | YY_SCALE rExp ',' rExp ',' rExp
             { /*Scale($2, $4, $6);*/ }
 ;
 
-lightTypes: POINTLIGHT '{' 
+lightTypes: YY_POINTLIGHT '{' 
             {
-                printf( "new light\n" ); 
+                printf( "new point light\n" ); 
                 g_light = new rawray::Light();
                 
                 #ifdef VERBOSE_NEW
@@ -344,17 +357,37 @@ lightTypes: POINTLIGHT '{'
                 
 ;
 
+materialTypes: YY_LAMBERT '{' 
+            {
+                printf( "new lambert material\n" ); 
+                g_material = new rawray::Lambert();
+                
+                #ifdef VERBOSE_NEW
+                printf( "LAMVERT: %x\n", g_material );
+                #endif
+            }
+        lambertOptions
+                
+;
+
 lightOptions: /* empty */ 
-        | POS rExp ',' rExp ',' rExp lightOptions
+        | YY_POS rExp ',' rExp ',' rExp lightOptions
             { printf( "pos = %f, %f, %f\n", $2, $4, $6 ); g_light->SetPosition( math::Vector3($2,$4,$6) ); }
-        | WATTAGE rExp lightOptions
+        | YY_WATTAGE rExp lightOptions
             { printf( "wattage = %f\n", $2 ); g_light->SetWattage( $2 ); }
-        | COLOR rExp ',' rExp ',' rExp lightOptions
+        | YY_COLOR rExp ',' rExp ',' rExp lightOptions
             { printf( "color = %f, %f, %f\n", $2, $4, $6 ); g_light->SetColor( math::Vector3($2,$4,$6) ); }
 ;
 
+lambertOptions: /* empty */ 
+        | YY_DIFFUSE rExp ',' rExp ',' rExp lambertOptions
+            { printf( "diffuse = %f, %f, %f\n", $2, $4, $6 ); ((rawray::Lambert*)g_material)->SetDiffuse( math::Vector3($2,$4,$6) ); }
+        | YY_AMBIENT rExp ',' rExp ',' rExp lambertOptions
+            { printf( "ambient = %f, %f, %f\n", $2, $4, $6 ); ((rawray::Lambert*)g_material)->SetAmbient( math::Vector3($2,$4,$6) ); }
+;
+
 meshOptions: /* empty */
-        | LOAD STRING
+        | YY_LOAD YY_STRING
             {
                 $2[strlen($2)-1]=0;
                 printf( "Loading Mesh: '%s'\n", $2+1 );
@@ -363,87 +396,97 @@ meshOptions: /* empty */
 ;
 
 globalOptions: /* empty */
-        | HEIGHT iExp globalOptions
+        | YY_HEIGHT iExp globalOptions
             { printf( "height = %d\n", $2 ); g_image->Resize( g_image->GetWidth(), rawray::options::global::win_height = $2 ); }
-        | WIDTH iExp globalOptions
+        | YY_WIDTH iExp globalOptions
             { printf( "width = %d\n", $2 ); g_image->Resize( rawray::options::global::win_width = $2, g_image->GetHeight() ); }
-        | GL_BGCOLOR rExp ',' rExp ',' rExp globalOptions
+        | YY_GL_BGCOLOR rExp ',' rExp ',' rExp globalOptions
             { printf( "gl bg color = %f, %f, %f\n", $2, $4, $6 ); rawray::options::global::gl_bg_color = math::Vector3($2,$4,$6); }
-        | IMG_BGCOLOR rExp ',' rExp ',' rExp globalOptions
+        | YY_IMG_BGCOLOR rExp ',' rExp ',' rExp globalOptions
             { printf( "img bg color = %f, %f, %f\n", $2, $4, $6 ); rawray::options::global::img_bg_color = math::Vector3($2,$4,$6); }
-        | GL_SPHERE_SECTIONS iExp globalOptions
+        | YY_IMG_FGCOLOR rExp ',' rExp ',' rExp globalOptions
+            { printf( "img fg color = %f, %f, %f\n", $2, $4, $6 ); rawray::options::global::img_fg_color = math::Vector3($2,$4,$6); }
+        | YY_GL_SPHERE_SECTIONS iExp globalOptions
             { printf( "gl sphere sections = %d\n", rawray::options::global::gl_sphere_sections = $2 ); }
-        | NUM_THREADS iExp globalOptions
+        | YY_NUM_THREADS iExp globalOptions
             { printf( "num threads = %d\n", rawray::options::global::num_threads = $2 ); }
-        | RENDER_X_BLOCK iExp globalOptions
+        | YY_TRIANGLE_TEST YY_BARYCENTRIC globalOptions
+            { printf( "triangle test = barycentric\n", rawray::options::global::triangle_intersection_algorithm = rawray::options::BARYCENTRIC ); }
+        | YY_TRIANGLE_TEST YY_BARYCENTRIC YY_PROJECTION globalOptions
+            { printf( "triangle test = barycentric projection\n", rawray::options::global::triangle_intersection_algorithm = rawray::options::BARYCENTRIC_PROJECTION ); }
+        | YY_TRIANGLE_TEST YY_PLUCKER globalOptions
+            { printf( "triangle test = plucker\n", rawray::options::global::triangle_intersection_algorithm = rawray::options::PLUCKER ); }
+        | YY_TRIANGLE_TEST YY_MOLLER globalOptions
+            { printf( "triangle test = moller\n", rawray::options::global::triangle_intersection_algorithm = rawray::options::MOLLER ); }
+        | YY_RENDER_X_BLOCK iExp globalOptions
             { printf( "render x block = %d\n", rawray::options::global::render_x_block = $2 ); }
-        | RENDER_Y_BLOCK iExp globalOptions
+        | YY_RENDER_Y_BLOCK iExp globalOptions
             { printf( "render y block = %d\n", rawray::options::global::render_y_block = $2 ); }
-        | RENDER_HANDLER_SLEEP iExp globalOptions
+        | YY_RENDER_HANDLER_SLEEP iExp globalOptions
             { printf( "render handler sleep = %d\n", rawray::options::global::render_handler_sleep = $2 ); }
-        | RENDER_THREAD_SLEEP iExp globalOptions
+        | YY_RENDER_THREAD_SLEEP iExp globalOptions
             { printf( "render thread sleep = %d\n", rawray::options::global::render_thread_sleep = $2 ); }
-        | RENDER_SPINLOCK_SLEEP iExp globalOptions
+        | YY_RENDER_SPINLOCK_SLEEP iExp globalOptions
             { printf( "render spinlock sleep = %d\n", rawray::options::global::render_spinlock_sleep = $2 ); }
-        | GAUSSIAN_BLUR_MAX rExp globalOptions
+        | YY_GAUSSIAN_BLUR_MAX rExp globalOptions
             { printf( "gaussian blur max = %f\n", rawray::options::global::gaussian_blur_max = $2 ); }
-        | GAUSSIAN_BLUR_SIGMA rExp globalOptions
+        | YY_GAUSSIAN_BLUR_SIGMA rExp globalOptions
             { printf( "gaussian blur sigma = %f\n", rawray::options::global::gaussian_blur_sigma = $2 ); }
-        | ENABLE GL_RENDER_LIGHTS globalOptions
+        | YY_ENABLE YY_GL_RENDER_LIGHTS globalOptions
 			{ printf( "enabling rendering of lights in gl\n" ); rawray::options::global::gl_render_lights = true; }
-		| DISABLE GL_RENDER_LIGHTS globalOptions
+		| YY_DISABLE YY_GL_RENDER_LIGHTS globalOptions
 			{ printf( "disabling rendering of lights in gl\n" ); rawray::options::global::gl_render_lights = false; }
-		| ENABLE HEADLESS globalOptions
+		| YY_ENABLE YY_HEADLESS globalOptions
 		    { printf( "enabling headless mode\n" ); rawray::options::global::headless = true; }
-		| DISABLE HEADLESS globalOptions
+		| YY_DISABLE YY_HEADLESS globalOptions
 		    { printf( "disabling headless mode\n" ); rawray::options::global::headless = false; }
 ;
 
 cameraOptions: /* empty */
-        | POS rExp ',' rExp ',' rExp cameraOptions
+        | YY_POS rExp ',' rExp ',' rExp cameraOptions
             { printf( "camera pos = %f, %f, %f\n", $2, $4, $6 ); g_camera->SetEye( rawray::options::camera::eye = math::Vector3($2,$4,$6) ); }
-        | DIR rExp ',' rExp ',' rExp cameraOptions
+        | YY_DIR rExp ',' rExp ',' rExp cameraOptions
             { printf( "camera dir = %f, %f, %f\n", $2, $4, $6 ); g_camera->SetViewDir( rawray::options::camera::view = math::Vector3($2,$4,$6) ); }
-        | LOOKAT rExp ',' rExp ',' rExp cameraOptions
+        | YY_LOOKAT rExp ',' rExp ',' rExp cameraOptions
             { printf( "camera look at = %f, %f, %f\n", $2, $4, $6 ); g_camera->SetLookAt( rawray::options::camera::lookat = math::Vector3($2,$4,$6) ); }
-        | UP rExp ',' rExp ',' rExp cameraOptions
+        | YY_UP rExp ',' rExp ',' rExp cameraOptions
             { printf( "camera up = %f, %f, %f\n", $2, $4, $6 ); g_camera->SetUp( rawray::options::camera::up = math::Vector3($2,$4,$6) ); }
-        | FOV rExp cameraOptions
+        | YY_FOV rExp cameraOptions
             { printf( "camera fov = %f\n", $2 ); g_camera->SetFOV( rawray::options::camera::fov = $2 ); }
-        | ASPECT rExp cameraOptions
+        | YY_ASPECT rExp cameraOptions
             { printf( "camera aspect ratio = %f\n", $2 ); g_camera->SetAspect( rawray::options::camera::aspect = $2 ); }
-        | MIN_DRAW rExp cameraOptions
+        | YY_MIN_DRAW rExp cameraOptions
             { printf( "camera min draw = %f\n", $2 ); g_camera->SetMinDraw( rawray::options::camera::min_draw = $2 ); }
-        | MAX_DRAW rExp cameraOptions
+        | YY_MAX_DRAW rExp cameraOptions
             { printf( "camera max draw = %f\n", $2 ); g_camera->SetMaxDraw( rawray::options::camera::max_draw = $2 ); }
 ;
 
 p0Options: /* empty */
-        | SPIRAL_NUM_SPHERES iExp p0Options
+        | YY_SPIRAL_NUM_SPHERES iExp p0Options
             { printf( "spiral num spheres = %d\n", rawray::options::p0::spiral_num_spheres = $2 ); }
-        | SPIRAL_RADIUS rExp p0Options
+        | YY_SPIRAL_RADIUS rExp p0Options
             { printf( "spiral radius = %f\n", rawray::options::p0::spiral_radius = $2 ); }
-        | LORENZ_DT rExp p0Options
+        | YY_LORENZ_DT rExp p0Options
             { printf( "lorenz dt = %f\n", rawray::options::p0::lorenz_dt = $2 ); }
-        | LORENZ_MIN_DISTANCE rExp p0Options
+        | YY_LORENZ_MIN_DISTANCE rExp p0Options
             { printf( "lorenz min distance = %f\n", rawray::options::p0::lorenz_min_distance = $2 ); }
-        | LORENZ_MAX_DISTANCE rExp p0Options
+        | YY_LORENZ_MAX_DISTANCE rExp p0Options
             { printf( "lorenz max distance = %f\n", rawray::options::p0::lorenz_max_distance = $2 ); }
-        | LORENZ_SIGMA rExp p0Options
+        | YY_LORENZ_SIGMA rExp p0Options
             { printf( "lorenz sigma = %f\n", rawray::options::p0::lorenz_sigma = $2 ); }
-        | LORENZ_RHO rExp p0Options
+        | YY_LORENZ_RHO rExp p0Options
             { printf( "lorenz rho = %f\n", rawray::options::p0::lorenz_rho = $2 ); }
-        | LORENZ_BETA rExp p0Options
+        | YY_LORENZ_BETA rExp p0Options
             { printf( "lorenz beta = %f\n", rawray::options::p0::lorenz_beta = $2 ); }
-        | LORENZ_RADIUS rExp p0Options
+        | YY_LORENZ_RADIUS rExp p0Options
             { printf( "lorenz radius = %f\n", rawray::options::p0::lorenz_radius = $2 ); }
-        | LORENZ_NUM_SPHERES iExp p0Options
+        | YY_LORENZ_NUM_SPHERES iExp p0Options
             { printf( "lorenz num spheres = %d\n", rawray::options::p0::lorenz_num_spheres = $2 ); }
-        | LORENZ_START rExp ',' rExp ',' rExp p0Options
+        | YY_LORENZ_START rExp ',' rExp ',' rExp p0Options
             { printf( "lorenz start = %f, %f, %f\n", $2, $4, $6 ); rawray::options::p0::lorenz_start = math::Vector3($2,$4,$6); }
 ;
 
-rExp:     REAL                 { $$ = $1; }
+rExp:     YY_REAL                 { $$ = $1; }
         | iExp                 { $$ = $1; }
         | fExp                 { $$ = $1; }
         
@@ -472,24 +515,24 @@ rExp:     REAL                 { $$ = $1; }
         | constantExp
 ;
 
-fExp:      MATH_SIN '(' rExp ')'    {$$ = sin($3); }
-        |  MATH_COS '(' rExp ')'    {$$ = cos($3); }
-        |  MATH_TAN '(' rExp ')'    {$$ = tan($3); }
-        |  MATH_ASIN '(' rExp ')'   {$$ = asin($3); }
-        |  MATH_ACOS '(' rExp ')'   {$$ = acos($3); }
-        |  MATH_ATAN '(' rExp ')'   {$$ = atan($3); }
-        |  MATH_LN '(' rExp ')'     {$$ = log($3); }
-        |  MATH_LOG '(' rExp ')'    {$$ = log10($3); }
-        |  MATH_EXP '(' rExp ')'    {$$ = exp($3); }
-        |  MATH_SQRT '(' rExp ')'   {$$ = sqrt($3); }
+fExp:      YY_MATH_SIN '(' rExp ')'    {$$ = sin($3); }
+        |  YY_MATH_COS '(' rExp ')'    {$$ = cos($3); }
+        |  YY_MATH_TAN '(' rExp ')'    {$$ = tan($3); }
+        |  YY_MATH_ASIN '(' rExp ')'   {$$ = asin($3); }
+        |  YY_MATH_ACOS '(' rExp ')'   {$$ = acos($3); }
+        |  YY_MATH_ATAN '(' rExp ')'   {$$ = atan($3); }
+        |  YY_MATH_LN '(' rExp ')'     {$$ = log($3); }
+        |  YY_MATH_LOG '(' rExp ')'    {$$ = log10($3); }
+        |  YY_MATH_EXP '(' rExp ')'    {$$ = exp($3); }
+        |  YY_MATH_SQRT '(' rExp ')'   {$$ = sqrt($3); }
 ;
 
 constantExp:
-           MATH_E { $$ = 2.718281828459f; }
-        |  MATH_PI { $$ = 3.141592653589793f; }
+           YY_MATH_E { $$ = 2.718281828459f; }
+        |  YY_MATH_PI { $$ = 3.141592653589793f; }
 ;
 
-iExp:     PARSE_INT             { $$ = $1; }
+iExp:     YY_PARSE_INT             { $$ = $1; }
         | iExp '+' iExp         { $$ = $1 + $3; }
         | iExp '-' iExp         { $$ = $1 - $3; }
         | iExp '*' iExp         { $$ = $1 * $3; }
@@ -525,7 +568,11 @@ void SetConfigSources(Scene* scene, Camera* cam, Image* img) {
 }
 
 bool ConfigParser(const char* filename) {
+#ifdef YYDEBUG
+#if YYDEBUG==1
     yydebug = 1;
+#endif
+#endif
     
     if( !g_scene || !g_camera || !g_image )
         return false;

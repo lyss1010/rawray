@@ -12,6 +12,14 @@ namespace rawray {
 
 class DllExport BLPatch : Object
 {
+// Temporary data required for patch intersection computations
+private:
+struct BLPatchData {
+    float a1,b1,c1,d1;
+    float a2,b2,c2,d2;
+};
+
+
 public:
     BLPatch() : Object(NULL) { }
     virtual ~BLPatch() { }
@@ -28,6 +36,9 @@ protected:
     Vector3 verts_[4];
 
 private:
+    float ComputeU(float v, const BLPatch::BLPatchData& patch);
+    float ComputeT(const Ray& ray, const Vector3& p, const Vector3& absQ);
+
     DISALLOW_COPY_CONSTRUCTORS(BLPatch);
 
 }; // class BLPatch

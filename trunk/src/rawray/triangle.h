@@ -66,8 +66,11 @@ private:
     TriangleMesh& mesh_;
     uint32 index_;
 
-    // Defined only if using BarycentricProjection intersections
+    // Defined only if using BarycentricProjection or Moller intersections (NOTE: Unnormaized)
     Vector3* n_;
+
+    // Defined only if using BarycentricProjection
+    Vector3* det2d_;
 
     // Defined only if using Plucker intersections
     PluckerCoord* pluckA_;

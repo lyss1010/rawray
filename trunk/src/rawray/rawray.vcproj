@@ -412,7 +412,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\res\scenes\sphere_smooth.cfg">
+					RelativePath="..\..\res\scenes\sphere.cfg">
 				</File>
 				<File
 					RelativePath="..\..\res\scenes\spiral.cfg">

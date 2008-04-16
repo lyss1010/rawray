@@ -23,8 +23,7 @@
 #include "scene.h"
 #include "camera.h"
 #include "image.h"
-#include "triangle.h"
-#include "triangle_mesh.h"
+#include "triangle_factory.h"
 #include "sphere.h"
 
 //#define YYDEBUG 1
@@ -550,7 +549,7 @@ namespace rawray {
 
 void AddTrianglesOfMesh() {
     for( uint32 i=0; i<g_mesh->GetNumTriangles(); ++i ) {
-        Triangle* t = new Triangle( *g_mesh, i, g_material );
+        Triangle* t = rawray::TriangleFactory::NewTriangle( *g_mesh, i, g_material );
         g_scene->AddObject( t );
         
         #ifdef VERBOSE_NEW

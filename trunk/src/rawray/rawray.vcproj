@@ -175,7 +175,22 @@
 					RelativePath=".\triangle.cpp">
 				</File>
 				<File
+					RelativePath=".\triangle_barycentric.cpp">
+				</File>
+				<File
+					RelativePath=".\triangle_barycentric_projection.cpp">
+				</File>
+				<File
+					RelativePath=".\triangle_factory.cpp">
+				</File>
+				<File
 					RelativePath=".\triangle_mesh.cpp">
+				</File>
+				<File
+					RelativePath=".\triangle_moller.cpp">
+				</File>
+				<File
+					RelativePath=".\triangle_plucker.cpp">
 				</File>
 			</Filter>
 			<Filter
@@ -262,7 +277,22 @@
 					RelativePath=".\triangle.h">
 				</File>
 				<File
+					RelativePath=".\triangle_barycentric.h">
+				</File>
+				<File
+					RelativePath=".\triangle_barycentric_projection.h">
+				</File>
+				<File
+					RelativePath=".\triangle_factory.h">
+				</File>
+				<File
 					RelativePath=".\triangle_mesh.h">
+				</File>
+				<File
+					RelativePath=".\triangle_moller.h">
+				</File>
+				<File
+					RelativePath=".\triangle_plucker.h">
 				</File>
 			</Filter>
 			<Filter

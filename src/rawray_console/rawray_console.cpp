@@ -44,7 +44,7 @@ int _tmain( int argc, _TCHAR* argv[] )
 	//_CrtSetBreakAlloc( 438 );
 
     // TEMP: vector test
-    VectorTest();
+    //VectorTest();
 
     // Initialize options defaults
     rawray::options::init();

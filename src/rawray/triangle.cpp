@@ -19,7 +19,7 @@ float PluckerCoord::GetOrientation(const PluckerCoord& p) {
 
 Triangle::Triangle(TriangleMesh& mesh, uint32 index, const Material* material)
             : Object(material), mesh_(mesh), index_(index),
-            n_(NULL), pluckA_(NULL), pluckB_(NULL), pluckC_(NULL)
+            n_(NULL), det2d_(NULL), pluckA_(NULL), pluckB_(NULL), pluckC_(NULL)
 {
     // Choose which algorithm we will use to intersect with
     // This will save us the switch in the intersect function
@@ -118,21 +118,20 @@ bool Triangle::IntersectBarycentric(HitInfo& hit, const Ray& ray, float minDista
     const float denominator = a*ei_minus_hf + b*gf_minus_di + c*dh_minus_eg;
     if( denominator == 0.0f ) return false;
     
-    const float denominatorMul = 1.0f / denominator;
+    const float inv_den = 1.0f / denominator;
     const float ak_minus_jb = a*k - j*b;
     const float jc_minux_al = j*c - a*l;
     const float bl_minux_kc = b*l - k*c;
 
-    const float t = (f*ak_minus_jb + e*jc_minux_al + d*bl_minux_kc) * denominatorMul;
+    const float t = (f*ak_minus_jb + e*jc_minux_al + d*bl_minux_kc) * inv_den;
     if( t < minDistance || t > maxDistance ) return false;
 
-    const float gamma = (-ray.direction.z*ak_minus_jb - ray.direction.y*jc_minux_al - ray.direction.x*bl_minux_kc) * denominatorMul;
+    const float gamma = (-ray.direction.z*ak_minus_jb - ray.direction.y*jc_minux_al - ray.direction.x*bl_minux_kc) * inv_den;
     if( gamma < 0.0f || gamma > 1.0f ) return false;
 
-    const float beta = (j*ei_minus_hf + k*gf_minus_di + l*dh_minus_eg) * denominatorMul;
+    const float beta = (j*ei_minus_hf + k*gf_minus_di + l*dh_minus_eg) * inv_den;
     if( beta < 0.0f || beta > 1.0f - gamma ) return false;
 
-    // Copy values we computed earlier for hit point and distance
     hit.point = ray.origin + t * ray.direction;
     hit.distance = t;
     hit.material = material_;
@@ -149,13 +148,27 @@ void Triangle::PreCalcBarycentricProjection() {
     const Vector3& v1 = mesh_.GetVertices()[ vertexIndices.y ];
     const Vector3& v2 = mesh_.GetVertices()[ vertexIndices.z ];
 
+    const Vector3& b = v2 - v0;
+    const Vector3& c = v1 - v0;
+
     SAFE_DELETE(n_);
-    n_ = new Vector3( math::Cross( v2-v0, v1-v0 ).Normalize() );
+    n_ = new Vector3( math::Cross(b, c) );
+
+    // denominator = b[u] * c[v] - b[v] * c[u];
+    // .x = x component removed, .y = y component removed etc...
+    SAFE_DELETE(det2d_);
+    det2d_ = new Vector3( (b.y)*(c.z) - (b.z)*(c.y),
+                          (b.z)*(c.x) - (b.x)*(c.z),
+                          (b.x)*(c.y) - (b.y)*(c.x) );
+
+    det2d_->x = math::FloatZero(det2d_->x, options::epsilon) ? 0.0f : 1.0f / det2d_->x;
+    det2d_->y = math::FloatZero(det2d_->y, options::epsilon) ? 0.0f : 1.0f / det2d_->y;
+    det2d_->z = math::FloatZero(det2d_->z, options::epsilon) ? 0.0f : 1.0f / det2d_->z;
 }
 
-// TODO: The normal interpolation is incorrect
 bool Triangle::IntersectBarycentricProjection(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance) {
     assert( n_ );
+    assert( det2d_ );
 	const Tuple3I vertexIndices = mesh_.GetVertexIndices()[ index_ ];
     const Vector3& v0 = mesh_.GetVertices()[ vertexIndices.x ];
     const Vector3& v1 = mesh_.GetVertices()[ vertexIndices.y ];
@@ -170,8 +183,8 @@ bool Triangle::IntersectBarycentricProjection(HitInfo& hit, const Ray& ray, floa
     if( denominator == 0.0f ) return false;
 
     // Compute distance to the plane along the ray
-    const float distance = -math::Dot( ray.origin-v0, *n_ ) / denominator;
-    if( distance < minDistance || distance > maxDistance ) return false;
+    const float t = -math::Dot( ray.origin-v0, *n_ ) / denominator;
+    if( t < minDistance || t > maxDistance ) return false;
 
     // Determine dominant axis
     const float absNX = fabs(n_->x);
@@ -184,68 +197,79 @@ bool Triangle::IntersectBarycentricProjection(HitInfo& hit, const Ray& ray, floa
     else
         axis = (absNY > absNZ) ? 1 : 2;
 
+    // Grab the precomputed inverse determinant based on which axis we're on
+    const float inv_det = det2d_->operator [](axis);
+    if( inv_det == 0.0f ) return false;
     const uint8 u = (axis+1)%3;
     const uint8 v = (axis+2)%3;
 
-    // Compute the point on the plane where we intersect
-    const Vector3& h = (ray.direction * distance) + ray.origin - v0;
+    IntersectBarycentric(hit, ray, minDistance, maxDistance);
 
-    denominator = b[u] * c[v] - b[v] * c[u];
-    if( denominator == 0.0f ) return false;
-    denominator = 1.0f / denominator;
-
-    const float beta = (b[u] * h[v] - b[v] * h[u]) * denominator;
+    // Compute the point on the plane where we intersect minus the first vertex
+    hit.point = (ray.direction * t) + ray.origin;
+    
+    const float hv = (hit.point[v]-v0[v]);
+    const float hu = (hit.point[u]-v0[u]);
+    const float beta = (hv * b[u] - hu * b[v]) * inv_det;
     if( beta < 0.0f ) return false;
 
-    const float gamma = (c[v] * h[u] - c[u] * h[v]) * denominator;
+    const float gamma = (hu * c[v] - hv * c[u]) * inv_det;
     if( gamma < 0.0f ) return false;
     if( beta+gamma > 1.0f ) return false;
 
-    // Copy values we computed earlier for hit point and distance
-    hit.point = h;
-    hit.distance = distance;
+    hit.distance = t;
     hit.material = material_;
     Interpolate(hit, 1-beta-gamma, beta, gamma);
-
+    
     return true;
 }
 
 
 // Moller triangle intersection test
 // See: http://ompf.org/forum/viewtopic.php?t=165
-// TODO: Does not work
-void Triangle::PreCalcMoller() { }
-bool Triangle::IntersectMoller(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance) {
-	const Tuple3I vertexIndices = mesh_.GetVertexIndices()[ index_ ];
+// TODO: Write me
+void Triangle::PreCalcMoller() {
+    const Tuple3I vertexIndices = mesh_.GetVertexIndices()[ index_ ];
     const Vector3& v0 = mesh_.GetVertices()[ vertexIndices.x ];
     const Vector3& v1 = mesh_.GetVertices()[ vertexIndices.y ];
     const Vector3& v2 = mesh_.GetVertices()[ vertexIndices.z ];
 
-	const Vector3& e0 = v1 - v0;
-	const Vector3& e1 = v2 - v0;
+    const Vector3& b = v2 - v0;
+    const Vector3& c = v1 - v0;
 
-	const Vector3& pvec = math::Cross( ray.direction, e1 );
-	float det = math::Dot( e0, pvec );
-	if( det == 0.0f ) return false;
+    SAFE_DELETE(n_);
+    n_ = new Vector3( math::Cross(b, c) );
+}
 
-	float inv_det = 1.0f / det;
-	const Vector3& tvec = ray.origin - v0;
+bool Triangle::IntersectMoller(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance) {
+	assert( n_ );
+    const Tuple3I vertexIndices = mesh_.GetVertexIndices()[ index_ ];
+    const Vector3& v0 = mesh_.GetVertices()[ vertexIndices.x ];
+    const Vector3& v1 = mesh_.GetVertices()[ vertexIndices.y ];
+    const Vector3& v2 = mesh_.GetVertices()[ vertexIndices.z ];
 
-	float u = math::Dot( tvec, pvec ) * inv_det;
-	if( u < 0.0f || u > 1.0f ) return false;
+	const Vector3& b = v1 - v0;
+	const Vector3& c = v2 - v0;
+    const Vector3& o = ray.origin - v0;
 
-	const Vector3& qvec = math::Cross( tvec, e0 );
+    const float det = n_->Dot(ray.direction);
+    if( det == 0.0f ) return false;
+    const float inv_det = -1.0f / det;
 
-	float v = math::Dot( e1, qvec ) * inv_det;
-	if( v < 0.0f || (u+v) > 1.0f ) return false;
+    const float t = n_->Dot(o) * inv_det;
+    if( t < minDistance || t > maxDistance ) return false;
 
-	float t = math::Dot( e1, qvec ) * inv_det;
-	if( t < minDistance || t > maxDistance ) return false;
+    const float beta = math::Cross(o,c).Dot(ray.direction) * inv_det;
+    if( beta < 0.0f ) return false;
 
-	hit.point = ray.origin + t * ray.direction;
+    const float gamma = math::Cross(b,o).Dot(ray.direction) * inv_det;
+    if( gamma < 0.0f ) return false;
+    if( beta+gamma > 1.0f ) return false;
+
     hit.distance = t;
     hit.material = material_;
-    Interpolate(hit, 1-u-v, u, v);
+    hit.point = ray.origin + ray.direction * t;
+    Interpolate(hit, 1-beta-gamma, beta, gamma);
 
     return true;
 }
@@ -297,13 +321,12 @@ bool Triangle::IntersectPlucker(HitInfo& hit, const Ray& ray, float minDistance,
     const float beta = dirB*norm;
     const float gamma = dirC*norm;
 
+    // Compute the hit point by interpolation based by our barycentric coords
     const Tuple3I vertexIndices = mesh_.GetVertexIndices()[ index_ ];
-    const Vector3& v0 = mesh_.GetVertices()[ vertexIndices.x ];
-    const Vector3& v1 = mesh_.GetVertices()[ vertexIndices.y ];
-    const Vector3& v2 = mesh_.GetVertices()[ vertexIndices.z ];
+    hit.point = alpha*mesh_.GetVertices()[ vertexIndices.x ] + 
+                beta*mesh_.GetVertices()[ vertexIndices.y ] + 
+                gamma*mesh_.GetVertices()[ vertexIndices.z ];
 
-    // Use the computed orientation data as unnormalized barycentric coords
-    hit.point = alpha*v0 + beta*v1 + gamma*v2;
     hit.distance = (hit.point - ray.origin).Length();
     if( hit.distance < minDistance || hit.distance > maxDistance )
         return false;

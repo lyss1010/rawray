@@ -49,6 +49,7 @@ Triangle::Triangle(TriangleMesh& mesh, uint32 index, const Material* material)
 
 Triangle::~Triangle() {
     delete n_;
+    delete det2d_;
     delete pluckA_;
     delete pluckB_;
     delete pluckC_;
@@ -70,6 +71,7 @@ void Triangle::RenderGL() {
 
     glBegin(GL_TRIANGLES);
         glColor3f( color.x, color.y, color.z );
+
 		glNormal3f(n0.x, n0.y, n0.z);
         glVertex3f(v0.x, v0.y, v0.z);
 
@@ -91,6 +93,7 @@ bool Triangle::Intersect(HitInfo& hit, const Ray& ray, float minDistance, float 
 
 // Ray-Plane intersection with barycentric coordinate test
 // See: Fundamentals of Computer Graphics, Peter Shirley p206
+// Moller test with the determinants computed out by hand
 void Triangle::PreCalcBarycentric() { }
 bool Triangle::IntersectBarycentric(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance) {
 	const Tuple3I vertexIndices = mesh_.GetVertexIndices()[ index_ ];
@@ -98,6 +101,8 @@ bool Triangle::IntersectBarycentric(HitInfo& hit, const Ray& ray, float minDista
     const Vector3& v1 = mesh_.GetVertices()[ vertexIndices.y ];
     const Vector3& v2 = mesh_.GetVertices()[ vertexIndices.z ];
 
+    // Manually compute determinants to avoid redundant calculations
+    // See Moller intersection for cleaner (slower) code which does the same test
     const float a = v0.x - v1.x;
     const float b = v0.y - v1.y;
     const float c = v0.z - v1.z;
@@ -167,8 +172,8 @@ void Triangle::PreCalcBarycentricProjection() {
 }
 
 bool Triangle::IntersectBarycentricProjection(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance) {
-    assert( n_ );
-    assert( det2d_ );
+    assert( n_ ); assert( det2d_ );
+
 	const Tuple3I vertexIndices = mesh_.GetVertexIndices()[ index_ ];
     const Vector3& v0 = mesh_.GetVertices()[ vertexIndices.x ];
     const Vector3& v1 = mesh_.GetVertices()[ vertexIndices.y ];
@@ -208,6 +213,7 @@ bool Triangle::IntersectBarycentricProjection(HitInfo& hit, const Ray& ray, floa
     // Compute the point on the plane where we intersect minus the first vertex
     hit.point = (ray.direction * t) + ray.origin;
     
+    // Compute the 2d determinant get barycentric coordinates
     const float hv = (hit.point[v]-v0[v]);
     const float hu = (hit.point[u]-v0[u]);
     const float beta = (hv * b[u] - hu * b[v]) * inv_det;
@@ -227,18 +233,15 @@ bool Triangle::IntersectBarycentricProjection(HitInfo& hit, const Ray& ray, floa
 
 // Moller triangle intersection test
 // See: http://ompf.org/forum/viewtopic.php?t=165
-// TODO: Write me
+// See: Fundamentals of Computer Graphics, Peter Shirley p206
 void Triangle::PreCalcMoller() {
     const Tuple3I vertexIndices = mesh_.GetVertexIndices()[ index_ ];
     const Vector3& v0 = mesh_.GetVertices()[ vertexIndices.x ];
     const Vector3& v1 = mesh_.GetVertices()[ vertexIndices.y ];
     const Vector3& v2 = mesh_.GetVertices()[ vertexIndices.z ];
 
-    const Vector3& b = v2 - v0;
-    const Vector3& c = v1 - v0;
-
     SAFE_DELETE(n_);
-    n_ = new Vector3( math::Cross(b, c) );
+    n_ = new Vector3( math::Cross(v2 - v0, v1 - v0) );
 }
 
 bool Triangle::IntersectMoller(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance) {
@@ -252,6 +255,7 @@ bool Triangle::IntersectMoller(HitInfo& hit, const Ray& ray, float minDistance, 
 	const Vector3& c = v2 - v0;
     const Vector3& o = ray.origin - v0;
 
+    // Solve 3x3 linear system using Cramer's rule
     const float det = n_->Dot(ray.direction);
     if( det == 0.0f ) return false;
     const float inv_det = -1.0f / det;
@@ -316,6 +320,7 @@ bool Triangle::IntersectPlucker(HitInfo& hit, const Ray& ray, float minDistance,
 			return false;
 	}
 
+    // Our orientations are also unnormalized barycentric coordinates
     const float norm = 1.0f / (dirA + dirB + dirC);
     const float alpha = dirA*norm;
     const float beta = dirB*norm;

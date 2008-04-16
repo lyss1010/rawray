@@ -5,6 +5,7 @@
 #include "rawray_console.h"
 #include "rawray/glut_window.h"
 #include "rawray/options.h"
+#include "tools/sse.h"
 
 
 // Exit point
@@ -32,9 +33,37 @@ void VectorTest()
 		movups vec1, xmm1
 	}
 
-    std::cout << vec1.x << " " << vec1.y << " " << vec1.z << '\n';
+    //std::cout << vec1.x << " " << vec1.y << " " << vec1.z << '\n';
 }
 
+void SSETest() {
+    std::cout << "Testing SSE Version... ";
+    switch( tools::sse::GetVersion() ) {
+    case tools::sse::SSE1:
+        std::cout << "SSE" << std::endl;
+        break;
+
+    case tools::sse::SSE2:
+        std::cout << "SSE2" << std::endl;
+        break;
+    
+    case tools::sse::SSE3:
+        std::cout << "SSE3" << std::endl;
+        break;
+    
+    case tools::sse::SSSE3:
+        std::cout << "SSSE3" << std::endl;
+        break;
+            
+    case tools::sse::SSE4_1:
+        std::cout << "SSE4.1" << std::endl;
+        break;
+            
+    case tools::sse::SSE4_2:
+        std::cout << "SSE4.2" << std::endl;
+        break;
+    }
+}
 
 // Console Entry point
 int _tmain( int argc, _TCHAR* argv[] )
@@ -43,8 +72,8 @@ int _tmain( int argc, _TCHAR* argv[] )
 	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF );
 	//_CrtSetBreakAlloc( 438 );
 
-    // TEMP: vector test
-    //VectorTest();
+    SSETest();
+    VectorTest();
 
     // Initialize options defaults
     rawray::options::init();

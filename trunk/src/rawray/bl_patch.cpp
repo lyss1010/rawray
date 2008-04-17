@@ -3,12 +3,35 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 #include "bl_patch.h"
+#include "material.h"
 
 namespace rawray {
 
-
-
 void BLPatch::RenderGL() {
+    const Vector3& color = material_ ? material_->BaseColor() : Vector3(1);
+
+    const Vector3& e0 = verts_[1] - verts_[0];
+    const Vector3& e1 = verts_[3] - verts_[0];
+    const Vector3& e2 = verts_[1] - verts_[2];
+    const Vector3& e3 = verts_[3] - verts_[2];
+
+    const Vector3& n1 = math::Cross(e0,e1);
+    const Vector3& n2 = math::Cross(e2,e3);
+
+    // Draw 2 triangles so we can see something at least in GL
+    glBegin(GL_TRIANGLES);
+        glColor3f( color.x, color.y, color.z );
+
+		glNormal3f(n1.x, n1.y, n1.z);
+        glVertex3f(verts_[0].x, verts_[0].y, verts_[0].z);
+        glVertex3f(verts_[1].x, verts_[1].y, verts_[1].z);
+        glVertex3f(verts_[3].x, verts_[3].y, verts_[3].z);
+
+		glNormal3f(n2.x, n2.y, n2.z);
+        glVertex3f(verts_[2].x, verts_[2].y, verts_[2].z);
+        glVertex3f(verts_[3].x, verts_[3].y, verts_[3].z);
+        glVertex3f(verts_[0].x, verts_[0].y, verts_[0].z);
+    glEnd();
 }
 
 void BLPatch::PreCalc() {

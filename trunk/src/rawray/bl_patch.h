@@ -10,7 +10,9 @@
 /////////////////////////////////////////////////////////////////////////////
 namespace rawray {
 
-class DllExport BLPatch : Object
+class Material;
+
+class DllExport BLPatch : public Object
 {
 // Temporary data required for patch intersection computations
 private:
@@ -21,8 +23,13 @@ struct BLPatchData {
 
 
 public:
-    BLPatch() : Object(NULL) { }
+    BLPatch(Material* material) : Object(material) { }
     virtual ~BLPatch() { }
+
+    void SetP00(const Vector3& v) { verts_[0] = v; }
+    void SetP01(const Vector3& v) { verts_[1] = v; }
+    void SetP10(const Vector3& v) { verts_[2] = v; }
+    void SetP11(const Vector3& v) { verts_[3] = v; }
 
     Vector3& operator[](uint32 i) { return verts_[i]; }
     const Vector3& operator[](uint32 i) const { return verts_[i]; }
@@ -30,7 +37,7 @@ public:
     virtual void RenderGL();
     virtual void PreCalc();
 
-    virtual bool Intersect(HitInfo& hit, const Ray& ray, float minDistance = 0.0f, float maxDistance = MAX_DISTANCE)=0;
+    virtual bool Intersect(HitInfo& hit, const Ray& ray, float minDistance = 0.0f, float maxDistance = MAX_DISTANCE);
 
 protected:
     Vector3 verts_[4];

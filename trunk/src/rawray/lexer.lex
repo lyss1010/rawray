@@ -46,6 +46,7 @@ STRING      '([^']*)'|\"([^\"]*)\"
 %x material
 %x lambert
 %x sphere
+%x blpatch
 %x p0
 %%
 
@@ -147,6 +148,12 @@ STRING      '([^']*)'|\"([^\"]*)\"
 <INITIAL>sphere{WS}                 { yy_push_state(sphere); return YY_SPHERE; }
 <sphere>center{WS}                  { return YY_CENTER; }
 <sphere>radius{WS}                  { return YY_RADIUS; }
+
+<INITIAL>blpatch{WS}                { yy_push_state(blpatch); return YY_BLPATCH; }
+<blpatch>blah{WS}                   { return YY_P00; }
+<blpatch>foo{WS}                    { return YY_P01; }
+<blpatch>p10{WS}                    { return YY_P10; }
+<blpatch>p11{WS}                    { return YY_P11; }
 
 <*>{STRING}{WS}                     { yylval.str = _strdup(yytext); return YY_STRING; }
 <*>{INT}{WS}                        { yylval.integer = atoi(yytext); return YY_PARSE_INT; }

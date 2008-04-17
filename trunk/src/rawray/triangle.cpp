@@ -49,22 +49,15 @@ void Triangle::RenderGL() {
 
 void Triangle::Interpolate(HitInfo& hit, float alpha, float beta, float gamma) {
     const Tuple3I normalIndices = mesh_.GetNormalIndices()[ index_ ];
-	const Vector3& n0 = alpha * mesh_.GetNormals()[ normalIndices.x ];
-    const Vector3& n1 = beta * mesh_.GetNormals()[ normalIndices.y ];
-    const Vector3& n2 = gamma * mesh_.GetNormals()[ normalIndices.z ];
-
-    hit.normal.x = n0.x + n1.x + n2.x;
-    hit.normal.y = n0.y + n1.y + n2.y;
-    hit.normal.z = n0.z + n1.z + n2.z;
+    hit.normal = alpha * mesh_.GetNormals()[ normalIndices.x ] +
+                 beta  * mesh_.GetNormals()[ normalIndices.y ] +
+                 gamma * mesh_.GetNormals()[ normalIndices.z ];
 
     if( mesh_.GetTexCoordIndices() != NULL ) {
         const Tuple3I texCoordIndices = mesh_.GetTexCoordIndices()[ index_ ];
-        const Vector2& t0 = alpha * mesh_.GetTexCoords()[ texCoordIndices.x ];
-        const Vector2& t1 = beta * mesh_.GetTexCoords()[ texCoordIndices.y ];
-        const Vector2& t2 = gamma * mesh_.GetTexCoords()[ texCoordIndices.z ];
-
-        hit.texCoord.x = t0.x + t1.x + t2.x;
-        hit.texCoord.y = t0.y + t1.y + t2.y;
+        hit.texCoord = alpha * mesh_.GetTexCoords()[ texCoordIndices.x ] +
+                       beta  * mesh_.GetTexCoords()[ texCoordIndices.y ] +
+                       gamma * mesh_.GetTexCoords()[ texCoordIndices.z ];
     } else
         hit.texCoord = Vector2();
 }

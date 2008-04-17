@@ -53,7 +53,7 @@ bool TriangleBarycentric::Intersect(HitInfo& hit, const Ray& ray, float minDista
     if( gamma < 0.0f || gamma > 1.0f ) return false;
 
     const float beta = (j*ei_minus_hf + k*gf_minus_di + l*dh_minus_eg) * inv_den;
-    if( beta < 0.0f || beta > 1.0f - gamma ) return false;
+    if( beta < 0.0f || beta + gamma > 1.0f ) return false;
 
     hit.point = ray.origin + t * ray.direction;
     hit.distance = t;

@@ -16,7 +16,7 @@ namespace rawray {
 
 class PluckerCoord {
 public:
-	PluckerCoord() { }
+    PluckerCoord() { }
     PluckerCoord(const Vector3& direction, const Vector3& point);
 
     float GetOrientation(const PluckerCoord& p);

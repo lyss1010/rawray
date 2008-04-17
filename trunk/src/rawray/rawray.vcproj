@@ -414,6 +414,12 @@
 				<File
 					RelativePath="..\..\res\scenes\blpatch.cfg">
 					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="TRUE">
+						<Tool
+							Name="VCCustomBuildTool"/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release|Win32"
 						ExcludedFromBuild="TRUE">
 						<Tool
@@ -453,6 +459,12 @@
 				<File
 					RelativePath="..\..\res\scenes\sphere.cfg">
 					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="TRUE">
+						<Tool
+							Name="VCCustomBuildTool"/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release|Win32"
 						ExcludedFromBuild="TRUE">
 						<Tool
@@ -477,6 +489,12 @@
 				<File
 					RelativePath="..\..\res\scenes\teapot.cfg">
 					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="TRUE">
+						<Tool
+							Name="VCCustomBuildTool"/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Release|Win32"
 						ExcludedFromBuild="TRUE">
 						<Tool
@@ -485,67 +503,6 @@
 				</File>
 				<File
 					RelativePath="..\..\res\scenes\triangle.cfg">
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-				</File>
-			</Filter>
-			<Filter
-				Name="models"
-				Filter="">
-				<File
-					RelativePath="..\..\res\models\bunny.obj">
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\res\models\sphere.obj">
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\res\models\sphere_smooth.obj">
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\res\models\teapot.obj">
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\res\models\triangle.obj">
 					<FileConfiguration
 						Name="Debug|Win32"
 						ExcludedFromBuild="TRUE">

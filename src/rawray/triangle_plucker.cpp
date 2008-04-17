@@ -14,7 +14,7 @@ void TrianglePlucker::PreCalc() {
     const Vector3& v1 = mesh_.GetVertices()[ vertexIndices.y ];
     const Vector3& v2 = mesh_.GetVertices()[ vertexIndices.z ];
     
-    // Edge A corresponds to the edge opposite of vertex A (v0)
+    // Compute the plucker coords of the 3 lines representing edges
     pluckA_ = PluckerCoord( v2-v1, v1 );
     pluckB_ = PluckerCoord( v0-v2, v2 );
     pluckC_ = PluckerCoord( v1-v0, v0 );
@@ -26,23 +26,45 @@ void TrianglePlucker::PreCalc() {
 // See: http://www.flipcode.com/archives/Plcker_Coordinates_for_the_Rest_of_Us-Part_4_Applications.shtml
 bool TrianglePlucker::Intersect(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance) {
     PluckerCoord pluckRay( ray.direction, ray.origin );
-    float dirA = pluckA_.GetOrientation( pluckRay );
-    float dirB = pluckB_.GetOrientation( pluckRay );
-    float dirC = pluckC_.GetOrientation( pluckRay );
+    
+    const float dirA = pluckA_.GetOrientation( pluckRay );
+    const float dirB = pluckB_.GetOrientation( pluckRay );
+    float dirC;
 
-	// We treat hits on the exact edge as misses
-	if( dirA == 0.0f || dirB == 0.0f || dirC == 0.0f )
-		return false;
+    // Favor larger code for less redundant operations
+    // Perform directionality tests as soon as possible and only if nesecary
+    if( dirA > 0.0f ) { 
+        // Orientations must be positive
+        if( dirB < 0.0f ) return false;
 
-	// Make sure all orientations are the same direction
-	if( dirA < 0.0f ) {
-		if( dirB > 0.0f || dirC > 0.0f )
-			return false;
-	} else {
-		if( dirB < 0.0f || dirC < 0.0f )
-			return false;
-	}
+        dirC = pluckC_.GetOrientation( pluckRay );
+        if( dirC < 0.0f ) return false;
 
+    } else if( dirA < 0.0f ) { 
+        // Orientations must be negative
+        if( dirB > 0.0f ) return false;
+
+        dirC = pluckC_.GetOrientation( pluckRay );
+        if( dirC > 0.0f ) return false;
+
+    } else { 
+        // Orientations can be anything
+        if( dirB > 0.0f ) {
+            // Orientations must be positive
+            dirC = pluckC_.GetOrientation( pluckRay );
+            if( dirC < 0.0f ) return false;
+            
+        } else if( dirB < 0.0f ) {
+            // Orientations must be negative
+            dirC = pluckC_.GetOrientation( pluckRay );
+            if( dirC > 0.0f ) return false;
+
+        } else {
+            // We hit the point along the edges A and B, dirA=dirB=0.0
+            dirC = 1.0f;
+        }
+    }
+    
     // Our orientations are also unnormalized barycentric coordinates
     const float norm = 1.0f / (dirA + dirB + dirC);
     const float alpha = dirA*norm;

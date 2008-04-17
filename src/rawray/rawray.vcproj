@@ -412,6 +412,9 @@
 				Name="scenes"
 				Filter="">
 				<File
+					RelativePath="..\..\res\scenes\blpatch.cfg">
+				</File>
+				<File
 					RelativePath="..\..\res\scenes\bunny.cfg">
 					<FileConfiguration
 						Name="Debug|Win32"

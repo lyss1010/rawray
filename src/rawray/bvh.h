@@ -12,7 +12,7 @@
 /////////////////////////////////////////////////////////////////////////////
 namespace rawray {
 
-class DllExport BVH : Object
+class DllExport BVH : public Object
 {
 public:
     BVH(std::vector<Object*>* objects) : Object(NULL), objects_(objects) { }

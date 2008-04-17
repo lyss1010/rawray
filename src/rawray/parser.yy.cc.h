@@ -94,7 +94,12 @@ typedef union
 #define	YY_SPHERE	345
 #define	YY_CENTER	346
 #define	YY_RADIUS	347
-#define	NEG	348
+#define	YY_BLPATCH	348
+#define	YY_P00	349
+#define	YY_P01	350
+#define	YY_P10	351
+#define	YY_P11	352
+#define	NEG	353
 
 
 extern YYSTYPE yylval;

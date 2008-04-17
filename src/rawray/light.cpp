@@ -12,7 +12,7 @@ void Light::RenderGL() {
 
 		glPushMatrix();
 		glTranslatef( position_.x, position_.y, position_.z );
-		glutWireSphere( wattage_*0.001f, 2, 2 ); // magic number to scale down lights based on wattage
+		glutWireSphere( wattage_*0.0005f, 5, 5 ); // magic number to scale down lights based on wattage
 		glPopMatrix();
 	}
 }

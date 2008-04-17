@@ -18,7 +18,7 @@ class Light;
 class Material;
 class TriangleMesh;
 
-class DllExport Scene : Object
+class DllExport Scene : public Object
 {
 public:
     Scene() : Object(NULL), bvh_(&objects_) { }

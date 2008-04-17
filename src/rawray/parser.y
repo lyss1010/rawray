@@ -25,6 +25,7 @@
 #include "image.h"
 #include "triangle_factory.h"
 #include "sphere.h"
+#include "bl_patch.h"
 
 //#define YYDEBUG 1
 
@@ -164,6 +165,13 @@ std::stack<math::Matrix4x4>             g_matrixStack;
 %token YY_CENTER
 %token YY_RADIUS
 
+%token YY_BLPATCH
+%token YY_P00
+%token YY_P01
+%token YY_P10
+%token YY_P11
+
+
 // add more tokens here!
 
 %right '='
@@ -190,7 +198,7 @@ block:    YY_GLOBAL '{' globalOptions '}'   { memmove( &yyval, &yyval, sizeof(yy
 ;
 
 objectTypes:
-          YY_TRIANGLE '{'
+        YY_TRIANGLE '{'
             {
                 g_mesh = new rawray::TriangleMesh();
                 #ifdef VERBOSE_NEW
@@ -198,7 +206,7 @@ objectTypes:
                 #endif
                 //((TriangleMesh*)pObj)->CreateSingleTriangle();
             }
-          triangleOptions '}'
+        triangleOptions '}'
             {
                 g_scene->AddMesh( g_mesh );
                 rawray::AddTrianglesOfMesh();
@@ -220,7 +228,7 @@ objectTypes:
                 rawray::AddTrianglesOfMesh();
             }
             
-	| YY_MESH '{'
+	    | YY_MESH '{'
             {
                 g_mesh = new rawray::TriangleMesh();
                 #ifdef VERBOSE_NEW
@@ -233,7 +241,7 @@ objectTypes:
                 rawray::AddTrianglesOfMesh();
             }
             
-	| YY_MESH YY_STRING '{'
+	    | YY_MESH YY_STRING '{'
             {
                 g_mesh = new rawray::TriangleMesh();
                 #ifdef VERBOSE_NEW
@@ -248,7 +256,7 @@ objectTypes:
                 rawray::AddTrianglesOfMesh();
             }
 
-	| YY_SPHERE '{'
+	    | YY_SPHERE '{'
             {
                 g_obj = new rawray::Sphere( math::Vector3(0),
                                             1.0f,
@@ -264,7 +272,7 @@ objectTypes:
                 g_obj = NULL;
             }
             
-	| YY_SPHERE YY_STRING '{'
+	    | YY_SPHERE YY_STRING '{'
             {
                 g_obj = new rawray::Sphere( math::Vector3(0),
                                             1.0f,
@@ -281,8 +289,37 @@ objectTypes:
                 g_scene->AddObject( g_obj );
                 g_obj = NULL;
             }
-
-	| YY_INSTANCE '{'
+            
+        | YY_BLPATCH '{'
+            {
+                g_obj = new rawray::BLPatch( g_material );
+                                             
+                #ifdef VERBOSE_NEW
+                printf( "BLPATCH: %d", g_obj );
+                #endif
+            }
+        blPatchOptions '}'
+            {
+                g_scene->AddObject( g_obj );
+                g_obj = NULL;
+            }
+            
+        | YY_BLPATCH YY_STRING '{'
+            {
+                g_obj = new rawray::BLPatch( g_material );
+                #ifdef VERBOSE_NEW
+                printf( "BLPATCH: %d", g_obj );
+                #endif
+                
+                g_objectMap[$2] = g_obj;
+            }
+        blPatchOptions '}'
+            {
+                g_scene->AddObject( g_obj );
+                g_obj = NULL;
+            }
+/*
+	    | YY_INSTANCE '{'
             {
                 printf( "Instance not supported\n" );
             }
@@ -290,13 +327,15 @@ objectTypes:
             {
             }
             
-	| YY_INSTANCE YY_STRING '{'
+	    | YY_INSTANCE YY_STRING '{'
             {
                 printf( "Named Instance not supported\n" );
             }
           instanceOptions '}'
             {
             }
+            
+*/
 ;
 
 triangleOptions: /* empty */
@@ -321,8 +360,21 @@ sphereOptions: /* empty */
             { ((rawray::Sphere*)g_obj)->SetRadius( $2 ); }
 ;
 
-instanceOptions: /* empty */
-        | YY_GEOMETRY YY_STRING sphereOptions
+blPatchOptions: /* empty /*
+        | YY_P00
+        | YY_P00 rExp ',' rExp ',' rExp blPatchOptions
+            { ((rawray::BLPatch*)g_obj)->SetP00( math::Vector3($2,$4,$6) ); }
+        | YY_P01 rExp ',' rExp ',' rExp blPatchOptions
+            { ((rawray::BLPatch*)g_obj)->SetP01( math::Vector3($2,$4,$6) ); }
+        | YY_P10 rExp ',' rExp ',' rExp blPatchOptions
+            { ((rawray::BLPatch*)g_obj)->SetP10( math::Vector3($2,$4,$6) ); }
+        | YY_P11 rExp ',' rExp ',' rExp blPatchOptions
+            { ((rawray::BLPatch*)g_obj)->SetP11( math::Vector3($2,$4,$6) ); }
+;
+
+/*
+instanceOptions: 
+        | YY_GEOMETRY YY_STRING instanceOptions
             {
                 //std::map<std::string, Object*>::const_iterator it = g_objectMap.find ($2);
                 //if (it != g_objectMap.end ())
@@ -331,6 +383,7 @@ instanceOptions: /* empty */
                 //}
             }
 ;
+*/
 
 transform:  YY_PUSHMATRIX { /*PushMatrix();*/ }
         | YY_POPMATRIX

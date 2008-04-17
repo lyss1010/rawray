@@ -50,11 +50,11 @@ bool TriangleBarycentricProjection::Intersect(HitInfo& hit, const Ray& ray, floa
     const float t = -math::Dot( ray.origin-v0, n_ ) / denominator;
     if( t < minDistance || t > maxDistance ) return false;
 
-    // Determine dominant axis
     const float absNX = fabs(n_.x);
     const float absNY = fabs(n_.y);
     const float absNZ = fabs(n_.z);
 
+    // Determine dominant axis
     uint8 axis; // 0=x, 1=y, 2=z
     if( absNX > absNY )
         axis = (absNX > absNZ) ? 0 : 2;

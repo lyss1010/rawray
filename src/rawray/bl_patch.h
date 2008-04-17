@@ -17,8 +17,8 @@ class DllExport BLPatch : public Object
 // Temporary data required for patch intersection computations
 private:
 struct BLPatchData {
-    float a1,b1,c1,d1;
-    float a2,b2,c2,d2;
+    float A1, B1, C1, D1;
+    float A2, B2, C2, D2;
 };
 
 
@@ -44,7 +44,7 @@ protected:
 
 private:
     float ComputeU(float v, const BLPatch::BLPatchData& patch);
-    float ComputeT(const Ray& ray, const Vector3& p, const Vector3& absQ);
+    float ComputeT(const Ray& ray, const Vector3& p, uint8 axis);
 
     DISALLOW_COPY_CONSTRUCTORS(BLPatch);
 

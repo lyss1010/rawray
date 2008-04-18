@@ -95,46 +95,48 @@ bool BLPatch::Intersect(HitInfo& hit, const Ray& ray, float minDistance, float m
         if( u < 0.0f || u > 1.0f ) return false;
 
         hit.point = u*v*x1 + u*x2 + v*x3 + x4;
-        //hit.distance = (hit.point[axis] - ray.origin.[axis]) / ray.direction[axis];
+        hit.distance = (hit.point[axis] - ray.origin[axis]) / ray.direction[axis];
     } else {
-    //    const float u1 = 0;//ComputeU( v1, p );
-    //    const float u2 = 0;//ComputeU( v1, p );
-    //    const Vector3 p1;// = u1*v1*x1 + u1*x2 + v1*x3 + x4;
-    //    const Vector3 p2;// = u2*v2*x1 + u2*x2 + v2*x3 + x4;
+        const float u1 = ComputeU( v1, p );
+        const float u2 = ComputeU( v1, p );
+        
+        // We prevent unnesecary instances of vectors by not using binary operators
+        // p = u*v*x1 + u*x2 + v1*x3 + x4
+        Vector3 p1 = x4; p1 += v1*x3; p1 += u1*x2; p1 += u1*v1*x1;
+        Vector3 p2 = x4; p2 += v2*x3; p2 += u2*x2; p2 += u2*v2*x1;
 
-    //    const float inv_dir = 1.0f;// / ray.direction[axis];
-    //    const float t1 = 0;//(p1[axis] - ray.origin[axis]) * inv_dir;
-    //    const float t2 = 0;//(p2[axis] - ray.origin[axis]) * inv_dir;
+        const float inv_dir = 1.0f / ray.direction[axis];
+        const float t1 = (p1[axis] - ray.origin[axis]) * inv_dir;
+        const float t2 = (p2[axis] - ray.origin[axis]) * inv_dir;
 
-        // TODO: Take care of u,v out of bounds here
-        // Find the closest non-negative distance from the two t values
-        // We leave the check for t2 negativeness for afterwards
-        //if( t1 < 0.0f || t2 < t1 ) {
-        //    hit.distance = t2;
-        //    hit.point = p2;
-        //    u = u2;
-        //    v = v2;
-        //} else {
-        //    hit.distance = t1;
-        //    hit.point = p1;
-        //    u = u1;
-        //    v = v1;
-        //}
+        //TODO: Take care of u,v out of bounds here
+        //Find the closest non-negative distance from the two t values
+        //We leave the check for t2 negativeness for afterwards
+        if( t1 < 0.0f || t2 < t1 ) {
+            hit.distance = t2;
+            hit.point = p2;
+            u = u2;
+            v = v2;
+        } else {
+            hit.distance = t1;
+            hit.point = p1;
+            u = u1;
+            v = v1;
+        }
     }
 
-    //if( hit.distance < minDistance || hit.distance > maxDistance ) return false;
-    //hit.material = material_;
+    if( hit.distance < minDistance || hit.distance > maxDistance ) return false;
+    hit.material = material_;
 
-    //// Correct texture coordinates?
-    //hit.texCoord.x = u;
-    //hit.texCoord.y = v;
+    // Correct texture coordinates?
+    hit.texCoord.x = u;
+    hit.texCoord.y = v;
 
-    //// Compute the normal by using the partial derivitive w/ respect to u and v individually
-    //hit.normal = math::Cross( ( (1-v)*(verts_[2]-verts_[0]) + v*(verts_[3]-verts_[1]) ), 
-    //                          ( (1-u)*(verts_[1]-verts_[0]) + u*(verts_[3]-verts_[2]) ) );
+    // Compute the normal by using the partial derivitive w/ respect to u and v individually
+    hit.normal = math::Cross( ( (1-v)*(verts_[2]-verts_[0]) + v*(verts_[3]-verts_[1]) ), 
+                              ( (1-u)*(verts_[1]-verts_[0]) + u*(verts_[3]-verts_[2]) ) );
 
-    //return true;
-    return false;
+    return true;
 }
 
 float BLPatch::ComputeU(float v, const BLPatch::BLPatchData& patch) {

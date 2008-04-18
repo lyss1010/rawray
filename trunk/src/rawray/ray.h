@@ -10,19 +10,29 @@
 /////////////////////////////////////////////////////////////////////////////
 namespace rawray {
 
-class DllExport Ray
+// struct means default public access, but don't change direction or abs!
+struct DllExport Ray
 {
-public:
     Vector3 origin;
     Vector3 direction;
+	Vector3 abs;		// Absolute value of the direction
 
-    Ray() : origin(), direction( Vector3(0.0f, 0.0f, 1.0f) ) { }
-    Ray(const Vector3& origin, const Vector3& direction) : origin(origin), direction(direction) { }
-    Ray(const Ray& r) : origin(r.origin), direction(r.direction) { }
+    Ray() 
+		: origin(), 
+		direction( Vector3(0, 0, 1) ), 
+		abs( Vector3(0, 0, 1) ) { }
 
-private:
+    Ray(const Vector3& origin, const Vector3& direction) : origin(origin), direction(direction) {
+		this->direction.Normalize();
+		abs = Vector3( fabs(this->direction.x), fabs(this->direction.y), fabs(this->direction.z) );
+	}
 
-}; // class Ray
+    Ray(const Ray& r) 
+		: origin(r.origin), 
+		direction(r.direction), 
+		abs(r.abs) { }
+
+}; // struct Ray
 
 } // namespace rawray
 /////////////////////////////////////////////////////////////////////////////

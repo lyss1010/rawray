@@ -28,8 +28,10 @@ public:
     virtual bool Intersect(HitInfo& hit, const Ray& ray, float minDistance = 0.0f, float maxDistance = MAX_DISTANCE);
 
 private:
-	Vector3 n_;
-	Vector3 det2d_;
+	Vector3 n_, b_, c_;
+	uint8 axis_, u_, v_;
+	float det2d_;
+	//Vector3 det2d_;
 
     DISALLOW_IMPLICIT_CONSTRUCTORS(TriangleBarycentricProjection);
 

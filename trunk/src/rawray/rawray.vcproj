@@ -342,180 +342,69 @@
 			Name="Resource Files"
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
+			<File
+				RelativePath=".\lexer.h">
+			</File>
+			<File
+				RelativePath=".\lexer.lex">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Generating Lexer"
+						CommandLine="&quot;$(InputDir)flex.exe&quot; $(InputFileName)
+"
+						AdditionalDependencies="$(InputDir)parser.yy.cc.h"
+						Outputs="lexer.yy.cc"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Generating Lexer"
+						CommandLine="&quot;$(InputDir)flex.exe&quot; $(InputFileName)
+"
+						AdditionalDependencies="parser.yy.cc.h"
+						Outputs="lexer.yy.cc"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\parser.h">
+			</File>
+			<File
+				RelativePath=".\parser.y">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Generating Parser"
+						CommandLine="&quot;$(InputDir)bison.exe&quot; -d -oparser.yy.cc $(InputFileName)
+"
+						AdditionalDependencies=""
+						Outputs="parser.yy.cc"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Generating Parser"
+						CommandLine="&quot;$(InputDir)bison.exe&quot; -d -oparser.yy.cc $(InputFileName)
+"
+						AdditionalDependencies="parser.yy.cc"
+						Outputs="parser.yy.cc"/>
+				</FileConfiguration>
+			</File>
 			<Filter
-				Name="parser"
+				Name="generated"
 				Filter="">
 				<File
-					RelativePath=".\lexer.h">
+					RelativePath=".\lexer.yy.cc">
 				</File>
 				<File
-					RelativePath=".\lexer.lex">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Generating Lexer"
-							CommandLine="&quot;$(InputDir)flex.exe&quot; $(InputFileName)"
-							AdditionalDependencies="$(InputDir)parser.yy.cc.h"
-							Outputs="lexer.yy.cc"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Generating Lexer"
-							CommandLine="&quot;$(InputDir)flex.exe&quot; $(InputFileName)"
-							AdditionalDependencies="parser.yy.cc.h"
-							Outputs="lexer.yy.cc"/>
-					</FileConfiguration>
+					RelativePath=".\parser.yy.cc">
 				</File>
 				<File
-					RelativePath=".\parser.h">
-				</File>
-				<File
-					RelativePath=".\parser.y">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Generating Parser"
-							CommandLine="&quot;$(InputDir)bison.exe&quot; -d -oparser.yy.cc $(InputFileName)
-"
-							AdditionalDependencies=""
-							Outputs="parser.yy.cc"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCustomBuildTool"
-							Description="Generating Parser"
-							CommandLine="&quot;$(InputDir)bison.exe&quot; -d -oparser.yy.cc $(InputFileName)
-"
-							AdditionalDependencies="parser.yy.cc"
-							Outputs="parser.yy.cc"/>
-					</FileConfiguration>
-				</File>
-				<Filter
-					Name="generated"
-					Filter="">
-					<File
-						RelativePath=".\lexer.yy.cc">
-					</File>
-					<File
-						RelativePath=".\parser.yy.cc">
-					</File>
-					<File
-						RelativePath=".\parser.yy.cc.h">
-					</File>
-				</Filter>
-			</Filter>
-			<Filter
-				Name="scenes"
-				Filter="">
-				<File
-					RelativePath="..\..\res\scenes\blpatch.cfg">
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\res\scenes\bunny.cfg">
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\res\scenes\lorenz.cfg">
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\res\scenes\sphere.cfg">
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\res\scenes\spiral.cfg">
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\res\scenes\teapot.cfg">
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\res\scenes\triangle.cfg">
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="TRUE">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
+					RelativePath=".\parser.yy.cc.h">
 				</File>
 			</Filter>
 		</Filter>

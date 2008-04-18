@@ -53,6 +53,8 @@ void Triangle::Interpolate(HitInfo& hit, float alpha, float beta, float gamma) {
                  beta  * mesh_.GetNormals()[ normalIndices.y ] +
                  gamma * mesh_.GetNormals()[ normalIndices.z ];
 
+	hit.normal.Normalize();
+
     if( mesh_.GetTexCoordIndices() != NULL ) {
         const Tuple3I texCoordIndices = mesh_.GetTexCoordIndices()[ index_ ];
         hit.texCoord = alpha * mesh_.GetTexCoords()[ texCoordIndices.x ] +

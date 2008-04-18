@@ -1,8 +1,8 @@
 #	             Vertex list
-v -4 0 -4
-v  4 0 -4
-v  4 0  4
-v -4 0  4
+v -10 0 -10
+v  10 0 -10
+v  10 0  10
+v -10 0  10
 
 #	             Normal list
 vn 0 1 0

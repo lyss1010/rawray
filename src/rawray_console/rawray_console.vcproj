@@ -202,6 +202,30 @@ copy &quot;$(SolutionDir)lib\tools.dll&quot; &quot;$(OutDir)&quot;
 			Name="Resource Files"
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
+			<File
+				RelativePath="..\..\res\scenes\blpatch.cfg">
+			</File>
+			<File
+				RelativePath="..\..\res\scenes\bunny.cfg">
+			</File>
+			<File
+				RelativePath="..\..\res\scenes\empty.cfg">
+			</File>
+			<File
+				RelativePath="..\..\res\scenes\lorenz.cfg">
+			</File>
+			<File
+				RelativePath="..\..\res\scenes\sphere.cfg">
+			</File>
+			<File
+				RelativePath="..\..\res\scenes\spiral.cfg">
+			</File>
+			<File
+				RelativePath="..\..\res\scenes\teapot.cfg">
+			</File>
+			<File
+				RelativePath="..\..\res\scenes\triangle.cfg">
+			</File>
 		</Filter>
 		<File
 			RelativePath=".\ReadMe.txt">

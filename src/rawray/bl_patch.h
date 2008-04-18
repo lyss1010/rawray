@@ -44,7 +44,6 @@ protected:
 
 private:
     float ComputeU(float v, const BLPatch::BLPatchData& patch);
-    float ComputeT(const Ray& ray, const Vector3& p, uint8 axis);
 
     DISALLOW_COPY_CONSTRUCTORS(BLPatch);
 

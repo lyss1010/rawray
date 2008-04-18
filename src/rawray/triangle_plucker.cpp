@@ -41,7 +41,7 @@ bool TrianglePlucker::Intersect(HitInfo& hit, const Ray& ray, float minDistance,
         dirC = pluckC_.GetOrientation( pluckRay );
         if( dirC < 0.0f ) return false;
 
-    } else if( dirA < 0.0f ) { 
+    } else {
         // Orientations must be negative
         if( dirB >= 0.0f ) return false;
 

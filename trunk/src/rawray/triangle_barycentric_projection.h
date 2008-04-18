@@ -29,9 +29,8 @@ public:
 
 private:
 	Vector3 n_, b_, c_;
-	uint8 axis_, u_, v_;
 	float det2d_;
-	//Vector3 det2d_;
+	uint8 axis_, u_, v_;
 
     DISALLOW_IMPLICIT_CONSTRUCTORS(TriangleBarycentricProjection);
 

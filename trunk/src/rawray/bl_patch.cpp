@@ -138,15 +138,14 @@ bool BLPatch::Intersect(HitInfo& hit, const Ray& ray, float minDistance, float m
 }
 
 float BLPatch::ComputeU(float v, const BLPatch::BLPatchData& patch) {
-    //const float divisor_a = v * (patch.A2 + patch.A2);
-    //const float divisor_b = v * (patch.A2 - patch.A1) + patch.B2 - patch.B1;
+    const float divisor_a = v * (patch.A2 + patch.A2);
+    const float divisor_b = v * (patch.A2 - patch.A1) + patch.B2 - patch.B1;
 
-    //// Choose the largest divisor for numerical stability
-    //if( fabs(divisor_b) > fabs(divisor_a) )
-    //    return ( v*(patch.C1 - patch.C2) + patch.D1 - patch.D2) / divisor_b;
-    //else
-    //    return (-v * patch.C2 - patch.D2) / divisor_a;
-    return 0;
+    // Choose the largest divisor for numerical stability
+    if( fabs(divisor_b) > fabs(divisor_a) )
+        return ( v*(patch.C1 - patch.C2) + patch.D1 - patch.D2) / divisor_b;
+
+	return (-v * patch.C2 - patch.D2) / divisor_a;
 }
 
 } // namespace rawray

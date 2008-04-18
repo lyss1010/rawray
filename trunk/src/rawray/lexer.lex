@@ -26,6 +26,10 @@ int yyerr=0;
 
 void yy_done_parsing() {
 	yy_delete_buffer( YY_CURRENT_BUFFER );
+	
+	delete yy_start_stack;
+	yy_start_stack = 0;
+	
 	yy_init = 1;
 }
 %}

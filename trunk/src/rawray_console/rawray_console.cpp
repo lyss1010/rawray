@@ -70,7 +70,7 @@ int _tmain( int argc, _TCHAR* argv[] )
 {
 	// Enable memory leak messages on exit
 	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF );
-	_CrtSetBreakAlloc( 143 );
+	//_CrtSetBreakAlloc( 143 );
 
     SSETest();
     VectorTest();

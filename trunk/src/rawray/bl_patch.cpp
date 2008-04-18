@@ -41,62 +41,62 @@ void BLPatch::PreCalc() {
 bool BLPatch::Intersect(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance) {
     return false;
 
-    //const Vector3& x1 = verts_[3] - verts_[2] - verts_[1] + verts_[0];
-    //const Vector3& x2 = verts_[2] - verts_[0];
-    //const Vector3& x3 = verts_[1] - verts_[0];
-    //const Vector3& x4 = verts_[0];
+    const Vector3& x1 = verts_[3] - verts_[2] - verts_[1] + verts_[0];
+    const Vector3& x2 = verts_[2] - verts_[0];
+    const Vector3& x3 = verts_[1] - verts_[0];
+    const Vector3& x4 = verts_[0];
 
-    //// Manually solve: r + t*d = uv*x1 + u*x2 + v*x3 + x4
-    //// We will use a the BLPatchData struct to hold temp values
-    //BLPatch::BLPatchData p;
+    // Manually solve: r + t*d = uv*x1 + u*x2 + v*x3 + x4
+    // We will use a the BLPatchData struct to hold temp values
+    BLPatch::BLPatchData p;
 
-    //// where i is either x,y,z
-    //// t.i = (1/d.i) * (uv*x1.i + u*x2.i + v*x3.i + x4.i - r.i)
-    //// setting tx*dx*dz = tz*dz*dx where tx=tz=t and substituting the above equation
-    //p.A1 = x1.x * ray.direction.z - x1.z * ray.direction.x;
-    //p.B1 = x2.x * ray.direction.z - x2.z * ray.direction.x;
-    //p.C1 = x3.x * ray.direction.z - x3.z * ray.direction.x;
-    //p.D1 = ray.direction.z * (x4.x - ray.origin.x) - ray.direction.x * (x4.z - ray.origin.z);
+    // where i is either x,y,z
+    // t.i = (1/d.i) * (uv*x1.i + u*x2.i + v*x3.i + x4.i - r.i)
+    // setting tx*dx*dz = tz*dz*dx where tx=tz=t and substituting the above equation
+    p.A1 = x1.x * ray.direction.z - x1.z * ray.direction.x;
+    p.B1 = x2.x * ray.direction.z - x2.z * ray.direction.x;
+    p.C1 = x3.x * ray.direction.z - x3.z * ray.direction.x;
+    p.D1 = ray.direction.z * (x4.x - ray.origin.x) - ray.direction.x * (x4.z - ray.origin.z);
 
-    //// the same as above but using ty*dy*dz = tz*dz*dy
-    //p.A1 = x1.y * ray.direction.z - x1.z * ray.direction.y;
-    //p.B1 = x2.y * ray.direction.z - x2.z * ray.direction.y;
-    //p.C1 = x3.y * ray.direction.z - x3.z * ray.direction.y;
-    //p.D1 = ray.direction.z * (x4.y - ray.origin.y) - ray.direction.y * (x4.z - ray.origin.z);
+    // the same as above but using ty*dy*dz = tz*dz*dy
+    p.A1 = x1.y * ray.direction.z - x1.z * ray.direction.y;
+    p.B1 = x2.y * ray.direction.z - x2.z * ray.direction.y;
+    p.C1 = x3.y * ray.direction.z - x3.z * ray.direction.y;
+    p.D1 = ray.direction.z * (x4.y - ray.origin.y) - ray.direction.y * (x4.z - ray.origin.z);
 
-    //// Set the following two equations equal to each other, you get back a quadratic
-    //// 0 = uvA1 + uB1 + vC1 + D1 = uvA2 + uB2 + vC2 + D2
-    //// 0 = v^2(A2C1 - A1C2) + v(A2D1 - A1D2 + B2C1 - B1C2) + (B2D1 - B1D2)
-    //float v1, v2;
-    //const int numRoots = math::SolveQuadratic( &v1, &v2,
-    //                        ( p.A2*p.C1 - p.A1*p.C2 ),
-    //                        ( p.A2*p.D1 - p.A1*p.D2 + p.B2*p.C1 - p.B1*p.C2 ),
-    //                        ( p.B2*p.D1 - p.B1*p.D2 ) );
+    // Set the following two equations equal to each other, you get back a quadratic
+    // 0 = uvA1 + uB1 + vC1 + D1 = uvA2 + uB2 + vC2 + D2
+    // 0 = v^2(A2C1 - A1C2) + v(A2D1 - A1D2 + B2C1 - B1C2) + (B2D1 - B1D2)
+    float v1, v2;
+    const int numRoots = math::SolveQuadratic( &v1, &v2,
+                            ( p.A2*p.C1 - p.A1*p.C2 ),
+                            ( p.A2*p.D1 - p.A1*p.D2 + p.B2*p.C1 - p.B1*p.C2 ),
+                            ( p.B2*p.D1 - p.B1*p.D2 ) );
 
-    //if( numRoots < 1 ) return false;
-    //
-    //const float absDX = fabs(ray.direction.x);
-    //const float absDY = fabs(ray.direction.y);
-    //const float absDZ = fabs(ray.direction.z);
+    if( numRoots < 1 ) return false;
+    
+    const float absDX = fabs(ray.direction.x);
+    const float absDY = fabs(ray.direction.y);
+    const float absDZ = fabs(ray.direction.z);
 
-    //// Determine dominant axis, this is to ensure no div by 0 when we compute t
-    //uint8 axis; // 0=x, 1=y, 2=z
-    //if( absDX > absDY )
-    //    axis = (absDX > absDZ) ? 0 : 2;
-    //else
-    //    axis = (absDY > absDZ) ? 1 : 2;
-    //
-    //float u, v;
-    //if( numRoots == 1 ) {
-    //    if( v1 < 0.0f || v1 > 1.0f ) return false;
-    //    
-    //    v = v1;
-    //    u = ComputeU( v, p );
-    //    if( u < 0.0f || u > 1.0f ) return false;
+    // Determine dominant axis, this is to ensure no div by 0 when we compute t
+    uint8 axis; // 0=x, 1=y, 2=z
+    if( absDX > absDY )
+        axis = (absDX > absDZ) ? 0 : 2;
+    else
+        axis = (absDY > absDZ) ? 1 : 2;
+    
+    float u, v;
+    if( numRoots == 1 ) {
+        if( v1 < 0.0f || v1 > 1.0f ) return false;
+        
+        v = v1;
+        u = ComputeU( v, p );
+        if( u < 0.0f || u > 1.0f ) return false;
 
-    //    hit.point = u*v*x1 + u*x2 + v*x3 + x4;
-    //    hit.distance = (p[axis] - ray.origin.[axis]) / ray.direction[axis];
-    //} else {
+        hit.point = u*v*x1 + u*x2 + v*x3 + x4;
+        //hit.distance = (hit.point[axis] - ray.origin.[axis]) / ray.direction[axis];
+    } else {
     //    const float u1 = 0;//ComputeU( v1, p );
     //    const float u2 = 0;//ComputeU( v1, p );
     //    const Vector3 p1;// = u1*v1*x1 + u1*x2 + v1*x3 + x4;
@@ -120,7 +120,7 @@ bool BLPatch::Intersect(HitInfo& hit, const Ray& ray, float minDistance, float m
         //    u = u1;
         //    v = v1;
         //}
-    //}
+    }
 
     //if( hit.distance < minDistance || hit.distance > maxDistance ) return false;
     //hit.material = material_;

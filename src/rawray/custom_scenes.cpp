@@ -17,13 +17,19 @@ void GlutWindow::MakeScene(int* argc, char* argv[]) {
     for(int i=1; i<*argc; ++i ) {
         std::cout << "Loading config file '" << argv[i] << "'..." << std::endl;
         if( !ConfigParser( argv[i] ) )
-            std::cout << "Loading config file '" << argv[i] << "'... FAILED" << std::endl;
+			std::cout << "FAILED" << std::endl;
+		else
+			std::cout << "SUCCESS" << std::endl;
     }
 }
 
 
 void GlutWindow::MakeSpiralScene() {
-    ConfigParser( "./../res/scenes/spiral.cfg" );
+	std::cout << "Loading config file './../res/scenes/spiral.cfg'..." << std::endl;
+    if( !ConfigParser( "./../res/scenes/spiral.cfg" ) )
+		std::cout << "FAILED" << std::endl;
+	else
+		std::cout << "SUCCESS" << std::endl;
 
     const float dt = 1.0f / options::p0::spiral_num_spheres;
     const float a = options::p0::spiral_radius;
@@ -47,7 +53,11 @@ void GlutWindow::MakeSpiralScene() {
 }
 
 void GlutWindow::MakeLorenzScene() {
-    ConfigParser( "./../res/scenes/lorenz.cfg" );
+	std::cout << "Loading config file './../res/scenes/lorenz.cfg'..." << std::endl;
+    if( !ConfigParser( "./../res/scenes/lorenz.cfg" ) )
+		std::cout << "FAILED" << std::endl;
+	else
+		std::cout << "SUCCESS" << std::endl;
 
     float base_dt = options::p0::lorenz_dt;
 	float min_dist = options::p0::lorenz_min_distance;

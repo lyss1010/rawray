@@ -17,6 +17,9 @@ class DllExport BLPatch : public Object
 // Temporary data required for patch intersection computations
 private:
 struct BLPatchData {
+	BLPatchData(float A1, float B1, float C1, float D1, float A2, float B2, float C2, float D2)
+		: A1(A1), B1(B1), C1(C1), D1(D1), A2(A2), B2(B2), C2(C2), D2(D2) { }
+
     float A1, B1, C1, D1;
     float A2, B2, C2, D2;
 };

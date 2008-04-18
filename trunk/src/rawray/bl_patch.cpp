@@ -39,30 +39,27 @@ void BLPatch::PreCalc() {
 
 // See: http://www.cs.utah.edu/~kpotter/pubs/bilinear.pdf
 bool BLPatch::Intersect(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance) {
-    return false;
-
     const Vector3& x1 = verts_[3] - verts_[2] - verts_[1] + verts_[0];
     const Vector3& x2 = verts_[2] - verts_[0];
     const Vector3& x3 = verts_[1] - verts_[0];
     const Vector3& x4 = verts_[0];
 
     // Manually solve: r + t*d = uv*x1 + u*x2 + v*x3 + x4
-    // We will use a the BLPatchData struct to hold temp values
-    BLPatch::BLPatchData p;
+	// t.i = (1/d.i) * (uv*x1.i + u*x2.i + v*x3.i + x4.i - r.i)
+    BLPatch::BLPatchData p( 
+		
+		// setting tx*dx*dz = tz*dz*dx where tx=tz=t and substituting the above equation
+		x1.x * ray.direction.z - x1.z * ray.direction.x,	// A1
+		x2.x * ray.direction.z - x2.z * ray.direction.x,	// B1
+		x3.x * ray.direction.z - x3.z * ray.direction.x,	// C1
+		ray.direction.z * (x4.x - ray.origin.x) - ray.direction.x * (x4.z - ray.origin.z), // D1
 
-    // where i is either x,y,z
-    // t.i = (1/d.i) * (uv*x1.i + u*x2.i + v*x3.i + x4.i - r.i)
-    // setting tx*dx*dz = tz*dz*dx where tx=tz=t and substituting the above equation
-    p.A1 = x1.x * ray.direction.z - x1.z * ray.direction.x;
-    p.B1 = x2.x * ray.direction.z - x2.z * ray.direction.x;
-    p.C1 = x3.x * ray.direction.z - x3.z * ray.direction.x;
-    p.D1 = ray.direction.z * (x4.x - ray.origin.x) - ray.direction.x * (x4.z - ray.origin.z);
-
-    // the same as above but using ty*dy*dz = tz*dz*dy
-    p.A1 = x1.y * ray.direction.z - x1.z * ray.direction.y;
-    p.B1 = x2.y * ray.direction.z - x2.z * ray.direction.y;
-    p.C1 = x3.y * ray.direction.z - x3.z * ray.direction.y;
-    p.D1 = ray.direction.z * (x4.y - ray.origin.y) - ray.direction.y * (x4.z - ray.origin.z);
+		// and then using ty*dy*dz = tz*dz*dy
+		x1.y * ray.direction.z - x1.z * ray.direction.y,	// A2
+		x2.y * ray.direction.z - x2.z * ray.direction.y,	// B2
+		x3.y * ray.direction.z - x3.z * ray.direction.y,	// C2
+		ray.direction.z * (x4.y - ray.origin.y) - ray.direction.y * (x4.z - ray.origin.z)  // D2
+	);
 
     // Set the following two equations equal to each other, you get back a quadratic
     // 0 = uvA1 + uB1 + vC1 + D1 = uvA2 + uB2 + vC2 + D2

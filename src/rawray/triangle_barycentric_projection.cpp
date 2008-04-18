@@ -14,9 +14,8 @@ void TriangleBarycentricProjection::PreCalc() {
     const Vector3& v1 = mesh_.GetVertices()[ vertexIndices.y ];
     const Vector3& v2 = mesh_.GetVertices()[ vertexIndices.z ];
 
-    const Vector3& b_ = v2 - v0;
-    const Vector3& c_ = v1 - v0;
-
+    b_ = v2 - v0;
+    c_ = v1 - v0;
     n_ = math::Cross(b_, c_);
 
 	const float absNX = fabs(n_.x);

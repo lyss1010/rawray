@@ -72,16 +72,12 @@ bool BLPatch::Intersect(HitInfo& hit, const Ray& ray, float minDistance, float m
 
     if( numRoots < 1 ) return false;
     
-    const float absDX = fabs(ray.direction.x);
-    const float absDY = fabs(ray.direction.y);
-    const float absDZ = fabs(ray.direction.z);
-
     // Determine dominant axis, this is to ensure no div by 0 when we compute t
     uint8 axis; // 0=x, 1=y, 2=z
-    if( absDX > absDY )
-        axis = (absDX > absDZ) ? 0 : 2;
+    if( ray.abs.x > ray.abs.y )
+        axis = (ray.abs.x > ray.abs.z) ? 0 : 2;
     else
-        axis = (absDY > absDZ) ? 1 : 2;
+        axis = (ray.abs.y > ray.abs.z) ? 1 : 2;
     
     float u, v;
     if( numRoots == 1 ) {

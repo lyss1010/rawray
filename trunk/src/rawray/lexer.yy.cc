@@ -942,10 +942,16 @@ char *yytext;
 #include <cstdlib>
 #include <stdio.h>
 #include <string.h>
+#include "lexer.h"
 #include "parser.yy.cc.h"
 
 int yyline=1;
 int yyerr=0;
+
+void yy_done_parsing() {
+	yy_delete_buffer( YY_CURRENT_BUFFER );
+	yy_init = 1;
+}
 #define s_global 1
 
 #define s_camera 2
@@ -970,7 +976,7 @@ int yyerr=0;
 
 #define s_p0 12
 
-#line 974 "lexer.yy.cc"
+#line 980 "lexer.yy.cc"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -1121,10 +1127,10 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
 
-#line 52 "lexer.lex"
+#line 58 "lexer.lex"
 
 
-#line 1128 "lexer.yy.cc"
+#line 1134 "lexer.yy.cc"
 
 	if ( yy_init )
 		{
@@ -1217,585 +1223,585 @@ do_action:	/* This label is used only to access EOF actions. */
 	{ /* beginning of action switch */
 case 1:
 YY_RULE_SETUP
-#line 54 "lexer.lex"
+#line 60 "lexer.lex"
 { return YY_ENABLE; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 55 "lexer.lex"
+#line 61 "lexer.lex"
 { return YY_DISABLE; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 56 "lexer.lex"
+#line 62 "lexer.lex"
 { return YY_MATH_COS; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 57 "lexer.lex"
+#line 63 "lexer.lex"
 { return YY_MATH_SIN; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 58 "lexer.lex"
+#line 64 "lexer.lex"
 { return YY_MATH_TAN; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 59 "lexer.lex"
+#line 65 "lexer.lex"
 { return YY_MATH_ACOS; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 60 "lexer.lex"
+#line 66 "lexer.lex"
 { return YY_MATH_ASIN; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 61 "lexer.lex"
+#line 67 "lexer.lex"
 { return YY_MATH_ATAN; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 62 "lexer.lex"
+#line 68 "lexer.lex"
 { return YY_MATH_ATAN2; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 63 "lexer.lex"
+#line 69 "lexer.lex"
 { return YY_MATH_LN; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 64 "lexer.lex"
+#line 70 "lexer.lex"
 { return YY_MATH_LOG; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 65 "lexer.lex"
+#line 71 "lexer.lex"
 { return YY_MATH_EXP; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 66 "lexer.lex"
+#line 72 "lexer.lex"
 { return YY_MATH_SQRT; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 67 "lexer.lex"
+#line 73 "lexer.lex"
 { return YY_MATH_E; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 68 "lexer.lex"
+#line 74 "lexer.lex"
 { return YY_MATH_PI; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 70 "lexer.lex"
+#line 76 "lexer.lex"
 { return YY_LT; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 71 "lexer.lex"
+#line 77 "lexer.lex"
 { return YY_GT; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 72 "lexer.lex"
+#line 78 "lexer.lex"
 { return YY_LBOX; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 73 "lexer.lex"
+#line 79 "lexer.lex"
 { return YY_LBOX; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 74 "lexer.lex"
+#line 80 "lexer.lex"
 { return YY_LCURLY; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 75 "lexer.lex"
+#line 81 "lexer.lex"
 { yy_pop_state(); return YY_RCURLY; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 76 "lexer.lex"
+#line 82 "lexer.lex"
 { return YY_LPAREN; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 77 "lexer.lex"
+#line 83 "lexer.lex"
 { return YY_RPAREN; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 78 "lexer.lex"
+#line 84 "lexer.lex"
 { return YY_COMMA; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 79 "lexer.lex"
+#line 85 "lexer.lex"
 { return YY_EQUAL; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 80 "lexer.lex"
+#line 86 "lexer.lex"
 { return YY_PLUS; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 81 "lexer.lex"
+#line 87 "lexer.lex"
 { return YY_MINUS; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 82 "lexer.lex"
+#line 88 "lexer.lex"
 { return YY_MUL; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 83 "lexer.lex"
+#line 89 "lexer.lex"
 { return YY_DIV; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 84 "lexer.lex"
+#line 90 "lexer.lex"
 { return YY_CARAT; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 85 "lexer.lex"
+#line 91 "lexer.lex"
 { return YY_BSLASH; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 86 "lexer.lex"
+#line 92 "lexer.lex"
 { yyline++; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 89 "lexer.lex"
+#line 95 "lexer.lex"
 { yy_push_state(s_global); return YY_S_GLOBAL; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 90 "lexer.lex"
+#line 96 "lexer.lex"
 { return YY_WIDTH; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 91 "lexer.lex"
+#line 97 "lexer.lex"
 { return YY_HEIGHT; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 92 "lexer.lex"
+#line 98 "lexer.lex"
 { return YY_POS; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 93 "lexer.lex"
+#line 99 "lexer.lex"
 { return YY_IMG_BGCOLOR; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 94 "lexer.lex"
+#line 100 "lexer.lex"
 { return YY_IMG_FGCOLOR; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 95 "lexer.lex"
+#line 101 "lexer.lex"
 { return YY_GL_BGCOLOR; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 96 "lexer.lex"
+#line 102 "lexer.lex"
 { return YY_GL_SPHERE_SECTIONS; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 97 "lexer.lex"
+#line 103 "lexer.lex"
 { return YY_NUM_THREADS; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 98 "lexer.lex"
+#line 104 "lexer.lex"
 { return YY_RENDER_X_BLOCK; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 99 "lexer.lex"
+#line 105 "lexer.lex"
 { return YY_RENDER_Y_BLOCK; }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 100 "lexer.lex"
+#line 106 "lexer.lex"
 { return YY_RENDER_HANDLER_SLEEP; }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 101 "lexer.lex"
+#line 107 "lexer.lex"
 { return YY_RENDER_THREAD_SLEEP; }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 102 "lexer.lex"
+#line 108 "lexer.lex"
 { return YY_RENDER_SPINLOCK_SLEEP; }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 103 "lexer.lex"
+#line 109 "lexer.lex"
 { return YY_GAUSSIAN_BLUR_MAX; }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 104 "lexer.lex"
+#line 110 "lexer.lex"
 { return YY_GAUSSIAN_BLUR_SIGMA; }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 105 "lexer.lex"
+#line 111 "lexer.lex"
 { return YY_GL_RENDER_LIGHTS; }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 106 "lexer.lex"
+#line 112 "lexer.lex"
 { return YY_HEADLESS; }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 107 "lexer.lex"
+#line 113 "lexer.lex"
 { return YY_TRIANGLE_TEST; }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 108 "lexer.lex"
+#line 114 "lexer.lex"
 { return YY_PROJECTION; }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 109 "lexer.lex"
+#line 115 "lexer.lex"
 { return YY_BARYCENTRIC; }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 110 "lexer.lex"
+#line 116 "lexer.lex"
 { return YY_PLUCKER; }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 111 "lexer.lex"
+#line 117 "lexer.lex"
 { return YY_MOLLER; }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 114 "lexer.lex"
+#line 120 "lexer.lex"
 { yy_push_state(s_camera); return YY_S_CAMERA; }
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 115 "lexer.lex"
+#line 121 "lexer.lex"
 { return YY_POS; }
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 116 "lexer.lex"
+#line 122 "lexer.lex"
 { return YY_DIR; }
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 117 "lexer.lex"
+#line 123 "lexer.lex"
 { return YY_LOOKAT; }
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 118 "lexer.lex"
+#line 124 "lexer.lex"
 { return YY_UP; }
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 119 "lexer.lex"
+#line 125 "lexer.lex"
 { return YY_FOV; }
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 120 "lexer.lex"
+#line 126 "lexer.lex"
 { return YY_ASPECT; }
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 121 "lexer.lex"
+#line 127 "lexer.lex"
 { return YY_MIN_DRAW; }
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 122 "lexer.lex"
+#line 128 "lexer.lex"
 { return YY_MAX_DRAW; }
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 124 "lexer.lex"
+#line 130 "lexer.lex"
 { yy_push_state(s_p0); return YY_S_P0; }
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 125 "lexer.lex"
+#line 131 "lexer.lex"
 { return YY_SPIRAL_NUM_SPHERES; }
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 126 "lexer.lex"
+#line 132 "lexer.lex"
 { return YY_SPIRAL_RADIUS; }
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 127 "lexer.lex"
+#line 133 "lexer.lex"
 { return YY_LORENZ_DT; }
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 128 "lexer.lex"
+#line 134 "lexer.lex"
 { return YY_LORENZ_MIN_DISTANCE; }
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 129 "lexer.lex"
+#line 135 "lexer.lex"
 { return YY_LORENZ_MAX_DISTANCE; }
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 130 "lexer.lex"
+#line 136 "lexer.lex"
 { return YY_LORENZ_SIGMA; }
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 131 "lexer.lex"
+#line 137 "lexer.lex"
 { return YY_LORENZ_RHO; }
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 132 "lexer.lex"
+#line 138 "lexer.lex"
 { return YY_LORENZ_BETA; }
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 133 "lexer.lex"
+#line 139 "lexer.lex"
 { return YY_LORENZ_RADIUS; }
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 134 "lexer.lex"
+#line 140 "lexer.lex"
 { return YY_LORENZ_NUM_SPHERES; }
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 135 "lexer.lex"
+#line 141 "lexer.lex"
 { return YY_LORENZ_START; }
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 137 "lexer.lex"
+#line 143 "lexer.lex"
 { yy_push_state(s_triangle); return YY_S_TRIANGLE; }
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 138 "lexer.lex"
+#line 144 "lexer.lex"
 { return YY_V1; }
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 139 "lexer.lex"
+#line 145 "lexer.lex"
 { return YY_V2; }
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 140 "lexer.lex"
+#line 146 "lexer.lex"
 { return YY_V3; }
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
-#line 141 "lexer.lex"
+#line 147 "lexer.lex"
 { return YY_N1; }
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
-#line 142 "lexer.lex"
+#line 148 "lexer.lex"
 { return YY_N2; }
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
-#line 143 "lexer.lex"
+#line 149 "lexer.lex"
 { return YY_N3; }
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
-#line 145 "lexer.lex"
+#line 151 "lexer.lex"
 { yy_push_state(s_mesh); return YY_S_MESH; }
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
-#line 146 "lexer.lex"
+#line 152 "lexer.lex"
 { return YY_LOAD; }
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
-#line 148 "lexer.lex"
+#line 154 "lexer.lex"
 { yy_push_state(s_instance); return YY_S_INSTANCE; }
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
-#line 149 "lexer.lex"
+#line 155 "lexer.lex"
 { return YY_GEOMETRY; }
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
-#line 151 "lexer.lex"
+#line 157 "lexer.lex"
 { return YY_PUSHMATRIX; }
 	YY_BREAK
 case 89:
 YY_RULE_SETUP
-#line 152 "lexer.lex"
+#line 158 "lexer.lex"
 { return YY_POPMATRIX; }
 	YY_BREAK
 case 90:
 YY_RULE_SETUP
-#line 153 "lexer.lex"
+#line 159 "lexer.lex"
 { return YY_ROTATE; }
 	YY_BREAK
 case 91:
 YY_RULE_SETUP
-#line 154 "lexer.lex"
+#line 160 "lexer.lex"
 { return YY_TRANSLATE; }
 	YY_BREAK
 case 92:
 YY_RULE_SETUP
-#line 155 "lexer.lex"
+#line 161 "lexer.lex"
 { return YY_SCALE; }
 	YY_BREAK
 case 93:
 YY_RULE_SETUP
-#line 157 "lexer.lex"
+#line 163 "lexer.lex"
 { yy_push_state(s_light); return YY_S_LIGHT; }
 	YY_BREAK
 case 94:
 YY_RULE_SETUP
-#line 158 "lexer.lex"
+#line 164 "lexer.lex"
 { yy_pop_state(); yy_push_state(s_pointlight); return YY_S_POINTLIGHT; }
 	YY_BREAK
 case 95:
 YY_RULE_SETUP
-#line 159 "lexer.lex"
+#line 165 "lexer.lex"
 { return YY_COLOR; }
 	YY_BREAK
 case 96:
 YY_RULE_SETUP
-#line 160 "lexer.lex"
+#line 166 "lexer.lex"
 { return YY_POS; }
 	YY_BREAK
 case 97:
 YY_RULE_SETUP
-#line 161 "lexer.lex"
+#line 167 "lexer.lex"
 { return YY_WATTAGE; }
 	YY_BREAK
 case 98:
 YY_RULE_SETUP
-#line 163 "lexer.lex"
+#line 169 "lexer.lex"
 { yy_push_state(s_material); return YY_S_MATERIAL; }
 	YY_BREAK
 case 99:
 YY_RULE_SETUP
-#line 164 "lexer.lex"
+#line 170 "lexer.lex"
 { yy_pop_state(); yy_push_state(s_lambert); return YY_S_LAMBERT; }
 	YY_BREAK
 case 100:
 YY_RULE_SETUP
-#line 165 "lexer.lex"
+#line 171 "lexer.lex"
 { return YY_DIFFUSE; }
 	YY_BREAK
 case 101:
 YY_RULE_SETUP
-#line 166 "lexer.lex"
+#line 172 "lexer.lex"
 { return YY_AMBIENT; }
 	YY_BREAK
 case 102:
 YY_RULE_SETUP
-#line 168 "lexer.lex"
+#line 174 "lexer.lex"
 { yy_push_state(s_sphere); return YY_S_SPHERE; }
 	YY_BREAK
 case 103:
 YY_RULE_SETUP
-#line 169 "lexer.lex"
+#line 175 "lexer.lex"
 { return YY_CENTER; }
 	YY_BREAK
 case 104:
 YY_RULE_SETUP
-#line 170 "lexer.lex"
+#line 176 "lexer.lex"
 { return YY_RADIUS; }
 	YY_BREAK
 case 105:
 YY_RULE_SETUP
-#line 172 "lexer.lex"
+#line 178 "lexer.lex"
 { yy_push_state(s_blpatch); return YY_S_BLPATCH; }
 	YY_BREAK
 case 106:
 YY_RULE_SETUP
-#line 173 "lexer.lex"
+#line 179 "lexer.lex"
 { return YY_P00; }
 	YY_BREAK
 case 107:
 YY_RULE_SETUP
-#line 174 "lexer.lex"
+#line 180 "lexer.lex"
 { return YY_P01; }
 	YY_BREAK
 case 108:
 YY_RULE_SETUP
-#line 175 "lexer.lex"
+#line 181 "lexer.lex"
 { return YY_P10; }
 	YY_BREAK
 case 109:
 YY_RULE_SETUP
-#line 176 "lexer.lex"
+#line 182 "lexer.lex"
 { return YY_P11; }
 	YY_BREAK
 case 110:
 YY_RULE_SETUP
-#line 180 "lexer.lex"
+#line 186 "lexer.lex"
 { yylval.str = _strdup(yytext); return YY_STRING; }
 	YY_BREAK
 case 111:
 YY_RULE_SETUP
-#line 181 "lexer.lex"
+#line 187 "lexer.lex"
 { yylval.integer = atoi(yytext); return YY_PARSE_INT; }
 	YY_BREAK
 case 112:
 YY_RULE_SETUP
-#line 182 "lexer.lex"
+#line 188 "lexer.lex"
 { yylval.real = (float)atof(yytext); return YY_REAL; }
 	YY_BREAK
 case 113:
 YY_RULE_SETUP
-#line 184 "lexer.lex"
+#line 190 "lexer.lex"
 // eat up whitespace
 	YY_BREAK
 case 114:
 YY_RULE_SETUP
-#line 185 "lexer.lex"
+#line 191 "lexer.lex"
 // eat up comments 
 	YY_BREAK
 case 115:
 YY_RULE_SETUP
-#line 186 "lexer.lex"
+#line 192 "lexer.lex"
 { printf("\nParse error #%d line %d near: %s\n", ++yyerr, yyline, yytext); }
 	YY_BREAK
 case 116:
 YY_RULE_SETUP
-#line 188 "lexer.lex"
+#line 194 "lexer.lex"
 ECHO;
 	YY_BREAK
-#line 1799 "lexer.yy.cc"
+#line 1805 "lexer.yy.cc"
 			case YY_STATE_EOF(INITIAL):
 			case YY_STATE_EOF(s_global):
 			case YY_STATE_EOF(s_camera):
@@ -2691,5 +2697,5 @@ int main()
 	return 0;
 	}
 #endif
-#line 188 "lexer.lex"
+#line 194 "lexer.lex"
 

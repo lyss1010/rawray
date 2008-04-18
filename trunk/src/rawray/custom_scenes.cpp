@@ -21,6 +21,8 @@ void GlutWindow::MakeScene(int* argc, char* argv[]) {
 		else
 			std::cout << "SUCCESS" << std::endl;
     }
+
+	DoneParsing();
 }
 
 
@@ -30,6 +32,8 @@ void GlutWindow::MakeSpiralScene() {
 		std::cout << "FAILED" << std::endl;
 	else
 		std::cout << "SUCCESS" << std::endl;
+
+	DoneParsing();
 
     const float dt = 1.0f / options::p0::spiral_num_spheres;
     const float a = options::p0::spiral_radius;
@@ -58,6 +62,8 @@ void GlutWindow::MakeLorenzScene() {
 		std::cout << "FAILED" << std::endl;
 	else
 		std::cout << "SUCCESS" << std::endl;
+
+	DoneParsing();
 
     float base_dt = options::p0::lorenz_dt;
 	float min_dist = options::p0::lorenz_min_distance;

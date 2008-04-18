@@ -346,14 +346,16 @@
 				Name="parser"
 				Filter="">
 				<File
+					RelativePath=".\lexer.h">
+				</File>
+				<File
 					RelativePath=".\lexer.lex">
 					<FileConfiguration
 						Name="Debug|Win32">
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="Generating Lexer"
-							CommandLine="&quot;$(InputDir)flex++.exe&quot; $(InputFileName)
-"
+							CommandLine="&quot;$(InputDir)flex.exe&quot; $(InputFileName)"
 							AdditionalDependencies="$(InputDir)parser.yy.cc.h"
 							Outputs="lexer.yy.cc"/>
 					</FileConfiguration>
@@ -362,8 +364,7 @@
 						<Tool
 							Name="VCCustomBuildTool"
 							Description="Generating Lexer"
-							CommandLine="&quot;$(InputDir)flex++.exe&quot; $(InputFileName)
-"
+							CommandLine="&quot;$(InputDir)flex.exe&quot; $(InputFileName)"
 							AdditionalDependencies="parser.yy.cc.h"
 							Outputs="lexer.yy.cc"/>
 					</FileConfiguration>

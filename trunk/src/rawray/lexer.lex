@@ -18,10 +18,16 @@
 #include <cstdlib>
 #include <stdio.h>
 #include <string.h>
+#include "lexer.h"
 #include "parser.yy.cc.h"
 
 int yyline=1;
 int yyerr=0;
+
+void yy_done_parsing() {
+	yy_delete_buffer( YY_CURRENT_BUFFER );
+	yy_init = 1;
+}
 %}
 
 

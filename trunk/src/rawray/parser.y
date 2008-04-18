@@ -13,6 +13,7 @@
 #include <map>
 #include <string>
 #include <iostream>
+#include "lexer.h"
 #include "math/vector3.h"
 #include "math/vector4.h"
 #include "math/matrix4x4.h"
@@ -319,6 +320,8 @@ mesh_option:
 				$2[strlen($2)-1] = 0;
 				printf( "Loading Mesh: '%s'\n", $2+1 );
 				g_mesh->LoadOBJ( $2+1 );
+				
+				delete $2;
 			}
 ;
 
@@ -364,6 +367,8 @@ object_triangle:
 				// TODO: implement
 				//g_objectMap[$2] = g_obj;
 				// Create single triagnle
+				
+				delete $2;
 			}
 			triangle_stuff YY_RCURLY
 			{
@@ -388,6 +393,8 @@ object_mesh:
 				
 				// TODO: implement
 				//g_objectMap[$2] = g_obj;
+				
+				delete $2;
 			}
 			mesh_stuff YY_RCURLY
 			{
@@ -410,6 +417,8 @@ object_sphere:
 			{
 				g_obj = new rawray::Sphere( math::Vector3(0), 1.0f, g_material );
 				g_objectMap[$2] = g_obj;
+				
+				delete $2;
 			}
 			sphere_stuff YY_RCURLY
 			{
@@ -432,6 +441,8 @@ object_blpatch:
 			{
 				g_obj = new rawray::BLPatch( g_material );
 				g_objectMap[$2] = g_obj;
+				
+				delete $2;
 			}
 			blpatch_stuff YY_RCURLY
 			{
@@ -536,7 +547,6 @@ constantExp:
 // End of grammar
 %%
 
-
 //Additional C code
 
 namespace rawray {
@@ -574,6 +584,10 @@ bool ConfigParser(const char* filename) {
     fclose( yyin );
 
 	return yyerr == 0;
+}
+
+void DoneParsing() {
+	yy_done_parsing();
 }
 
 } // namespace rawray

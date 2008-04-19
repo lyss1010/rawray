@@ -20,7 +20,10 @@
 #include "object.h"
 #include "material.h"
 #include "lambert.h"
+#include "plastica.h"
 #include "light.h"
+#include "point_light.h"
+#include "constant_light.h"
 #include "options.h"
 #include "scene.h"
 #include "camera.h"
@@ -173,11 +176,13 @@ std::stack<math::Matrix4x4>             g_matrixStack;
 
 %token YY_S_LIGHT
 %token YY_S_POINTLIGHT
+%token YY_S_CONSTANTLIGHT
 %token YY_WATTAGE
 %token YY_COLOR
 
 %token YY_S_MATERIAL
 %token YY_S_LAMBERT
+%token YY_S_PLASTICA
 %token YY_DIFFUSE
 %token YY_AMBIENT
 
@@ -210,8 +215,9 @@ option_blocks:	block | option_blocks block;
 /* ----------------------- recursion ------------------------*/
 global_stuff:		global_option		| global_stuff			global_option;
 camera_stuff:		camera_option		| camera_stuff			camera_option;
-pointlight_stuff:	pointlight_option	| pointlight_stuff		pointlight_option;
+light_stuff:		light_option		| light_stuff			light_option;
 lambert_stuff:		lambert_option		| lambert_stuff			lambert_option;
+plastica_stuff:		plastica_option		| plastica_stuff		plastica_option;
 p0_stuff:			p0_option			| p0_stuff				p0_option;
 mesh_stuff:			mesh_option			| mesh_stuff			mesh_option;
 sphere_stuff:		sphere_option		| sphere_stuff			sphere_option;
@@ -224,8 +230,8 @@ block:
 		  YY_S_GLOBAL YY_LCURLY global_stuff YY_RCURLY		{ }
 		| YY_S_CAMERA YY_LCURLY camera_stuff YY_RCURLY		{ }
 		| YY_S_P0 YY_LCURLY p0_stuff YY_RCURLY				{ }
-		| YY_S_LIGHT light_type YY_RCURLY					{ g_scene->AddLight( g_light ); g_light = NULL; }
-		| YY_S_MATERIAL material_type YY_RCURLY				{ g_scene->AddMaterial( g_material ); }
+		| YY_S_LIGHT light_type YY_RCURLY					{ }
+		| YY_S_MATERIAL material_type YY_RCURLY				{ }
 		| transformation									{ }
 		| object_type										{ }
 ;
@@ -276,12 +282,19 @@ camera_option:
 light_type:
 		  YY_S_POINTLIGHT YY_LCURLY
 			{
-				g_light = new rawray::Light();
+				g_light = new rawray::PointLight();
+				g_scene->AddLight( g_light );
 			}
-			pointlight_stuff
+			light_stuff
+		| YY_S_CONSTANTLIGHT YY_LCURLY
+			{
+				g_light = new rawray::ConstantLight();
+				g_scene->AddLight( g_light );
+			}
+			light_stuff
 ;
 
-pointlight_option:
+light_option:
 		  YY_POS vector3								{ g_light->SetPosition( math::Vector3( $2[0], $2[1], $2[2] ) ); }
 		| YY_WATTAGE rExp								{ g_light->SetWattage( $2 ); }
 		| YY_COLOR vector3								{ g_light->SetColor( math::Vector3( $2[0], $2[1], $2[2] ) ); }
@@ -291,13 +304,25 @@ material_type:
 		  YY_S_LAMBERT YY_LCURLY
 			{
 				g_material = new rawray::Lambert();
+				g_scene->AddMaterial( g_material );
 			}
 			lambert_stuff
+		| YY_S_PLASTICA YY_LCURLY
+			{
+				g_material = new rawray::Plastica();
+				g_scene->AddMaterial( g_material );
+			}
+			plastica_stuff
 ;
 
 lambert_option:
 		  YY_DIFFUSE vector3							{ ((rawray::Lambert*)g_material)->SetDiffuse( math::Vector3( $2[0], $2[1], $2[2] ) ); }
 		| YY_AMBIENT vector3							{ ((rawray::Lambert*)g_material)->SetAmbient( math::Vector3( $2[0], $2[1], $2[2] ) ); }
+;
+
+plastica_option:
+		  YY_DIFFUSE vector3							{ ((rawray::Plastica*)g_material)->SetDiffuse( math::Vector3( $2[0], $2[1], $2[2] ) ); }
+		| YY_AMBIENT vector3							{ ((rawray::Plastica*)g_material)->SetAmbient( math::Vector3( $2[0], $2[1], $2[2] ) ); }
 ;
 
 p0_option:
@@ -320,6 +345,7 @@ mesh_option:
 				$2[strlen($2)-1] = 0;
 				printf( "Loading Mesh: '%s'\n", $2+1 );
 				g_mesh->LoadOBJ( $2+1 );
+				printf( "Found %d triangles in mesh\n", g_mesh->GetNumTriangles() );
 				
 				delete $2;
 			}

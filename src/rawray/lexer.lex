@@ -54,8 +54,10 @@ STRING      '([^']*)'|\"([^\"]*)\"
 %x s_instance
 %x s_light
 %x s_pointlight
+%x s_constantlight
 %x s_material
 %x s_lambert
+%x s_plastica
 %x s_sphere
 %x s_blpatch
 %x s_p0
@@ -165,15 +167,26 @@ STRING      '([^']*)'|\"([^\"]*)\"
 <INITIAL>scale{WS}						{ return YY_SCALE; }
 
 <INITIAL>light{WS}						{ yy_push_state(s_light); return YY_S_LIGHT; }
+
 <s_light>point{WS}						{ yy_pop_state(); yy_push_state(s_pointlight); return YY_S_POINTLIGHT; }
 <s_pointlight>color{WS}					{ return YY_COLOR; }
 <s_pointlight>pos{WS}					{ return YY_POS; }
 <s_pointlight>wattage{WS}				{ return YY_WATTAGE; }
 
+<s_light>constant{WS}					{ yy_pop_state(); yy_push_state(s_constantlight); return YY_S_CONSTANTLIGHT; }
+<s_constantlight>color{WS}				{ return YY_COLOR; }
+<s_constantlight>pos{WS}				{ return YY_POS; }
+<s_constantlight>wattage{WS}			{ return YY_WATTAGE; }
+
 <INITIAL>material{WS}					{ yy_push_state(s_material); return YY_S_MATERIAL; }
+
 <s_material>lambert{WS}					{ yy_pop_state(); yy_push_state(s_lambert); return YY_S_LAMBERT; }
 <s_lambert>diffuse{WS}					{ return YY_DIFFUSE; }
 <s_lambert>ambient{WS}					{ return YY_AMBIENT; }
+
+<s_material>plastica{WS}				{ yy_pop_state(); yy_push_state(s_plastica); return YY_S_PLASTICA; }
+<s_plastica>diffuse{WS}					{ return YY_DIFFUSE; }
+<s_plastica>ambient{WS}					{ return YY_AMBIENT; }
 
 <INITIAL>sphere{WS}						{ yy_push_state(s_sphere); return YY_S_SPHERE; }
 <s_sphere>center{WS}					{ return YY_CENTER; }

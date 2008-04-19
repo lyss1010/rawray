@@ -1,0 +1,14 @@
+/////////////////////////////////////////////////////////////////////////////
+// point_light.cpp
+//
+/////////////////////////////////////////////////////////////////////////////
+#include "point_light.h"
+
+namespace rawray {
+
+float PointLight::GetFalloff(const Vector3& point) {
+	Vector3 distance = point - position_;
+	return 1.0f / distance.Length();
+}
+
+} // namespace rawray

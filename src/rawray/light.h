@@ -26,8 +26,9 @@ public:
     const Vector3& GetColor() const { return color_; }
     const Vector3& GetPosition() const { return position_; }
 
-    virtual void PreCalc() { }
     virtual void RenderGL();
+    virtual void PreCalc()=0;
+	virtual float GetFalloff(const Vector3& point)=0;
 
 protected:
     Vector3 position_;

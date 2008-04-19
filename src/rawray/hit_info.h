@@ -20,7 +20,6 @@ public:
     Vector3 point;
     Vector3 normal;
     Vector2 texCoord;
-	Vector3 barycentric;
 
     const Material* material;
 
@@ -29,10 +28,9 @@ public:
                      const Vector3& point = Vector3(),
                      const Vector3& normal = Vector3(0.0f, 1.0f, 0.0f),
                      const Vector2& texCoord = Vector2(0.0f, 0.0f),
-					 const Vector2& barycentric = Vector3(1.0f, 0.0f, 0.0f),
                      const Material* material = NULL) :
         distance(distance), point(point), normal(normal), 
-		texCoord(texCoord), barycentric(barycentric), material(material) { }
+		texCoord(texCoord), material(material) { }
 
 }; // class HitInfo
 

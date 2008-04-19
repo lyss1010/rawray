@@ -107,19 +107,18 @@ typedef union
 #define	YY_COLOR	357
 #define	YY_S_MATERIAL	358
 #define	YY_S_LAMBERT	359
-#define	YY_S_PLASTICA	360
-#define	YY_DIFFUSE	361
-#define	YY_AMBIENT	362
-#define	YY_S_SPHERE	363
-#define	YY_CENTER	364
-#define	YY_RADIUS	365
-#define	YY_S_BLPATCH	366
-#define	YY_P00	367
-#define	YY_P01	368
-#define	YY_P10	369
-#define	YY_P11	370
-#define	YY_EQUALS	371
-#define	NEG	372
+#define	YY_DIFFUSE	360
+#define	YY_AMBIENT	361
+#define	YY_S_SPHERE	362
+#define	YY_CENTER	363
+#define	YY_RADIUS	364
+#define	YY_S_BLPATCH	365
+#define	YY_P00	366
+#define	YY_P01	367
+#define	YY_P10	368
+#define	YY_P11	369
+#define	YY_EQUALS	370
+#define	NEG	371
 
 
 extern YYSTYPE yylval;

@@ -64,4 +64,44 @@ void Triangle::Interpolate(HitInfo& hit, float alpha, float beta, float gamma) {
         hit.texCoord = Vector2();
 }
 
+// Do not use in intersection tests, it doesn't bail out at first sign of miss
+// See: http://en.wikipedia.org/wiki/Barycentric_coordinates_(mathematics)
+Vector3 Triangle::ComputeBarycentric(const Vector3& point) const {
+	const Tuple3I vertexIndices = mesh_.GetVertexIndices()[ index_ ];
+    const Vector3& v0 = mesh_.GetVertices()[ vertexIndices.x ];
+    const Vector3& v1 = mesh_.GetVertices()[ vertexIndices.y ];
+    const Vector3& v2 = mesh_.GetVertices()[ vertexIndices.z ];
+
+	const float a = v0.x - v2.x;
+	const float b = v1.x - v2.x;
+	const float c = v2.x - point.x;
+	const float d = v0.y - v2.y;
+	const float e = v1.y - v2.y;
+	const float f = v2.y - point.y;
+	const float g = v0.z - v2.z;
+	const float h = v1.z - v2.z;
+	const float i = v2.z - point.z;
+
+	float alpha, beta;
+	if( math::FloatZero(a, options::epsilon) && math::FloatZero(b, options::epsilon) ) {
+		const float ci = c+i;
+		const float bh = b+h;
+		const float ag = a+g;
+		const float div = 1.0f / (d*bh-e*ag);
+
+		alpha = (e*ci-f*bh) *  div;
+		beta =  (d*ci-f*ag) * -div;
+	} else {
+		const float fi = f+i;
+		const float eh = e+h;
+		const float dg = d+g;
+		const float div = 1.0f / (a*eh-b*dg);
+
+		alpha = (b*fi-c*eh) *  div;
+		beta =  (a*fi-c*dg) * -div;
+	}
+	
+	return Vector3( alpha, beta, 1-alpha-beta );
+}
+
 } // namespace rawray

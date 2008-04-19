@@ -40,6 +40,7 @@ public:
     virtual void PreCalc()=0;
 
     virtual bool Intersect(HitInfo& hit, const Ray& ray, float minDistance = 0.0f, float maxDistance = MAX_DISTANCE)=0;
+	Vector3 ComputeBarycentric(const Vector3& point) const;
 
 protected:
 	Triangle(TriangleMesh& mesh, uint32 index, const Material* material)

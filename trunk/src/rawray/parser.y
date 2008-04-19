@@ -20,7 +20,6 @@
 #include "object.h"
 #include "material.h"
 #include "lambert.h"
-#include "plastica.h"
 #include "light.h"
 #include "point_light.h"
 #include "constant_light.h"
@@ -182,7 +181,6 @@ std::stack<math::Matrix4x4>             g_matrixStack;
 
 %token YY_S_MATERIAL
 %token YY_S_LAMBERT
-%token YY_S_PLASTICA
 %token YY_DIFFUSE
 %token YY_AMBIENT
 
@@ -217,7 +215,6 @@ global_stuff:		global_option		| global_stuff			global_option;
 camera_stuff:		camera_option		| camera_stuff			camera_option;
 light_stuff:		light_option		| light_stuff			light_option;
 lambert_stuff:		lambert_option		| lambert_stuff			lambert_option;
-plastica_stuff:		plastica_option		| plastica_stuff		plastica_option;
 p0_stuff:			p0_option			| p0_stuff				p0_option;
 mesh_stuff:			mesh_option			| mesh_stuff			mesh_option;
 sphere_stuff:		sphere_option		| sphere_stuff			sphere_option;
@@ -307,22 +304,11 @@ material_type:
 				g_scene->AddMaterial( g_material );
 			}
 			lambert_stuff
-		| YY_S_PLASTICA YY_LCURLY
-			{
-				g_material = new rawray::Plastica();
-				g_scene->AddMaterial( g_material );
-			}
-			plastica_stuff
 ;
 
 lambert_option:
 		  YY_DIFFUSE vector3							{ ((rawray::Lambert*)g_material)->SetDiffuse( math::Vector3( $2[0], $2[1], $2[2] ) ); }
 		| YY_AMBIENT vector3							{ ((rawray::Lambert*)g_material)->SetAmbient( math::Vector3( $2[0], $2[1], $2[2] ) ); }
-;
-
-plastica_option:
-		  YY_DIFFUSE vector3							{ ((rawray::Plastica*)g_material)->SetDiffuse( math::Vector3( $2[0], $2[1], $2[2] ) ); }
-		| YY_AMBIENT vector3							{ ((rawray::Plastica*)g_material)->SetAmbient( math::Vector3( $2[0], $2[1], $2[2] ) ); }
 ;
 
 p0_option:

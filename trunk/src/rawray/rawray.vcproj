@@ -218,9 +218,6 @@
 				<File
 					RelativePath=".\material.cpp">
 				</File>
-				<File
-					RelativePath=".\plastica.cpp">
-				</File>
 			</Filter>
 			<Filter
 				Name="std"
@@ -345,9 +342,6 @@
 				</File>
 				<File
 					RelativePath=".\material.h">
-				</File>
-				<File
-					RelativePath=".\plastica.h">
 				</File>
 			</Filter>
 			<Filter

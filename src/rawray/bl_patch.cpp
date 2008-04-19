@@ -14,9 +14,9 @@ void BLPatch::RenderGL() {
     glBegin(GL_TRIANGLES);
         glColor3f( color.x, color.y, color.z );
 
-        glVertex3f(verts_[1].x, verts_[1].y, verts_[1].z);
-        glVertex3f(verts_[2].x, verts_[2].y, verts_[2].z);
         glVertex3f(verts_[0].x, verts_[0].y, verts_[0].z);
+        glVertex3f(verts_[2].x, verts_[2].y, verts_[2].z);
+        glVertex3f(verts_[1].x, verts_[1].y, verts_[1].z);
 
         glVertex3f(verts_[3].x, verts_[3].y, verts_[3].z);
         glVertex3f(verts_[2].x, verts_[2].y, verts_[2].z);
@@ -36,20 +36,19 @@ bool BLPatch::Intersect(HitInfo& hit, const Ray& ray, float minDistance, float m
 
     // Manually solve: r + t*d = uv*x1 + u*x2 + v*x3 + x4
 	// t.i = (1/d.i) * (uv*x1.i + u*x2.i + v*x3.i + x4.i - r.i)
-    BLPatch::BLPatchData p( 
-		
-		// setting tx*dx*dz = tz*dz*dx where tx=tz=t and substituting the above equation
-		x1.x * ray.direction.z - x1.z * ray.direction.x,	// A1
-		x2.x * ray.direction.z - x2.z * ray.direction.x,	// B1
-		x3.x * ray.direction.z - x3.z * ray.direction.x,	// C1
-		ray.direction.z * (x4.x - ray.origin.x) - ray.direction.x * (x4.z - ray.origin.z), // D1
+    BLPatch::BLPatchData p;
 
-		// and then using ty*dy*dz = tz*dz*dy
-		x1.y * ray.direction.z - x1.z * ray.direction.y,	// A2
-		x2.y * ray.direction.z - x2.z * ray.direction.y,	// B2
-		x3.y * ray.direction.z - x3.z * ray.direction.y,	// C2
-		ray.direction.z * (x4.y - ray.origin.y) - ray.direction.y * (x4.z - ray.origin.z)  // D2
-	);
+	// setting tx*dx*dz = tz*dz*dx where tx=tz=t and substituting the above equation
+	p.A1 = x1.x * ray.direction.z - x1.z * ray.direction.x;
+	p.B1 = x2.x * ray.direction.z - x2.z * ray.direction.x;
+	p.C1 = x3.x * ray.direction.z - x3.z * ray.direction.x;
+	p.D1 = ray.direction.z * (x4.x - ray.origin.x) - ray.direction.x * (x4.z - ray.origin.z);
+
+	// and then using ty*dy*dz = tz*dz*dy
+	p.A2 = x1.y * ray.direction.z - x1.z * ray.direction.y;
+	p.B2 = x2.y * ray.direction.z - x2.z * ray.direction.y;
+	p.C2 = x3.y * ray.direction.z - x3.z * ray.direction.y;
+	p.D2 = ray.direction.z * (x4.y - ray.origin.y) - ray.direction.y * (x4.z - ray.origin.z);
 
     // Set the following two equations equal to each other, you get back a quadratic
     // 0 = uvA1 + uB1 + vC1 + D1 = uvA2 + uB2 + vC2 + D2
@@ -69,51 +68,57 @@ bool BLPatch::Intersect(HitInfo& hit, const Ray& ray, float minDistance, float m
     else
         axis = (ray.abs.y > ray.abs.z) ? 1 : 2;
     
-    float u, v;
+    float t, u, v;
     if( numRoots == 1 ) {
-        if( v1 < 0.0f || v1 > 1.0f ) return false;
-        
-        v = v1;
-        u = ComputeU( v, p );
-        if( u < 0.0f || u > 1.0f ) return false;
+		v = v1;
+		u = ComputeU( v, p );
+		hit.point = u*v*x1 + u*x2 + v*x3 + x4;
+		t = (hit.point[axis] - ray.origin[axis]) / ray.direction[axis];
 
-        hit.point = u*v*x1 + u*x2 + v*x3 + x4;
-        hit.distance = (hit.point[axis] - ray.origin[axis]) / ray.direction[axis];
+		if( !IsValid( t, u, v, minDistance, maxDistance, 0.5, 0.5 ) )
+			return false;
     } else {
         const float u1 = ComputeU( v1, p );
-        const float u2 = ComputeU( v1, p );
+        const float u2 = ComputeU( v2, p );
         
-        // We prevent unnesecary instances of vectors by not using binary operators
-        // p = u*v*x1 + u*x2 + v1*x3 + x4
-        Vector3 p1 = x4; p1 += v1*x3; p1 += u1*x2; p1 += u1*v1*x1;
-        Vector3 p2 = x4; p2 += v2*x3; p2 += u2*x2; p2 += u2*v2*x1;
+        Vector3 hit1 = u1*v1*x1 + u1*x2 + v1*x3 + x4;
+        Vector3 hit2 = u2*v2*x1 + u2*x2 + v2*x3 + x4;
 
         const float inv_dir = 1.0f / ray.direction[axis];
-        const float t1 = (p1[axis] - ray.origin[axis]) * inv_dir;
-        const float t2 = (p2[axis] - ray.origin[axis]) * inv_dir;
+        const float t1 = (hit1[axis] - ray.origin[axis]) * inv_dir;
+        const float t2 = (hit2[axis] - ray.origin[axis]) * inv_dir;
 
-        //TODO: Take care of u,v out of bounds here
-        //Find the closest non-negative distance from the two t values
-        //We leave the check for t2 negativeness for afterwards
-        if( t1 < 0.0f || t2 < t1 ) {
-            hit.distance = t2;
-            hit.point = p2;
-            u = u2;
-            v = v2;
-        } else {
-            hit.distance = t1;
-            hit.point = p1;
-            u = u1;
-            v = v1;
-        }
+		const bool hit_1_valid = IsValid( t1, u1, v1, minDistance, maxDistance, 0.5, 0.5 );
+		const bool hit_2_valid = IsValid( t2, u2, v2, minDistance, maxDistance, 0.5, 0.5 );
+		bool choose_hit_1 = true;
+
+		if( hit_1_valid ) {
+			if( hit_2_valid && t2 < t1)
+				choose_hit_1 = false;
+		} else {
+			if( hit_2_valid )
+				choose_hit_1 = false;
+			else
+				return false;
+		}
+
+		if( choose_hit_1 ) {
+			t = t1;
+			u = u1;
+			v = v1;
+			hit.point = hit1;
+		} else {
+			t = t2;
+			u = u2;
+			v = v2;
+			hit.point = hit2;
+		}
     }
 
-    if( hit.distance < minDistance || hit.distance > maxDistance ) return false;
-    hit.material = material_;
-
-    // Correct texture coordinates?
+	hit.distance = t;
     hit.texCoord.x = u;
     hit.texCoord.y = v;
+    hit.material = material_;
 
     // Compute the normal by using the partial derivitive w/ respect to u and v individually
     hit.normal = math::Cross( ( (1-v)*(verts_[2]-verts_[0]) + v*(verts_[3]-verts_[1]) ), 
@@ -122,15 +127,25 @@ bool BLPatch::Intersect(HitInfo& hit, const Ray& ray, float minDistance, float m
     return true;
 }
 
-float BLPatch::ComputeU(float v, const BLPatch::BLPatchData& patch) {
-    const float divisor_a = v * (patch.A2 + patch.A2);
-    const float divisor_b = v * (patch.A2 - patch.A1) + patch.B2 - patch.B1;
+bool BLPatch::IsValid(float t, float u, float v, float min, float max, float mid1, float mid2) {
+	if( t < min || t > max ) return false;
+	if( u < 0.0f || u > 1.0f || v < 0.0f || v > 1.0f ) return false;
+
+	if( (u <= mid1 || u >= mid2) || (v <= mid1 || v >= mid2) )
+		return true;
+
+	return false;
+}
+
+float BLPatch::ComputeU(float v, const BLPatch::BLPatchData& p) {
+    const float divisor_a = v * (p.A2 + p.B2);
+    const float divisor_b = v * (p.A2 - p.A1) + p.B2 - p.B1;
 
     // Choose the largest divisor for numerical stability
     if( fabs(divisor_b) > fabs(divisor_a) )
-        return ( v*(patch.C1 - patch.C2) + patch.D1 - patch.D2) / divisor_b;
+        return ( v*(p.C1 - p.C2) + p.D1 - p.D2 ) / divisor_b;
 
-	return (-v * patch.C2 - patch.D2) / divisor_a;
+	return -(v*p.C2 + p.D2) / divisor_a;
 }
 
 } // namespace rawray

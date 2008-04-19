@@ -32,7 +32,7 @@ int SolveQuadratic(float* out1, float* out2, float a, float b, float c) {
     else
         numRoots = 1;
 
-    float divisor = 1.0f / 2*a;
+    float divisor = 1.0f / (2*a);
     *out1 = (-b + discrim) * divisor;
     *out2 = (-b - discrim) * divisor;
 

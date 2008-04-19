@@ -24,7 +24,7 @@ public:
 
     //virtual void RenderGL();
 	virtual void PreCalc() { }
-	virtual float GetFalloff(const Vector3& point);
+	virtual float Falloff(const Vector3& direction);
 
 private:
     DISALLOW_COPY_CONSTRUCTORS(PointLight);

@@ -6,9 +6,10 @@
 
 namespace rawray {
 
-float PointLight::GetFalloff(const Vector3& point) {
-	Vector3 distance = point - position_;
-	return 1.0f / distance.Length();
+float PointLight::Falloff(const Vector3& direction) {
+	// Inverse square falloff
+	return 1.0f / direction.Length2();
 }
+
 
 } // namespace rawray

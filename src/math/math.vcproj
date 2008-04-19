@@ -154,6 +154,9 @@
 				RelativePath=".\basic_math.cpp">
 			</File>
 			<File
+				RelativePath=".\constants.cpp">
+			</File>
+			<File
 				RelativePath=".\matrix4x4.cpp">
 			</File>
 			<File
@@ -193,6 +196,9 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
 				RelativePath=".\basic_math.h">
+			</File>
+			<File
+				RelativePath=".\constants.h">
 			</File>
 			<File
 				RelativePath=".\matrix4x4.h">

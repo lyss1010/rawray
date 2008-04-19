@@ -6,8 +6,9 @@
 
 namespace rawray {
 
-float ConstantLight::GetFalloff(const Vector3& point) {
-	UNREFERENCED_PARAMETER(point);
+float ConstantLight::Falloff(const Vector3& direction) {
+	UNREFERENCED_PARAMETER(direction);
+
 	return 1.0f;
 }
 

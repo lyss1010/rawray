@@ -34,7 +34,7 @@ void GlutWindow::MakeSpiralScene() {
 		std::cout << "SUCCESS" << std::endl;
 
 	DoneParsing();
-
+	
     const float dt = 1.0f / options::p0::spiral_num_spheres;
     const float a = options::p0::spiral_radius;
     for (int i=0; i<options::p0::spiral_num_spheres; ++i ) {

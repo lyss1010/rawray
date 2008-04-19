@@ -206,9 +206,6 @@
 					RelativePath=".\image.cpp">
 				</File>
 				<File
-					RelativePath=".\light.cpp">
-				</File>
-				<File
 					RelativePath=".\scene.cpp">
 				</File>
 			</Filter>
@@ -220,6 +217,9 @@
 				</File>
 				<File
 					RelativePath=".\material.cpp">
+				</File>
+				<File
+					RelativePath=".\plastica.cpp">
 				</File>
 			</Filter>
 			<Filter
@@ -242,6 +242,19 @@
 							Name="VCCLCompilerTool"
 							UsePrecompiledHeader="1"/>
 					</FileConfiguration>
+				</File>
+			</Filter>
+			<Filter
+				Name="light"
+				Filter="">
+				<File
+					RelativePath=".\constant_light.cpp">
+				</File>
+				<File
+					RelativePath=".\light.cpp">
+				</File>
+				<File
+					RelativePath=".\point_light.cpp">
 				</File>
 			</Filter>
 		</Filter>
@@ -308,9 +321,6 @@
 					RelativePath=".\image.h">
 				</File>
 				<File
-					RelativePath=".\light.h">
-				</File>
-				<File
 					RelativePath=".\scene.h">
 				</File>
 			</Filter>
@@ -335,6 +345,22 @@
 				</File>
 				<File
 					RelativePath=".\material.h">
+				</File>
+				<File
+					RelativePath=".\plastica.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="light"
+				Filter="">
+				<File
+					RelativePath=".\constant_light.h">
+				</File>
+				<File
+					RelativePath=".\light.h">
+				</File>
+				<File
+					RelativePath=".\point_light.h">
 				</File>
 			</Filter>
 		</Filter>

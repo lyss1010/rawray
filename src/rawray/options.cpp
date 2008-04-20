@@ -9,26 +9,26 @@ namespace options {
 float epsilon;
 
 namespace global {
-    uint32 win_width;
-    uint32 win_height;
-    uint32 win_posX;
-    uint32 win_posY;
+    int win_width;
+    int win_height;
+    int win_posX;
+    int win_posY;
 
     math::Vector3 img_fg_color;
     math::Vector3 img_bg_color;
     math::Vector3 gl_bg_color;
-    uint32 gl_sphere_sections;
+    int gl_sphere_sections;
 	bool gl_render_lights;
     bool headless;
 
     TriangleIntersection triangle_intersection_algorithm;
 
-    uint32 num_threads;
-    uint32 render_x_block;
-    uint32 render_y_block;
-    uint32 render_handler_sleep;
-    uint32 render_thread_sleep;
-    uint32 render_spinlock_sleep;
+    int num_threads;
+    int render_x_block;
+    int render_y_block;
+    int render_handler_sleep;
+    int render_thread_sleep;
+    int render_spinlock_sleep;
 
     float gaussian_blur_max;
     float gaussian_blur_sigma;
@@ -50,7 +50,7 @@ namespace camera {
 } // namespace camera
 
 namespace p0 {
-	 uint32 spiral_num_spheres;
+	 int spiral_num_spheres;
 	 float spiral_radius;
 
 	 float lorenz_dt;
@@ -60,7 +60,7 @@ namespace p0 {
 	 float lorenz_rho;
 	 float lorenz_beta;
 	 float lorenz_radius;
-	 uint32 lorenz_num_spheres;
+	 int lorenz_num_spheres;
 	 math::Vector3 lorenz_start;
 
 } // namespace p0

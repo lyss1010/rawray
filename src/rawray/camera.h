@@ -37,7 +37,7 @@ public:
     inline float GetMinDraw() const { return minDraw_; }
     inline float GetMaxDraw() const { return maxDraw_; }
 
-    Ray EyeRay(uint32 x, uint32 y, float xOffset, float yOffset, uint32 width, uint32 height) const;
+    Ray EyeRay(int x, int y, float xOffset, float yOffset, int width, int height) const;
 
 	void Resize(int x, int y);
     void RenderGL();

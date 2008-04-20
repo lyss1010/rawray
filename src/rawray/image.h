@@ -21,9 +21,9 @@ public:
     explicit Image(const Image& i); // Copies entire image, does not link to same data
     ~Image();
 
-    int Resize(uint32 width, uint32 height);
-    void SetPixel(uint32 x, uint32 y, const Vector3& color);
-	void SetPixel(uint32 x, uint32 y, const math::Tuple3<uint8>& color);
+    int Resize(int width, int height);
+    void SetPixel(int x, int y, const Vector3& color);
+	void SetPixel(int x, int y, const math::Tuple3<uint8>& color);
 
     void Clear(const Vector3& color);
     void Clear(const math::Tuple3<uint8>& color);
@@ -31,7 +31,7 @@ public:
     bool GaussianBlur(float sigma);
     
     void RenderGL();
-    void RenderScanlineGL(uint32 y);
+    void RenderScanlineGL(int y);
 
 	void WritePPM();
     void WritePPM(clock_t rendertime);
@@ -39,15 +39,15 @@ public:
 
 	Vector3& GetPixel(int x, int y) { return pixels_[y*width_ + x]; }
     Vector3* GetPixels() { return pixels_; }
-    uint32  GetWidth() const { return width_; }
-    uint32  GetHeight() const { return height_; }
+    int GetWidth() const { return width_; }
+    int GetHeight() const { return height_; }
 
 private:
     Vector3* pixels_;
-    uint32 width_;
-    uint32 height_;
+    int width_;
+    int height_;
 
-    void WritePPM(const char* filename, uint8* data, uint32 width, uint32 height);
+    void WritePPM(const char* filename, uint8* data, int width, int height);
 
 
 }; // class Image

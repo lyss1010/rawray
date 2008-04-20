@@ -15,7 +15,7 @@ namespace rawray {
 class DllExport RenderTask
 {
 public:
-    RenderTask(uint32 x, uint32 y, uint32 width, uint32 height) :
+    RenderTask(int x, int y, int width, int height) :
         x_(x), y_(y), width_(width), height_(height) { }
 
     ~RenderTask() { }
@@ -23,8 +23,8 @@ public:
     bool Run( Scene& scene, const Camera& cam, Image& img, float* progress );
 
 private:
-    uint32 x_, y_;
-    uint32 width_, height_;
+    int x_, y_;
+    int width_, height_;
 
     DISALLOW_IMPLICIT_CONSTRUCTORS(RenderTask);
 };
@@ -64,7 +64,7 @@ private:
 class DllExport RenderJob
 {
 public:
-    RenderJob(uint32 numThreads, Scene& scene, const Camera& cam, Image& img) :
+    RenderJob(int numThreads, Scene& scene, const Camera& cam, Image& img) :
             numThreads_(numThreads), scene_(scene), cam_(cam), img_(img),
             threadID_(NULL), threadHandle_(NULL), abort_(false), isDone_(false) { }
 

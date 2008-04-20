@@ -38,7 +38,7 @@ public:
 
     virtual bool Intersect(HitInfo& hit, const Ray& ray, float minDistance = 0.0f, float maxDistance = MAX_DISTANCE);
 
-    void Raytrace(const Camera& cam, Image& image, uint32 xStart, uint32 yStart, uint32 width, uint32 height);
+    void Raytrace(const Camera& cam, Image& image, int xStart, int yStart, int width, int height);
     void Raytrace(const Camera& cam, Image& image);
 
     void PostProcess(Image& img);

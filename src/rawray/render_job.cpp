@@ -13,7 +13,7 @@ bool RenderTask::Run(Scene& scene, const Camera& cam, Image& img, float* progres
         return false;
 
     const float delta = 100.0f / height_;
-    for( uint32 row=y_; row<y_+height_; ++row ) {
+    for( int row=y_; row<y_+height_; ++row ) {
         *progress = float(row) * delta;
         scene.Raytrace(cam, img, x_, row, width_, 1);
     }
@@ -44,7 +44,7 @@ RenderThread::~RenderThread() {
 }
 
 void RenderThread::Abort() {
-    const uint32 sleepDuration = options::global::render_spinlock_sleep;
+    const int sleepDuration = options::global::render_spinlock_sleep;
 
     // Block here waiting for controller thread to finish
     abort_ = true;
@@ -59,7 +59,7 @@ void RenderThread::Abort() {
 }
 
 DWORD RenderThread::ThreadRoutine() {
-    const uint32 sleepDuration = options::global::render_thread_sleep;
+    const int sleepDuration = options::global::render_thread_sleep;
 
     while( !abort_ ) {
         Sleep( sleepDuration );
@@ -103,9 +103,9 @@ float RenderJob::Progress() {
     if( IsDone() )
         return 100.0f;
 
-    const uint32 num_assigned = assignedTasks_.size();
-    const uint32 num_remaining = tasks_.size();
-    const uint32 num_total = num_assigned + num_remaining;
+    const size_t num_assigned = assignedTasks_.size();
+    const size_t num_remaining = tasks_.size();
+    const size_t num_total = num_assigned + num_remaining;
     
     if( num_total == 0 || num_assigned <= numThreads_ )
         return 0.0f;
@@ -129,16 +129,16 @@ bool RenderJob::Run() {
     Cleanup();
 
     // Create a list of tasks we need done
-    const uint32 imgHeight = img_.GetHeight();
-    const uint32 imgWidth = img_.GetWidth();
+    const int imgHeight = img_.GetHeight();
+    const int imgWidth = img_.GetWidth();
 
-    const uint32 xChunk = options::global::render_x_block;
-    const uint32 yChunk = options::global::render_y_block;
+    const int xChunk = options::global::render_x_block;
+    const int yChunk = options::global::render_y_block;
     
 	// Create the rendering tasks in a temporary vector
 	//std::vector<RenderTask*> unshuffled_tasks;
-    for( uint32 y=0; y<imgHeight; y+=yChunk )
-        for( uint32 x=0; x<imgWidth; x+=xChunk )
+    for( int y=0; y<imgHeight; y+=yChunk )
+        for( int x=0; x<imgWidth; x+=xChunk )
             tasks_.push( new RenderTask(x, y, xChunk, yChunk) );
             //unshuffled_tasks.push_back( new RenderTask(x, y, xChunk, yChunk) );
 
@@ -165,7 +165,7 @@ bool RenderJob::Run() {
 }
 
 void RenderJob::Abort() {
-    const uint32 sleepDuration = options::global::render_spinlock_sleep;
+    const int sleepDuration = options::global::render_spinlock_sleep;
     abort_ = true;
 
     // Block here waiting for controller thread to finish
@@ -182,7 +182,7 @@ void RenderJob::Abort() {
 DWORD RenderJob::ThreadRoutine() {
     std::list<RenderThread*>::iterator threadIter;
     std::list<RenderThread*>::iterator toDelete;
-    const uint32 sleepDuration = options::global::render_handler_sleep;
+    const int sleepDuration = options::global::render_handler_sleep;
 
     clock_t startTime = clock();
     while( !threads_.empty() ) {

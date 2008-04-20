@@ -17,7 +17,7 @@ namespace rawray {
 class DllExport TriangleMoller : public Triangle
 {
 public:
-    TriangleMoller(TriangleMesh& mesh, uint32 index, const Material* material)
+    TriangleMoller(TriangleMesh& mesh, int index, const Material* material)
 		: Triangle(mesh, index, material) { }
 
 	virtual ~TriangleMoller() { }

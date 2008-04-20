@@ -108,7 +108,7 @@ void GlutWindow::Reshape(int x, int y) {
     else if( y == 0 ) y = 1;
 
 	cam_.Resize( x, y );
-    img_.Resize( (uint32)x, (uint32)y );
+    img_.Resize( x, y );
     glViewport( 0, 0, x, y );
 
     img_.ScreenShot();

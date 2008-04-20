@@ -94,6 +94,8 @@ public:
         return *this;
     }
 
+    uint8 GetDominantAxis() const;
+
 }; // class Vector3
 
 inline float Dot(const Vector3& a, const Vector3& b) { return a.x*b.x + a.y*b.y + a.z*b.z; }

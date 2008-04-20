@@ -24,6 +24,17 @@ Vector3 Vector3::Rotated(float theta, const Vector3& v) const {
     return v0 + c*v1 + s*v2;
 }
 
+uint8 Vector3::GetDominantAxis() const {
+    const float absX = fabs(x);
+    const float absY = fabs(y);
+    const float absZ = fabs(z);
+
+    if( absX > absY )
+        return ( (absX > absZ) ? 0 : 2 );
+    else
+        return ( (absY > absZ) ? 1 : 2 );
+}
+
 } // namespace math
 
 inline std::ostream& operator<<(std::ostream& out, const math::Vector3& v) {

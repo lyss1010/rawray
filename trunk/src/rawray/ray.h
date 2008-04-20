@@ -15,22 +15,18 @@ struct DllExport Ray
 {
     Vector3 origin;
     Vector3 direction;
-	Vector3 abs;		// Absolute value of the direction
 
     Ray() 
 		: origin(), 
-		direction( Vector3(0, 0, 1) ), 
-		abs( Vector3(0, 0, 1) ) { }
+		direction( Vector3(1, 0, 0) ) { }
 
     Ray(const Vector3& origin, const Vector3& direction) : origin(origin), direction(direction) {
-		this->direction.Normalize();
-		abs = Vector3( fabs(this->direction.x), fabs(this->direction.y), fabs(this->direction.z) );
+        this->direction.Normalize();
 	}
 
     Ray(const Ray& r) 
 		: origin(r.origin), 
-		direction(r.direction), 
-		abs(r.abs) { }
+		direction(r.direction) { }
 
 }; // struct Ray
 

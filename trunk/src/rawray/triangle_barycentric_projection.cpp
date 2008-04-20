@@ -33,14 +33,12 @@ void TriangleBarycentricProjection::PreCalc() {
 bool TriangleBarycentricProjection::Intersect(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance) {
 	if( det2d_ == 0.0f ) return false;
 
-    // See if we are exactly lined up with the plane (or a back face of a triangle)
-    const float denominator = math::Dot( ray.direction, n_ );
-    if( denominator == 0.0f ) return false;
-
     // Compute distance to the plane along the ray
 	const Tuple3I vertexIndices = mesh_.GetVertexIndices()[ index_ ];
     const Vector3& v0 = mesh_.GetVertices()[ vertexIndices.x ];
-    const float t = -math::Dot( ray.origin-v0, n_ ) / denominator;
+
+    // NOTE: We will allow division by zero, which will give infinity and fail in the distance tests
+    const float t = math::Dot( ray.origin-v0, n_ ) / math::Dot( ray.direction, n_ );
     if( t < minDistance || t > maxDistance ) return false;
 
     // Compute the point on the plane where we intersect minus the first vertex

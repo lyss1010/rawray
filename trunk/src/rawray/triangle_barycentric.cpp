@@ -37,16 +37,13 @@ bool TriangleBarycentric::Intersect(HitInfo& hit, const Ray& ray, float minDista
     const float ei_minus_hf = ray.direction.y*f - e*ray.direction.z;
     const float gf_minus_di = d*ray.direction.z - ray.direction.x*f;
     const float dh_minus_eg = e*ray.direction.x - d*ray.direction.y;
-
-    const float denominator = a*ei_minus_hf + b*gf_minus_di + c*dh_minus_eg;
-    if( denominator == 0.0f ) return false;
-    
-    const float inv_den = 1.0f / denominator;
     const float ak_minus_jb = a*k - j*b;
     const float jc_minux_al = j*c - a*l;
     const float bl_minux_kc = b*l - k*c;
 
-    const float t = (f*ak_minus_jb + e*jc_minux_al + d*bl_minux_kc) * inv_den;
+    // NOTE: We will allow division by zero which will give us infinity and fail the distance test
+    const float inv_den = 1.0f / (a*ei_minus_hf + b*gf_minus_di + c*dh_minus_eg);
+    const float t = (f*ak_minus_jb + e*jc_minux_al + d*bl_minux_kc) * inv_den ;
     if( t < minDistance || t > maxDistance ) return false;
 
     const float gamma = (-ray.direction.z*ak_minus_jb - ray.direction.y*jc_minux_al - ray.direction.x*bl_minux_kc) * inv_den;

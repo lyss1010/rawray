@@ -31,19 +31,16 @@ bool TriangleMoller::Intersect(HitInfo& hit, const Ray& ray, float minDistance, 
     const Vector3& o = ray.origin - v0;
 
     // Solve 3x3 linear system using Cramer's rule
-    const float det = n_.Dot(ray.direction);
-    if( det == 0.0f ) return false;
-    const float inv_det = -1.0f / det;
-
-    const float t = n_.Dot(o) * inv_det;
+    // NOTE: We will allow division by zero which will get us an infinite direction
+    const float neg_inv_det = -1.0f / n_.Dot(ray.direction);
+    const float t = n_.Dot(o) * neg_inv_det;
     if( t < minDistance || t > maxDistance ) return false;
 
-    const float beta = math::Cross(o,c).Dot(ray.direction) * inv_det;
+    const float beta = math::Cross(o,c).Dot(ray.direction) * neg_inv_det;
     if( beta < 0.0f ) return false;
 
-    const float gamma = math::Cross(b,o).Dot(ray.direction) * inv_det;
-    if( gamma < 0.0f ) return false;
-    if( beta+gamma > 1.0f ) return false;
+    const float gamma = math::Cross(b,o).Dot(ray.direction) * neg_inv_det;
+    if( gamma < 0.0f || beta+gamma > 1.0f ) return false;
 
     hit.distance = t;
     hit.material = material_;

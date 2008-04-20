@@ -17,18 +17,9 @@ void TriangleBarycentricProjection::PreCalc() {
     b_ = v2 - v0;
     c_ = v1 - v0;
     n_ = math::Cross(b_, c_);
-
-	const float absNX = fabs(n_.x);
-    const float absNY = fabs(n_.y);
-    const float absNZ = fabs(n_.z);
-
-    // Determine dominant axis:  0=x, 1=y, 2=z
-    if( absNX > absNY )
-        axis_ = (absNX > absNZ) ? 0 : 2;
-    else
-        axis_ = (absNY > absNZ) ? 1 : 2;
-
-	// The two non-dominant axis we will use
+    
+    // Compute the two non-dominant axis which we will use
+    axis_ = n_.GetDominantAxis();
 	u_ = (axis_ + 1)%3;
     v_ = (axis_ + 2)%3;
 

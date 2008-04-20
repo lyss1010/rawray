@@ -117,8 +117,10 @@ typedef union
 #define	YY_P01	367
 #define	YY_P10	368
 #define	YY_P11	369
-#define	YY_EQUALS	370
-#define	NEG	371
+#define	YY_U_CONSTRAINT	370
+#define	YY_V_CONSTRAINT	371
+#define	YY_EQUALS	372
+#define	NEG	373
 
 
 extern YYSTYPE yylval;

@@ -14,6 +14,7 @@
 #include <string>
 #include <iostream>
 #include "lexer.h"
+#include "math/vector2.h"
 #include "math/vector3.h"
 #include "math/vector4.h"
 #include "math/matrix4x4.h"
@@ -193,6 +194,8 @@ std::stack<math::Matrix4x4>             g_matrixStack;
 %token YY_P01
 %token YY_P10
 %token YY_P11
+%token YY_U_CONSTRAINT
+%token YY_V_CONSTRAINT
 
 
 %right YY_EQUALS
@@ -203,7 +206,7 @@ std::stack<math::Matrix4x4>             g_matrixStack;
 
 %type <real> rExp fExp constantExp
 %type <integer> iExp
-%type <vec> vector3 vector4
+%type <vec> vector2 vector3 vector4
 
 %%
 
@@ -356,6 +359,8 @@ blpatch_option:
 		| YY_P01 vector3								{ ((rawray::BLPatch*)g_obj)->SetP01( math::Vector3( $2[0], $2[1], $2[2] ) ); }
 		| YY_P10 vector3								{ ((rawray::BLPatch*)g_obj)->SetP10( math::Vector3( $2[0], $2[1], $2[2] ) ); }
 		| YY_P11 vector3								{ ((rawray::BLPatch*)g_obj)->SetP11( math::Vector3( $2[0], $2[1], $2[2] ) ); }
+		| YY_U_CONSTRAINT vector2                       { ((rawray::BLPatch*)g_obj)->SetUConstraint( $2[0], $2[1] ); }
+		| YY_V_CONSTRAINT vector2                       { ((rawray::BLPatch*)g_obj)->SetVConstraint( $2[0], $2[1] ); }
 
 
 object_triangle:
@@ -469,6 +474,14 @@ transformation:
 		| YY_ROTATE vector4			{  }
 		| YY_TRANSLATE vector3		{  }
 		| YY_SCALE vector3			{  }
+
+vector2:
+          YY_LT rExp YY_COMMA rExp YY_GT                { $$[0] = $2; $$[1] = $4; }
+        | YY_LT rExp YY_COMMA iExp YY_GT                { $$[0] = $2; $$[1] = $4; }
+        | YY_LT iExp YY_COMMA rExp YY_GT                { $$[0] = $2; $$[1] = $4; }
+        | YY_LT iExp YY_COMMA iExp YY_GT                { $$[0] = $2; $$[1] = $4; }
+        | YY_LT rExp YY_GT                              { $$[0] = $2; $$[1] = $2; }
+        | YY_LT iExp YY_GT                              { $$[0] = $2; $$[1] = $2; }
 
 
 vector3:

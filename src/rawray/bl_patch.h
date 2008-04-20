@@ -28,13 +28,16 @@ struct BLPatchData {
 
 
 public:
-    BLPatch(Material* material) : Object(material) { }
+    BLPatch(Material* material) : Object(material), uMin_(0.5f), uMax_(0.5f), vMin_(0.5f), vMax_(0.5f) { }
     virtual ~BLPatch() { }
 
-    void SetP00(const Vector3& v) { P00 = v; }
-    void SetP01(const Vector3& v) { P01 = v; }
-    void SetP10(const Vector3& v) { P10 = v; }
-    void SetP11(const Vector3& v) { P11 = v; }
+    void SetUConstraint(float min, float max) { uMin_=min; uMax_=max; }
+    void SetVConstraint(float min, float max) { vMin_=min; vMax_=max; }
+
+    void SetP00(const Vector3& v) { P00_ = v; }
+    void SetP01(const Vector3& v) { P01_ = v; }
+    void SetP10(const Vector3& v) { P10_ = v; }
+    void SetP11(const Vector3& v) { P11_ = v; }
 
     virtual void RenderGL();
     virtual void PreCalc();
@@ -42,22 +45,16 @@ public:
     virtual bool Intersect(HitInfo& hit, const Ray& ray, float minDistance = 0.0f, float maxDistance = MAX_DISTANCE);
 
 protected:
-    Vector3 P00, P01, P10, P11;
+    Vector3 P00_, P01_, P10_, P11_;
+    float uMin_, uMax_;
+    float vMin_, vMax_;
 
 private:
-    int ComputeV(float* out1, float* out2, 
-                 float a, float b, float c, 
-                 float min, float max, 
-                 float mid1, float mid2);
-
-    //float ComputeU(float v, const BLPatch::BLPatchData& patch);
-	//bool IsValid(float t, float u, float v, float min, float max, float mid1, float mid2);
-
-    bool RayPatchIntersection(const Vector3& r, const Vector3& q, Vector3& uv);
-    Vector3 SrfEval(double u, double v);
-    Vector3 TanU(double v);
-    Vector3 TanV(double u);
-    Vector3 Normal(double u, double v);
+    int ComputeV(float* out1, float* out2, float a, float b, float c);
+    float ComputeT(const Ray& ray, const Vector3& point);
+    float ComputeU(float v, const BLPatchData& patch);
+    bool IsValid(float u, float v);
+    Vector3 Eval(float u, float v);
 
     DISALLOW_COPY_CONSTRUCTORS(BLPatch);
 

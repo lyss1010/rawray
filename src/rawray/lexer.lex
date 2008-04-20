@@ -191,7 +191,8 @@ STRING      '([^']*)'|\"([^\"]*)\"
 <s_blpatch>p01{WS}						{ return YY_P01; }
 <s_blpatch>p10{WS}						{ return YY_P10; }
 <s_blpatch>p11{WS}						{ return YY_P11; }
-
+<s_blpatch>u{WS}constraint{WS}          { return YY_U_CONSTRAINT; }
+<s_blpatch>v{WS}constraint{WS}          { return YY_V_CONSTRAINT; }
 
 
 <*>{STRING}{WS}                     { yylval.str = _strdup(yytext); return YY_STRING; }

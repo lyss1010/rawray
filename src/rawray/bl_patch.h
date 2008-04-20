@@ -31,13 +31,10 @@ public:
     BLPatch(Material* material) : Object(material) { }
     virtual ~BLPatch() { }
 
-    void SetP00(const Vector3& v) { verts_[0] = v; }
-    void SetP01(const Vector3& v) { verts_[1] = v; }
-    void SetP10(const Vector3& v) { verts_[2] = v; }
-    void SetP11(const Vector3& v) { verts_[3] = v; }
-
-    Vector3& operator[](uint32 i) { return verts_[i]; }
-    const Vector3& operator[](uint32 i) const { return verts_[i]; }
+    void SetP00(const Vector3& v) { P00 = v; }
+    void SetP01(const Vector3& v) { P01 = v; }
+    void SetP10(const Vector3& v) { P10 = v; }
+    void SetP11(const Vector3& v) { P11 = v; }
 
     virtual void RenderGL();
     virtual void PreCalc();
@@ -45,11 +42,22 @@ public:
     virtual bool Intersect(HitInfo& hit, const Ray& ray, float minDistance = 0.0f, float maxDistance = MAX_DISTANCE);
 
 protected:
-    Vector3 verts_[4];
+    Vector3 P00, P01, P10, P11;
 
 private:
-    float ComputeU(float v, const BLPatch::BLPatchData& patch);
-	bool IsValid(float t, float u, float v, float min, float max, float mid1, float mid2);
+    int ComputeV(float* out1, float* out2, 
+                 float a, float b, float c, 
+                 float min, float max, 
+                 float mid1, float mid2);
+
+    //float ComputeU(float v, const BLPatch::BLPatchData& patch);
+	//bool IsValid(float t, float u, float v, float min, float max, float mid1, float mid2);
+
+    bool RayPatchIntersection(const Vector3& r, const Vector3& q, Vector3& uv);
+    Vector3 SrfEval(double u, double v);
+    Vector3 TanU(double v);
+    Vector3 TanV(double u);
+    Vector3 Normal(double u, double v);
 
     DISALLOW_COPY_CONSTRUCTORS(BLPatch);
 

@@ -39,4 +39,6 @@ int SolveQuadratic(float* out1, float* out2, float a, float b, float c) {
     return numRoots;
 }
 
+
+
 }  // namespace math

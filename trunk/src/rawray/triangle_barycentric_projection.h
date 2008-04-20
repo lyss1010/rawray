@@ -17,7 +17,7 @@ namespace rawray {
 class DllExport TriangleBarycentricProjection : public Triangle
 {
 public:
-    TriangleBarycentricProjection(TriangleMesh& mesh, uint32 index, const Material* material)
+    TriangleBarycentricProjection(TriangleMesh& mesh, int index, const Material* material)
 		: Triangle(mesh, index, material) { }
 
 	virtual ~TriangleBarycentricProjection() { }

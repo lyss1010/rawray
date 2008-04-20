@@ -51,22 +51,22 @@ bool Scene::Intersect(HitInfo& hit, const Ray& ray, float minDistance, float max
     return bvh_.Intersect(hit, ray, minDistance, maxDistance );
 }
 
-void Scene::Raytrace(const Camera& cam, Image& image, uint32 xStart, uint32 yStart, uint32 width, uint32 height)
+void Scene::Raytrace(const Camera& cam, Image& image, int xStart, int yStart, int width, int height)
 {
     Ray eyeRay;
     HitInfo hit;
     Vector3 shadedColor;
     
-    const uint32 imgWidth = image.GetWidth();
-    const uint32 imgHeight = image.GetHeight();
+    const int imgWidth = image.GetWidth();
+    const int imgHeight = image.GetHeight();
 
     // clip to the image so we don't go out of bounds
     width = std::min( xStart+width, imgWidth );
     height = std::min( yStart+height, imgHeight );
 
     // For all defined pixels in rectangle
-    for (uint32 y=yStart; y<height; ++y) {
-        for (uint32 x=xStart; x<width; ++x) {
+    for (int y=yStart; y<height; ++y) {
+        for (int x=xStart; x<width; ++x) {
             eyeRay = cam.EyeRay(x, y, 0.5f, 0.5f, imgWidth, imgHeight);
 
             if ( Intersect( hit, eyeRay ) ) {

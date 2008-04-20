@@ -61,8 +61,8 @@ typedef math::Vector2 Vector2;
 typedef math::Vector3 Vector3;
 typedef math::Vector4 Vector4;
 
-typedef math::Tuple2<uint32> Tuple2I;
-typedef math::Tuple3<uint32> Tuple3I;
+typedef math::Tuple2<int> Tuple2I;
+typedef math::Tuple3<int> Tuple3I;
 
 typedef math::Matrix4x4 Matrix4x4;
 

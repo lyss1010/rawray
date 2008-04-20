@@ -61,7 +61,7 @@ void Camera::CalcLookAt() {
     }
 }
 
-Ray Camera::EyeRay(uint32 x, uint32 y, float xOffset, float yOffset, uint32 width, uint32 height) const {
+Ray Camera::EyeRay(int x, int y, float xOffset, float yOffset, int width, int height) const {
     // Compute camera coordinate system
     Vector3 wDir(viewDir_);
     wDir.Negate();

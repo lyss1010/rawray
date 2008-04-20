@@ -21,7 +21,7 @@ class Triangle;
 
 namespace TriangleFactory {
 
-Triangle* NewTriangle(TriangleMesh& mesh, uint32 index, const Material* material);
+Triangle* NewTriangle(TriangleMesh& mesh, int index, const Material* material);
 
 } // namespace rawray::TriangleFactory
 

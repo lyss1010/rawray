@@ -12,7 +12,7 @@ namespace rawray {
 Image::Image() : pixels_(NULL), width_(0), height_(0) { }
 
 Image::Image(const Image& i) {
-    register uint32 numPixels = Resize(i.width_, i.height_);
+    register int numPixels = Resize(i.width_, i.height_);
 
     if( numPixels > 0 ) {
         memcpy( static_cast<void*>(pixels_), 
@@ -28,14 +28,14 @@ Image::~Image() {
     SAFE_DELETE_ARRAY( pixels_ );
 }
 
-int Image::Resize(uint32 width, uint32 height) {
+int Image::Resize(int width, int height) {
     if( width == width_ && height == height_ )
         return width*height;
 
     width_ = width;
     height_ = height;
 
-    register uint32 numPixels = width_*height_;
+    register int numPixels = width_*height_;
     if( numPixels <= 0 ) return 0;
     
     SAFE_DELETE_ARRAY( pixels_ );
@@ -45,12 +45,12 @@ int Image::Resize(uint32 width, uint32 height) {
     return numPixels;
 }
 
-void Image::SetPixel(uint32 x, uint32 y, const Vector3& color) {
+void Image::SetPixel(int x, int y, const Vector3& color) {
     if( x < width_ && y < height_ )
 		GetPixel(x, y) = color;
 }
 
-void Image::SetPixel(uint32 x, uint32 y, const math::Tuple3<uint8>& color) {
+void Image::SetPixel(int x, int y, const math::Tuple3<uint8>& color) {
 	if( x < width_ && y < height_ ) {
 		Vector3& pixel = GetPixel(x, y);
 		pixel.x = base::ByteToFloat(color.x);
@@ -60,14 +60,14 @@ void Image::SetPixel(uint32 x, uint32 y, const math::Tuple3<uint8>& color) {
 }
 
 void Image::Clear(const Vector3 &color) {
-    for(uint32 y=0; y<height_; y++)
-        for(uint32 x=0; x<width_; x++)
+    for(int y=0; y<height_; y++)
+        for(int x=0; x<width_; x++)
             SetPixel( x, y, color );
 }
 
 void Image::Clear(const math::Tuple3<uint8> &color) {
-    for(uint32 y=0; y<height_; y++)
-        for(uint32 x=0; x<width_; x++)
+    for(int y=0; y<height_; y++)
+        for(int x=0; x<width_; x++)
             SetPixel( x, y, color );
 }
 
@@ -144,11 +144,11 @@ bool Image::GaussianBlur(float sigma) {
 }
 
 void Image::RenderGL() {
-    for(uint32 y=0; y<height_; ++y)
+    for(int y=0; y<height_; ++y)
         RenderScanlineGL(y);
 }
 
-void Image::RenderScanlineGL(uint32 y) {
+void Image::RenderScanlineGL(int y) {
     glRasterPos2f(-1, -1 + 2*y / float(height_));
     glDrawPixels(width_, 1, GL_RGB, GL_FLOAT, &pixels_[y*width_]);
 }
@@ -170,9 +170,9 @@ void Image::WritePPM( clock_t rendertime ) {
 void Image::WritePPM(const char* filename) {
 	math::Tuple3<uint8>* data = new math::Tuple3<uint8>[ width_ * height_ ];
 
-	for(uint32 y=0; y<height_; y++) {
+	for(int y=0; y<height_; y++) {
 		int yOffset = y*width_;
-		for(uint32 x=0; x<width_; x++) {
+		for(int x=0; x<width_; x++) {
 			Vector3* p = pixels_ + yOffset + x;
 			math::Tuple3<uint8>* d = data    + yOffset + x;
 
@@ -185,7 +185,7 @@ void Image::WritePPM(const char* filename) {
     WritePPM(filename, static_cast<uint8*>( &((*data).x) ), width_, height_);
 }
 
-void Image::WritePPM(const char* filename, uint8* data, uint32 width, uint32 height) {
+void Image::WritePPM(const char* filename, uint8* data, int width, int height) {
     FILE* fp = NULL;
     fp = fopen( filename, "wb" );
     if (fp) {

@@ -18,26 +18,26 @@ enum TriangleIntersection {
 extern float epsilon;
 
 namespace global {
-    extern uint32 win_width;
-    extern uint32 win_height;
-    extern uint32 win_posX;
-    extern uint32 win_posY;
+    extern int win_width;
+    extern int win_height;
+    extern int win_posX;
+    extern int win_posY;
 
     extern math::Vector3 img_fg_color;
     extern math::Vector3 img_bg_color;
     extern math::Vector3 gl_bg_color;
-    extern uint32 gl_sphere_sections;
+    extern int gl_sphere_sections;
 	extern bool gl_render_lights;
     extern bool headless;
 
     extern TriangleIntersection triangle_intersection_algorithm;
 
-    extern uint32 num_threads;
-    extern uint32 render_x_block;
-    extern uint32 render_y_block;
-    extern uint32 render_handler_sleep;
-    extern uint32 render_thread_sleep;
-    extern uint32 render_spinlock_sleep;
+    extern int num_threads;
+    extern int render_x_block;
+    extern int render_y_block;
+    extern int render_handler_sleep;
+    extern int render_thread_sleep;
+    extern int render_spinlock_sleep;
 
     extern float gaussian_blur_max;
     extern float gaussian_blur_sigma;
@@ -58,7 +58,7 @@ namespace camera {
 } // namespace camera
 
 namespace p0 {
-	extern uint32 spiral_num_spheres;
+	extern int spiral_num_spheres;
 	extern float spiral_radius;
 
 	extern float lorenz_dt;
@@ -68,7 +68,7 @@ namespace p0 {
 	extern float lorenz_rho;
 	extern float lorenz_beta;
 	extern float lorenz_radius;
-	extern uint32 lorenz_num_spheres;
+	extern int lorenz_num_spheres;
 	extern math::Vector3 lorenz_start;
 
 } // namespace p0

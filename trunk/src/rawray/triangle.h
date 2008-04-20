@@ -31,10 +31,10 @@ public:
 	virtual ~Triangle() { }
 
     TriangleMesh& GetMesh() { return mesh_; }
-    uint32 GetIndex() const { return index_; }
+    int GetIndex() const { return index_; }
 
     void SetMesh(TriangleMesh& mesh) { mesh_=mesh; }
-    void SetIndex(uint32 index) { index_=index; }
+    void SetIndex(int index) { index_=index; }
 
     virtual void RenderGL();
     virtual void PreCalc()=0;
@@ -43,13 +43,13 @@ public:
 	Vector3 ComputeBarycentric(const Vector3& point) const;
 
 protected:
-	Triangle(TriangleMesh& mesh, uint32 index, const Material* material)
+	Triangle(TriangleMesh& mesh, int index, const Material* material)
 		: Object(material), mesh_(mesh), index_(index) { }
 	
     void Interpolate(HitInfo& hit, float alpha, float beta, float gamma);
 
 	TriangleMesh& mesh_;
-    uint32 index_;
+    int index_;
 
 private:
 	DISALLOW_IMPLICIT_CONSTRUCTORS(Triangle);

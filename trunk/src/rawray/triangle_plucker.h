@@ -17,7 +17,7 @@ namespace rawray {
 class DllExport TrianglePlucker : public Triangle
 {
 public:
-    TrianglePlucker(TriangleMesh& mesh, uint32 index, const Material* material)
+    TrianglePlucker(TriangleMesh& mesh, int index, const Material* material)
 		: Triangle(mesh, index, material) { }
 
 	virtual ~TrianglePlucker() { }

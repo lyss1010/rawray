@@ -32,7 +32,7 @@ public:
     Tuple3I* GetNormalIndices() { return normalIndices_; }
     Tuple3I* GetVertexIndices() { return vertexIndices_; }
     Tuple3I* GetTexCoordIndices() { return texCoordIndices_; }
-    uint32 GetNumTriangles() const { return numTriangles_; }
+    int GetNumTriangles() const { return numTriangles_; }
 
     bool LoadOBJ(const char* filename, const Matrix4x4& ctm = Matrix4x4());
 
@@ -47,7 +47,7 @@ protected:
     Tuple3I* normalIndices_;
     Tuple3I* vertexIndices_;
     Tuple3I* texCoordIndices_;
-    uint32 numTriangles_;
+    int numTriangles_;
 
 }; // class TriangleMesh
 

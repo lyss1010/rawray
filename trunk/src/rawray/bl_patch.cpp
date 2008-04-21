@@ -141,7 +141,7 @@ bool BLPatch::Intersect(HitInfo& hit, const Ray& ray, float minDistance, float m
     Vector3 dv =  (1-u) * (P01_-P00_);
             dv +=    u  * (P11_-P10_);
 
-    hit.normal = math::Cross( du, dv );
+    math::Cross( du, dv, hit.normal );
     hit.normal.Normalize();
 
     return true;

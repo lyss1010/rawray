@@ -6,6 +6,8 @@
 #include "base/conversions.h"
 #include <sstream>
 #include "time.h"
+#include <xmmintrin.h>
+
 
 namespace rawray {
 
@@ -25,6 +27,10 @@ Image::Image(const Image& i) {
 }
 
 Image::~Image() {
+    DeleteBuffer();
+}
+
+void Image::DeleteBuffer( ) {
     SAFE_DELETE_ARRAY( pixels_ );
 }
 
@@ -38,10 +44,10 @@ int Image::Resize(int width, int height) {
     register int numPixels = width_*height_;
     if( numPixels <= 0 ) return 0;
     
-    SAFE_DELETE_ARRAY( pixels_ );
+    DeleteBuffer();
+
     pixels_ = new Vector3[ numPixels ];
     memset( pixels_, 0, sizeof( *pixels_ )*numPixels );
-
     return numPixels;
 }
 
@@ -74,11 +80,17 @@ void Image::Clear(const math::Tuple3<uint8> &color) {
 void Image::ScreenShot() {
     glReadBuffer(GL_FRONT);
 
-    // Disable packing so we don't buffer overrun
+    // Save the current packing value for pixel storage
     glPushClientAttrib( GL_CLIENT_PIXEL_STORE_BIT );
+
+    // If SSE is enabled, Vector3 is really 4 float
+#ifdef SSE
+    glPixelStorei(GL_PACK_ALIGNMENT, 4);
+    glReadPixels( 0, 0, width_, height_, GL_RGBA, GL_FLOAT, pixels_ );
+#else
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
-    
     glReadPixels( 0, 0, width_, height_, GL_RGB, GL_FLOAT, pixels_ );
+#endif
 
     // Enable the default packing
     glPopClientAttrib();
@@ -150,7 +162,13 @@ void Image::RenderGL() {
 
 void Image::RenderScanlineGL(int y) {
     glRasterPos2f(-1, -1 + 2*y / float(height_));
+
+    // If SSE is enabled, Vector3 is really 4 float
+#ifdef SSE
+    glDrawPixels(width_, 1, GL_RGBA, GL_FLOAT, &pixels_[y*width_]);
+#else
     glDrawPixels(width_, 1, GL_RGB, GL_FLOAT, &pixels_[y*width_]);
+#endif
 }
 
 void Image::WritePPM( ) {

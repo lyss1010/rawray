@@ -36,7 +36,8 @@
 				BrowseInformationFile="$(IntDir)"
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="FALSE"
-				DebugInformationFormat="3"/>
+				DebugInformationFormat="3"
+				DisableSpecificWarnings="4251;4324"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -106,7 +107,8 @@
 				BrowseInformation="0"
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="FALSE"
-				DebugInformationFormat="0"/>
+				DebugInformationFormat="0"
+				DisableSpecificWarnings="4251;4324"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool

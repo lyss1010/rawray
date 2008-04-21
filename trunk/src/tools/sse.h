@@ -6,7 +6,6 @@
 #define RAWRAY_TOOLS_SSE_TEST_H
 #include "stdafx.h"
 
-
 /////////////////////////////////////////////////////////////////////////////
 namespace tools {
 namespace sse {
@@ -22,6 +21,8 @@ enum VERSION {
 };
 
 DllExport VERSION GetVersion();
+DllExport void SetFastFPU();
+DllExport void SetNormalFPU();
 
 } // namespace tools::sse
 } // namespace tools

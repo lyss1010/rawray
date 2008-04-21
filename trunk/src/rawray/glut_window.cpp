@@ -118,6 +118,7 @@ void GlutWindow::Keyboard(uint8 key, int x, int y) {
     UNREFERENCED_PARAMETER(x);
     UNREFERENCED_PARAMETER(y);
 
+    Vector3 v;
     bool need_display_update = true;
 
     switch (key) {
@@ -178,12 +179,14 @@ void GlutWindow::Keyboard(uint8 key, int x, int y) {
 
     case 'a':
     case 'A':
-        cam_.SetEye( cam_.GetEye() - keySpeed_*math::Cross( cam_.GetViewDir(), cam_.GetUp() ) );
+        math::Cross( cam_.GetViewDir(), cam_.GetUp(), v );
+        cam_.SetEye( cam_.GetEye() - keySpeed_*v );
         break;
 
     case 'd':
     case 'D':
-        cam_.SetEye( cam_.GetEye() + keySpeed_*math::Cross( cam_.GetViewDir(), cam_.GetUp() ) );
+        math::Cross( cam_.GetViewDir(), cam_.GetUp(), v );
+        cam_.SetEye( cam_.GetEye() + keySpeed_*v );
         break;
 
     default:
@@ -229,7 +232,7 @@ void GlutWindow::Motion(int x, int y) {
 	if (renderGL_) {
 		if( activeButton_ & MOUSE_LEFT ) {
 			Vector3 viewDir = cam_.GetViewDir();
-			Vector3 right = math::Cross(viewDir, cam_.GetUp());
+			Vector3 right; math::Cross( viewDir, cam_.GetUp(), right );
 
 			viewDir.Rotate( -mouseYSpeed_*dy*math::DEG_TO_RAD, right );
 			viewDir.Rotate( -mouseXSpeed_*dx*math::DEG_TO_RAD, cam_.GetUp() );

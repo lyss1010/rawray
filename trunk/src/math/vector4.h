@@ -13,7 +13,7 @@
 /////////////////////////////////////////////////////////////////////////////
 namespace math {
 
-ALIGN class DllExport Vector4
+class DllExport Vector4
 {
 public:
     float x, y, z, w;

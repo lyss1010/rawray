@@ -13,8 +13,8 @@ namespace rawray {
 // struct means default public access, but don't change direction or abs!
 struct DllExport Ray
 {
-    Vector3 origin;
-    Vector3 direction;
+    ALIGN16 Vector3 origin;
+    ALIGN16 Vector3 direction;
 
     Ray() 
 		: origin(), 

@@ -48,7 +48,7 @@ private:
     int height_;
 
     void WritePPM(const char* filename, uint8* data, int width, int height);
-
+    void DeleteBuffer();
 
 }; // class Image
 

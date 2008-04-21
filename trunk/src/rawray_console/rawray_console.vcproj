@@ -37,7 +37,7 @@
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4251"/>
+				DisableSpecificWarnings="4251;4324"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -116,7 +116,7 @@ copy &quot;$(SolutionDir)lib\d_tools.dll&quot; &quot;$(OutDir)&quot;
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="0"
-				DisableSpecificWarnings="4251"/>
+				DisableSpecificWarnings="4251;4324"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool

@@ -10,7 +10,7 @@ namespace rawray {
 
 PluckerCoord::PluckerCoord(const Vector3& direction, const Vector3& point) {
 	u_ = direction;
-	v_ = math::Cross(direction,point);
+	math::Cross(direction,point,v_);
 }
 
 float PluckerCoord::GetOrientation(const PluckerCoord& p) {

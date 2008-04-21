@@ -3,9 +3,38 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 #include "sse.h"
+#include <xmmintrin.h>
 
 namespace tools {
 namespace sse {
+
+//BIT_15;           // Flush all underflows to go to zero
+//BIT_14;           // Round to positive values
+//BIT_13;           // Round to negative values
+//BIT_13 | BIT_14;  // Round to zero
+//BIT_13 | BIT_14;  // Round to nearest (these bits must be both 0)
+//BIT_12;           // Mask out Precision exceptions
+//BIT_11;           // Mask out Underflow exceptions
+//BIT_10;           // Mask out Overflow exceptions
+//BIT_09;           // Mask out Divide by Zero exceptions
+//BIT_08;           // Mask out Denormal exceptions
+//BIT_07;           // Mask out Invalid Operation exceptions
+//BIT_06;           // Force denormals directly to zero (note: not implemented in all SSE cpus)
+
+#define FPU_MXCSR_DEFAULT 0x1f80
+#define FPU_FAST_MASK BIT_15 | BIT_12 | BIT_11 | BIT_10 | BIT_09 | BIT_08 | BIT_07 | BIT_06
+#define FPU_PRECISE_MASK 0
+
+// Loose precision on floating point calculations in favor of speed
+DllExport void SetFastFPU() {
+    // TODO: Check if DAZ is supported before trying to change that bit
+    _mm_setcsr( FPU_MXCSR_DEFAULT | FPU_FAST_MASK );
+}
+
+// Gain precision on floating point calculations at cost of speed
+DllExport void SetNormalFPU() {
+    _mm_setcsr( FPU_MXCSR_DEFAULT );
+}
 
 // TODO: Return an enum so we can differentiate between versions of SSE3 and SSE4
 VERSION GetVersion() {

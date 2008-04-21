@@ -16,7 +16,7 @@ void TriangleBarycentricProjection::PreCalc() {
 
     b_ = v2 - v0;
     c_ = v1 - v0;
-    n_ = math::Cross(b_, c_);
+    math::Cross(b_, c_, n_);
     
     // Compute the two non-dominant axis which we will use
     axis_ = n_.GetDominantAxis();

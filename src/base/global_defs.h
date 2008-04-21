@@ -13,14 +13,8 @@
 #define DllExport __declspec( dllimport )
 #endif
 
-// We want to align on 16byte boundaries for SSE instructions
 #define SSE
-
-#ifdef SSE
-#define ALIGN __declspec(align(16))
-#else
-#define ALIGN
-#endif
+#define ALIGN16 __declspec(align(16))
 
 // Tell code we're using Windows XP or later
 #define CORE_WINDOWS_VERSION 0x0501

@@ -74,6 +74,7 @@ int _tmain( int argc, _TCHAR* argv[] )
 
     SSETest();
     VectorTest();
+    tools::sse::SetFastFPU();
 
     // Initialize options defaults
     rawray::options::init();

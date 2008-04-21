@@ -8,14 +8,25 @@
 #define RAWRAY_MATH_VECTOR3_H
 #include "stdafx.h"
 
-
 /////////////////////////////////////////////////////////////////////////////
 namespace math {
 
-ALIGN class DllExport Vector3
+class DllExport Vector3
 {
 public:
+#ifdef SSE
+#pragma warning(push)
+#pragma warning(disable:4201)
+    union {
+        float vec[4];
+        struct {
+            float x, y, z, w;
+        };
+    };
+#pragma warning(pop)
+#else
     float x, y, z;
+#endif
 
     Vector3() : x(0.0f), y(0.0f), z(0.0f) { }
     explicit Vector3(float f) : x(f), y(f), z(f) { }
@@ -100,11 +111,7 @@ public:
 
 inline float Dot(const Vector3& a, const Vector3& b) { return a.x*b.x + a.y*b.y + a.z*b.z; }
 
-inline Vector3 Cross(const Vector3& a, const Vector3& b) {
-    return Vector3( a.y*b.z - a.z*b.y,
-                    a.z*b.x - a.x*b.z,
-                    a.x*b.y - a.y*b.x );
-}
+DllExport Vector3& Cross(const Vector3& a, const Vector3& b, Vector3& out);
 
 } // namespace math
 /////////////////////////////////////////////////////////////////////////////

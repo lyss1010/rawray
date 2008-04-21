@@ -14,7 +14,7 @@ void TriangleMoller::PreCalc() {
     const Vector3& v1 = mesh_.GetVertices()[ vertexIndices.y ];
     const Vector3& v2 = mesh_.GetVertices()[ vertexIndices.z ];
 
-    n_ = math::Cross(v2 - v0, v1 - v0);
+    math::Cross(v2 - v0, v1 - v0, n_);
 }
 
 // Moller triangle intersection test
@@ -36,10 +36,13 @@ bool TriangleMoller::Intersect(HitInfo& hit, const Ray& ray, float minDistance, 
     const float t = n_.Dot(o) * neg_inv_det;
     if( t < minDistance || t > maxDistance ) return false;
 
-    const float beta = math::Cross(o,c).Dot(ray.direction) * neg_inv_det;
+    Vector3 v; math::Cross(o,c,v);
+
+    const float beta = v.Dot(ray.direction) * neg_inv_det;
     if( beta < 0.0f ) return false;
 
-    const float gamma = math::Cross(b,o).Dot(ray.direction) * neg_inv_det;
+    math::Cross(b,o,v);
+    const float gamma = v.Dot(ray.direction) * neg_inv_det;
     if( gamma < 0.0f || beta+gamma > 1.0f ) return false;
 
     hit.distance = t;

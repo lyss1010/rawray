@@ -5,7 +5,7 @@
 #endif
 
 #include "parser.h"
-#include <malloc.h>
+#include <xmmintrin.h>
 #include <stdlib.h>
 #include <math.h>
 #include <stack>

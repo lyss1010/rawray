@@ -17,9 +17,9 @@ void Sphere::RenderGL() {
     glPopMatrix();
 }
 
-bool Sphere::Intersect(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance) {
+bool Sphere::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
+    const Ray& ray = hit.eyeRay;
     const Vector3 toCenter = ray.origin - center_;
-    
     const float a = ray.direction.Length2();
     const float b = -math::Dot( 2*ray.direction, toCenter );
     const float c = toCenter.Length2() - radius_*radius_;

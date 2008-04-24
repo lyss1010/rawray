@@ -14,7 +14,9 @@ void TriangleBarycentric::PreCalc() { }
 // Ray-Plane intersection with barycentric coordinate test
 // See: Fundamentals of Computer Graphics, Peter Shirley p206
 // Moller test with the determinants computed out by hand
-bool TriangleBarycentric::Intersect(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance) {
+bool TriangleBarycentric::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
+    const Ray& ray = hit.eyeRay;
+
 #ifdef SSE
 	const Tuple3I vertexIndices = mesh_.GetVertexIndices()[ index_ ];
     const float* v0 = mesh_.GetVertices()[ vertexIndices.x ].vec;

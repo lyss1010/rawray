@@ -24,7 +24,8 @@ void TrianglePlucker::PreCalc() {
 // See: http://tog.acm.org/resources/RTNews/html/rtnv10n3.html#art11
 // See: http://tog.acm.org/resources/RTNews/html/rtnv11n1.html#art3
 // See: http://www.flipcode.com/archives/Plcker_Coordinates_for_the_Rest_of_Us-Part_4_Applications.shtml
-bool TrianglePlucker::Intersect(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance) {
+bool TrianglePlucker::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
+    const Ray& ray = hit.eyeRay;
     PluckerCoord pluckRay( ray.direction, ray.origin );
     
     const float dirA = pluckA_.GetOrientation( pluckRay );

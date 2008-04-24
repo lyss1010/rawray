@@ -43,8 +43,9 @@ bool BLPatch::IsValid(float u, float v) {
     return (u < uMin_ || u > uMax_) || (v < uMin_ || v > uMax_);
 }
 
-bool BLPatch::Intersect(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance) {
+bool BLPatch::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
     Vector3 x1 = P11_; x1 -= P10_; x1 -= P01_; x1 += P00_;
+    const Ray& ray = hit.eyeRay;
     const Vector3& x2 = P10_ - P00_;
     const Vector3& x3 = P01_ - P00_;
     const Vector3& x4 = P00_ - ray.origin;

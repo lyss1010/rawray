@@ -30,8 +30,9 @@ void TriangleBarycentricProjection::PreCalc() {
 
 // Optimized Barycentric 2d projection test
 // See: http://www.mpi-inf.mpg.de/~wald/PhD/wald_phd.pdf p91
-bool TriangleBarycentricProjection::Intersect(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance) {
+bool TriangleBarycentricProjection::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
 	if( det2d_ == 0.0f ) return false;
+    const Ray& ray = hit.eyeRay;
 
     // Compute distance to the plane along the ray
 	const Tuple3I vertexIndices = mesh_.GetVertexIndices()[ index_ ];

@@ -18,8 +18,8 @@ class DllExport Tuple2
 public:
     T x, y;
 
-    Tuple2() : x(), y(), z() { }
-    explicit Tuple2(const T& t) : x(t), y(t), z(t) { }
+    Tuple2() : x(), y() { }
+    explicit Tuple2(const T& t) : x(t), y(t) { }
     Tuple2(const T& x, const T& y) : x(x), y(y) { }
     Tuple2(const Tuple2<T>& t) : x(t.x), y(t.y) { }
     
@@ -32,7 +32,7 @@ public:
     inline void Set(const T& t) { x=t; y=t; }
     inline void Set(const T& _x, const T& _y) { x=_x; y=_y; }
     inline void Set(const Tuple2& t) { x=v.x; y=t.y; }
-    inline void Set(const T* array) { if( !array ) return; x=array[0]; y=array[1]; z=array[2]; }
+    inline void Set(const T* array) { if( !array ) return; x=array[0]; y=array[1]; }
 
     // Array access (NOTE: no bounds check done)
     T& operator[](int i) { return (&x)[i]; }

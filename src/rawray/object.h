@@ -22,7 +22,7 @@ public:
     virtual void RenderGL()=0;
     virtual void PreCalc()=0;
 
-    virtual bool Intersect(HitInfo& hit, const Ray& ray, float minDistance = 0.0f, float maxDistance = MAX_DISTANCE)=0;
+    virtual bool Intersect(HitInfo& hit, float minDistance = 0.0f, float maxDistance = MAX_DISTANCE)=0;
 
 protected:
     const Material* material_;

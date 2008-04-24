@@ -47,8 +47,8 @@ void Scene::PreCalc() {
     bvh_.PreCalc();
 }
 
-bool Scene::Intersect(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance) {
-    return bvh_.Intersect(hit, ray, minDistance, maxDistance );
+bool Scene::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
+    return bvh_.Intersect(hit, minDistance, maxDistance );
 }
 
 void Scene::Raytrace(const Camera& cam, Image& image, int xStart, int yStart, int width, int height)
@@ -67,9 +67,11 @@ void Scene::Raytrace(const Camera& cam, Image& image, int xStart, int yStart, in
     // For all defined pixels in rectangle
     for (int y=yStart; y<height; ++y) {
         for (int x=xStart; x<width; ++x) {
-            eyeRay = cam.EyeRay(x, y, 0.5f, 0.5f, imgWidth, imgHeight);
+            hit.imgCoord.x = x;
+            hit.imgCoord.y = y;
+            hit.eyeRay = cam.EyeRay(x, y, 0.5f, 0.5f, imgWidth, imgHeight);
 
-            if ( Intersect( hit, eyeRay ) ) {
+            if ( Intersect( hit ) ) {
                 if( hit.material )
                     shadedColor = hit.material->Shade(eyeRay, hit, *this);
                 else

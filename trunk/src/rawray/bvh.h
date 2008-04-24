@@ -22,7 +22,7 @@ public:
 
     virtual void PreCalc();
     virtual void RenderGL();
-    virtual bool Intersect(HitInfo& hit, const Ray& ray, float minDistance = 0.0f, float maxDistance = MAX_DISTANCE);
+    virtual bool Intersect(HitInfo& hit, float minDistance = 0.0f, float maxDistance = MAX_DISTANCE);
 
 private:
     std::vector<Object*>* objects_;

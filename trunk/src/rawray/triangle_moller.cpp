@@ -20,7 +20,8 @@ void TriangleMoller::PreCalc() {
 // Moller triangle intersection test
 // See: http://ompf.org/forum/viewtopic.php?t=165
 // See: Fundamentals of Computer Graphics, Peter Shirley p206
-bool TriangleMoller::Intersect(HitInfo& hit, const Ray& ray, float minDistance, float maxDistance) {
+bool TriangleMoller::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
+    const Ray& ray = hit.eyeRay;
 	const Tuple3I vertexIndices = mesh_.GetVertexIndices()[ index_ ];
     const Vector3& v0 = mesh_.GetVertices()[ vertexIndices.x ];
     const Vector3& v1 = mesh_.GetVertices()[ vertexIndices.y ];

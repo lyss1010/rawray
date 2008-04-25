@@ -1,31 +1,36 @@
 /////////////////////////////////////////////////////////////////////////////
-// Class : material.h
+// Class : colorful.h
 // 
 /////////////////////////////////////////////////////////////////////////////
-#ifndef RAWRAY_RAWRAY_MATERIAL_H
-#define RAWRAY_RAWRAY_MATERIAL_H
+#ifndef RAWRAY_RAWRAY_COLORFUL_H
+#define RAWRAY_RAWRAY_COLORFUL_H
 #include "stdafx.h"
+#include "material.h"
 #include "ray.h"
 #include "hit_info.h"
 #include "scene.h"
 
+
 /////////////////////////////////////////////////////////////////////////////
 namespace rawray {
 
-class DllExport Material
+class DllExport Colorful : public Material
 {
 public:
-    Material() { }
-	virtual ~Material() {}
+    Colorful() { }
+    virtual ~Colorful() { }
 
-	virtual void PreCalc() {}
+    virtual void PreCalc() { }
+    
     virtual Vector3 Shade(const HitInfo& hit, const Scene&) const;
-	virtual Vector3 BaseColor() const;
 
-}; // class Material
+private:
+    DISALLOW_COPY_CONSTRUCTORS(Colorful);
+
+}; // class Colorful
 
 
 } // namespace rawray
 /////////////////////////////////////////////////////////////////////////////
 
-#endif // RAWRAY_RAWRAY_MATERIAL_H
+#endif // RAWRAY_RAWRAY_COLORFUL_H

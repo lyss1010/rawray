@@ -36,7 +36,12 @@ public:
 
 }; // class HitInfo
 
-//typedef HitInfo[4] HitInfoPack;
+// Packet of 4 hits used for SSE optimizations
+class DllExport HitPack {
+public:
+    HitInfo hits[4];
+    float hit_result[4];
+};
 
 } // namespace rawray
 /////////////////////////////////////////////////////////////////////////////

@@ -17,6 +17,13 @@ void Sphere::RenderGL() {
     glPopMatrix();
 }
 
+void Sphere::IntersectPack(HitPack& hitpack, float minDistance, float maxDistance) {
+    hitpack.hit_result[0] = Intersect( hitpack.hits[0], minDistance, maxDistance );
+    hitpack.hit_result[1] = Intersect( hitpack.hits[1], minDistance, maxDistance );
+    hitpack.hit_result[2] = Intersect( hitpack.hits[2], minDistance, maxDistance );
+    hitpack.hit_result[3] = Intersect( hitpack.hits[3], minDistance, maxDistance );
+}
+
 bool Sphere::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
     const Ray& ray = hit.eyeRay;
     const Vector3 toCenter = ray.origin - center_;

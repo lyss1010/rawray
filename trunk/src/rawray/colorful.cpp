@@ -1,14 +1,14 @@
 /////////////////////////////////////////////////////////////////////////////
-// lambert.cpp
+// colorful.cpp
 //
 /////////////////////////////////////////////////////////////////////////////
-#include "lambert.h"
+#include "colorful.h"
 #include "math/vector3.h"
 #include "light.h"
 
 namespace rawray {
 
-Vector3 Lambert::Shade(const HitInfo& hit, const Scene& scene) const {
+Vector3 Colorful::Shade(const HitInfo& hit, const Scene& scene) const {
     const Ray& ray = hit.eyeRay;
     const Vector3 viewDir = -ray.direction;
     const std::vector<Light*>& lights = scene.GetLights();
@@ -30,14 +30,14 @@ Vector3 Lambert::Shade(const HitInfo& hit, const Scene& scene) const {
 						hit.normal.Dot(direction) * falloff * light->GetWattage() * math::INV_PI );
 
 		Vector3 color = light->GetColor();
-		color *= diffuse_;
 		color *= intensity;
+
+		color = Vector3 (  (1-hit.texCoord.y)*(1-hit.texCoord.y),
+                           hit.texCoord.x*hit.texCoord.x,
+                           hit.texCoord.x );
 
 		shadedColor += color;
 	}
-
-    // Add in ambient component regardless of lights
-    shadedColor += ambient_;
 
     return shadedColor;
 }

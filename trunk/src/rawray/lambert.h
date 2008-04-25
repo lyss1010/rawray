@@ -30,7 +30,7 @@ public:
 
     virtual void PreCalc() { }
     
-    virtual Vector3 Shade(const Ray&, const HitInfo& hit, const Scene&) const;
+    virtual Vector3 Shade(const HitInfo& hit, const Scene&) const;
 	virtual Vector3 BaseColor() const { return diffuse_; }
 
 protected:

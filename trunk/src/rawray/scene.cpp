@@ -47,14 +47,16 @@ void Scene::PreCalc() {
     bvh_.PreCalc();
 }
 
+void Scene::IntersectPack(HitPack& hitpack, float minDistance, float maxDistance) {
+    bvh_.IntersectPack(hitpack, minDistance, maxDistance);
+}
+
 bool Scene::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
     return bvh_.Intersect(hit, minDistance, maxDistance );
 }
 
 void Scene::Raytrace(const Camera& cam, Image& image, int xStart, int yStart, int width, int height)
 {
-    Ray eyeRay;
-    HitInfo hit;
     Vector3 shadedColor;
     
     const int imgWidth = image.GetWidth();
@@ -64,22 +66,42 @@ void Scene::Raytrace(const Camera& cam, Image& image, int xStart, int yStart, in
     width = std::min( xStart+width, imgWidth );
     height = std::min( yStart+height, imgHeight );
 
-    // For all defined pixels in rectangle
-    for (int y=yStart; y<height; ++y) {
-        for (int x=xStart; x<width; ++x) {
-            hit.imgCoord.x = x;
-            hit.imgCoord.y = y;
-            hit.eyeRay = cam.EyeRay(x, y, 0.5f, 0.5f, imgWidth, imgHeight);
+    // NOTE: we will ignore unfull packs =(
+    HitPack hitpack;
+    int packsize = 0;
+    for( int y=yStart; y<height; ++y ) {
+        for( int x=xStart; x<width; ++x ) {
+            // Add new item to pack
+            hitpack.hits[packsize].eyeRay = cam.EyeRay( x, y, 0.5f, 0.5f, imgWidth, imgHeight );
+            hitpack.hits[packsize].distance = MAX_DISTANCE;
+            hitpack.hits[packsize].imgCoord.x = x;
+            hitpack.hits[packsize].imgCoord.y = y;
+            ++packsize;
+            
+            if( packsize == 4 ) {
+                // Shoot off pack if it is full
+                IntersectPack( hitpack );
+                ShadePack( hitpack, image );
 
-            if ( Intersect( hit ) ) {
-                if( hit.material )
-                    shadedColor = hit.material->Shade(eyeRay, hit, *this);
-                else
-                    shadedColor = options::global::img_fg_color;
-            } else
-                shadedColor = options::global::img_bg_color;
+                // Clear out old values from pack
+                memset( hitpack.hit_result, 0, sizeof(hitpack.hit_result) );
+                packsize = 0;
+            }
+        }
+    }
+}
 
-			image.SetPixel( x, y, shadedColor );
+void Scene::ShadePack( const HitPack& hitpack, Image& image ) {
+    for( int pack=0; pack<4; ++pack ) {
+        if( hitpack.hit_result[pack] != 0.0f ) {
+            // NOTE: It's the users's fault if the material is null
+            image.SetPixel( hitpack.hits[pack].imgCoord.x, 
+                            hitpack.hits[pack].imgCoord.y, 
+                            hitpack.hits[pack].material->Shade(hitpack.hits[pack], *this) );
+        } else {
+            image.SetPixel( hitpack.hits[pack].imgCoord.x,
+                            hitpack.hits[pack].imgCoord.y,
+                            options::global::img_bg_color );
         }
     }
 }

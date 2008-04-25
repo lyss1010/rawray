@@ -39,7 +39,9 @@ public:
     virtual void RenderGL();
     virtual void PreCalc()=0;
 
-    virtual bool Intersect(HitInfo& hit, float minDistance = 0.0f, float maxDistance = MAX_DISTANCE)=0;
+    virtual bool Intersect(HitInfo& hit, float minDistance, float maxDistance)=0;
+    virtual void IntersectPack(HitPack& hitpack, float minDistance, float maxDistance);
+
 	Vector3 ComputeBarycentric(const Vector3& point) const;
 
 protected:

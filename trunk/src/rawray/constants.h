@@ -8,6 +8,7 @@
 namespace rawray {
 
 const float MAX_DISTANCE = 1e12f;
+const float MIN_DISTANCE = 1e-5f;
 
 } // namespace rawray
 

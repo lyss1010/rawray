@@ -22,7 +22,8 @@ public:
     virtual void RenderGL()=0;
     virtual void PreCalc()=0;
 
-    virtual bool Intersect(HitInfo& hit, float minDistance = 0.0f, float maxDistance = MAX_DISTANCE)=0;
+    virtual bool Intersect(HitInfo& hit, float minDistance, float maxDistance)=0;
+    virtual void IntersectPack(HitPack& hitpack, float minDistance, float maxDistance)=0;
 
 protected:
     const Material* material_;

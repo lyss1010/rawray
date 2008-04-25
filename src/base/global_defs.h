@@ -13,7 +13,7 @@
 #define DllExport __declspec( dllimport )
 #endif
 
-#define SSE
+//#define SSE
 #define ALIGN16 __declspec(align(16))
 
 // Tell code we're using Windows XP or later

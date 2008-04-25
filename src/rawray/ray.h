@@ -30,7 +30,11 @@ struct DllExport Ray
 
 }; // struct Ray
 
-//typedef Ray[4] RayPack;
+// Packet of 4 rays used for SSE optimizations
+class DllExport RayPack {
+public:
+    Ray rays[4];
+};
 
 } // namespace rawray
 /////////////////////////////////////////////////////////////////////////////

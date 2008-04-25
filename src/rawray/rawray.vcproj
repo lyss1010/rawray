@@ -213,6 +213,9 @@
 				Name="material"
 				Filter="">
 				<File
+					RelativePath=".\colorful.cpp">
+				</File>
+				<File
 					RelativePath=".\lambert.cpp">
 				</File>
 				<File
@@ -337,6 +340,9 @@
 			<Filter
 				Name="material"
 				Filter="">
+				<File
+					RelativePath=".\colorful.h">
+				</File>
 				<File
 					RelativePath=".\lambert.h">
 				</File>

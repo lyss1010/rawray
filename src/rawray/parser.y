@@ -21,6 +21,7 @@
 #include "object.h"
 #include "material.h"
 #include "lambert.h"
+#include "colorful.h"
 #include "light.h"
 #include "point_light.h"
 #include "constant_light.h"
@@ -182,6 +183,7 @@ std::stack<math::Matrix4x4>             g_matrixStack;
 
 %token YY_S_MATERIAL
 %token YY_S_LAMBERT
+%token YY_S_COLORFUL
 %token YY_DIFFUSE
 %token YY_AMBIENT
 
@@ -307,6 +309,11 @@ material_type:
 				g_scene->AddMaterial( g_material );
 			}
 			lambert_stuff
+        | YY_S_COLORFUL YY_LCURLY
+            {
+                g_material = new rawray::Colorful();
+                g_scene->AddMaterial( g_material );
+            }
 ;
 
 lambert_option:

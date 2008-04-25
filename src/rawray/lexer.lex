@@ -57,6 +57,7 @@ STRING      '([^']*)'|\"([^\"]*)\"
 %x s_constantlight
 %x s_material
 %x s_lambert
+%x s_colorful
 %x s_sphere
 %x s_blpatch
 %x s_p0
@@ -179,6 +180,7 @@ STRING      '([^']*)'|\"([^\"]*)\"
 
 <INITIAL>material{WS}					{ yy_push_state(s_material); return YY_S_MATERIAL; }
 <s_material>lambert{WS}					{ yy_pop_state(); yy_push_state(s_lambert); return YY_S_LAMBERT; }
+<s_material>colorful{WS}				{ yy_pop_state(); yy_push_state(s_colorful); return YY_S_COLORFUL; }
 <s_lambert>diffuse{WS}					{ return YY_DIFFUSE; }
 <s_lambert>ambient{WS}					{ return YY_AMBIENT; }
 

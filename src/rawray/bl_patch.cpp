@@ -26,6 +26,14 @@ void BLPatch::RenderGL() {
 void BLPatch::PreCalc() {
 }
 
+void BLPatch::IntersectPack(HitPack& hitpack, float minDistance, float maxDistance) {
+    hitpack.hit_result[0] = Intersect( hitpack.hits[0], minDistance, maxDistance );
+    hitpack.hit_result[1] = Intersect( hitpack.hits[1], minDistance, maxDistance );
+    hitpack.hit_result[2] = Intersect( hitpack.hits[2], minDistance, maxDistance );
+    hitpack.hit_result[3] = Intersect( hitpack.hits[3], minDistance, maxDistance );
+}
+
+
 float BLPatch::ComputeU(float v, const BLPatchData& patch) {
     float denom_a = v*(patch.A1 - patch.A2) + patch.B1 - patch.B2;
     float denom_b = v*(patch.A1           ) + patch.B1;

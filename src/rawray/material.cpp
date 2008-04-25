@@ -6,8 +6,7 @@
 
 namespace rawray {
 
-Vector3 Material::Shade(const Ray& ray, const HitInfo& hit, const Scene& scene) const {
-    UNREFERENCED_PARAMETER(ray);
+Vector3 Material::Shade(const HitInfo& hit, const Scene& scene) const {
     UNREFERENCED_PARAMETER(hit);
     UNREFERENCED_PARAMETER(scene);
     

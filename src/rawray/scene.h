@@ -36,7 +36,8 @@ public:
     virtual void RenderGL();
     virtual void PreCalc();
 
-    virtual bool Intersect(HitInfo& hit, float minDistance = 0.0f, float maxDistance = MAX_DISTANCE);
+    virtual bool Intersect(HitInfo& hit, float minDistance = MIN_DISTANCE, float maxDistance = MAX_DISTANCE );
+    virtual void IntersectPack(HitPack& hitpack, float minDistance = MIN_DISTANCE, float maxDistance = MAX_DISTANCE );
 
     void Raytrace(const Camera& cam, Image& image, int xStart, int yStart, int width, int height);
     void Raytrace(const Camera& cam, Image& image);
@@ -49,7 +50,9 @@ private:
     std::vector<Light*> lights_;
 	std::vector<TriangleMesh*> meshes_;
     BVH bvh_;
-    
+
+    void ShadePack( const HitPack& hitpack, Image& image );
+
     DISALLOW_COPY_CONSTRUCTORS(Scene);
 
 }; // class Scene

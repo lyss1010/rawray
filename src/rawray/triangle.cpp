@@ -47,6 +47,13 @@ void Triangle::RenderGL() {
     glEnd();
 }
 
+void Triangle::IntersectPack(HitPack& hitpack, float minDistance, float maxDistance) {
+    hitpack.hit_result[0] = Intersect( hitpack.hits[0], minDistance, maxDistance );
+    hitpack.hit_result[1] = Intersect( hitpack.hits[1], minDistance, maxDistance );
+    hitpack.hit_result[2] = Intersect( hitpack.hits[2], minDistance, maxDistance );
+    hitpack.hit_result[3] = Intersect( hitpack.hits[3], minDistance, maxDistance );
+}
+
 void Triangle::Interpolate(HitInfo& hit, float alpha, float beta, float gamma) {
     const Tuple3I normalIndices = mesh_.GetNormalIndices()[ index_ ];
     hit.normal = alpha * mesh_.GetNormals()[ normalIndices.x ] +

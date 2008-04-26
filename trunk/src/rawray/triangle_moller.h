@@ -9,6 +9,7 @@
 #include "triangle_mesh.h"
 #include "hit_info.h"
 #include "ray.h"
+#include "math/vector4.h"
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -27,12 +28,19 @@ public:
 
     virtual bool Intersect(HitInfo& hit, float minDistance, float maxDistance);
 
-//#ifdef SSE
-//    virtual void IntersectPack(HitPack& hitpack, float minDistance, float maxDistance);
-//#endif SSE
+#ifdef SSE
+    virtual void IntersectPack(HitPack& hitpack, float minDistance, float maxDistance);
+#endif SSE
 
 private:
+#ifdef SSE
+	Vector4 nx_;
+	Vector4 ny_;
+	Vector4 nz_;
+#else
 	Vector3 n_;
+#endif
+
 
     DISALLOW_IMPLICIT_CONSTRUCTORS(TriangleMoller);
 

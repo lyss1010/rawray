@@ -13,7 +13,11 @@
 /////////////////////////////////////////////////////////////////////////////
 namespace math {
 
+#ifdef SSE
+class ALIGN16 DllExport Vector4
+#else
 class DllExport Vector4
+#endif
 {
 public:
     float x, y, z, w;

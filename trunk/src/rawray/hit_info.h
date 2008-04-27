@@ -37,10 +37,32 @@ public:
 }; // class HitInfo
 
 // Packet of 4 hits used for SSE optimizations
-class DllExport HitPack {
+class ALIGN16 DllExport HitPack {
 public:
-    HitInfo hits[4];
-    float hit_result[4];
+    ALIGN16 HitInfo hits[4];
+    ALIGN16 float hit_result[4];
+
+    // Special formatting of the eye rays for SSE optimized code
+#ifdef SSE
+    ALIGN16 float ray_d_x[4];
+    ALIGN16 float ray_d_y[4];
+    ALIGN16 float ray_d_z[4];
+
+    ALIGN16 float ray_o_x[4];
+    ALIGN16 float ray_o_y[4];
+    ALIGN16 float ray_o_z[4];
+#endif
+
+    void PackData() {
+        for( int i=0; i<4; ++i ) {
+            ray_o_x[i] = hits[i].eyeRay.origin.x;
+            ray_o_y[i] = hits[i].eyeRay.origin.y;
+            ray_o_z[i] = hits[i].eyeRay.origin.z;
+            ray_d_x[i] = hits[i].eyeRay.direction.x;
+            ray_d_y[i] = hits[i].eyeRay.direction.y;
+            ray_d_z[i] = hits[i].eyeRay.direction.z;
+        }
+    }
 };
 
 } // namespace rawray

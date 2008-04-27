@@ -11,6 +11,9 @@
 // Windows Includes
 #include <Windows.h>
 
+// SSE Includes
+#include <xmmintrin.h>
+
 // STD Includes
 #pragma warning(push)
 #pragma warning(disable:4702) // Unreachable code warning in <vector>

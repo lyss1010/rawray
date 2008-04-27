@@ -6,8 +6,6 @@
 #include "base/conversions.h"
 #include <sstream>
 #include "time.h"
-#include <xmmintrin.h>
-
 
 namespace rawray {
 

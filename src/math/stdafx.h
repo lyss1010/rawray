@@ -8,6 +8,9 @@
 #include "base/global_defs.h"
 #include "constants.h"
 
+// SSE includes
+#include <stdlib.h>
+#include <xmmintrin.h>
 
 // Standard C Runtime Libraries
 #include <math.h>

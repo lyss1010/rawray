@@ -9,6 +9,7 @@
 
 
 // Memory leak detection
+#include <xmmintrin.h>
 #include <stdlib.h>
 #include <crtdbg.h>
 

@@ -6,7 +6,6 @@
 #include "math/vector2.h"
 #include "math/vector3.h"
 #include "math/tuple3.h"
-#include <xmmintrin.h>
 
 namespace rawray {
 

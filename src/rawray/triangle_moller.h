@@ -11,17 +11,16 @@
 #include "ray.h"
 #include "math/vector4.h"
 
-
 /////////////////////////////////////////////////////////////////////////////
 namespace rawray {
 
-class DllExport TriangleMoller : public Triangle
+class ALIGN16 DllExport TriangleMoller : public Triangle
 {
 public:
     TriangleMoller(TriangleMesh& mesh, int index, const Material* material)
 		: Triangle(mesh, index, material) { }
 
-	virtual ~TriangleMoller() { }
+    virtual ~TriangleMoller() { }
 
     //virtual void RenderGL();
     virtual void PreCalc();
@@ -30,17 +29,10 @@ public:
 
 #ifdef SSE
     virtual void IntersectPack(HitPack& hitpack, float minDistance, float maxDistance);
-#endif SSE
+#endif // SSE
 
 private:
-#ifdef SSE
-	Vector4 nx_;
-	Vector4 ny_;
-	Vector4 nz_;
-#else
-	Vector3 n_;
-#endif
-
+    Vector3 n_;
 
     DISALLOW_IMPLICIT_CONSTRUCTORS(TriangleMoller);
 

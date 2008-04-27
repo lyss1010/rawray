@@ -11,7 +11,11 @@
 /////////////////////////////////////////////////////////////////////////////
 namespace math {
 
+#ifdef SSE
+class ALIGN16 DllExport Vector3
+#else
 class DllExport Vector3
+#endif
 {
 public:
 #ifdef SSE

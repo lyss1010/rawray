@@ -79,12 +79,16 @@ void Scene::Raytrace(const Camera& cam, Image& image, int xStart, int yStart, in
             ++packsize;
             
             if( packsize == 4 ) {
+                // Compute pre-compacted data for SIMD instructions
+                hitpack.PackData();
+                
                 // Shoot off pack if it is full
                 IntersectPack( hitpack );
                 ShadePack( hitpack, image );
 
-                // Clear out old values from pack
+                // Clear out old values from pack (TODO: Required?)
                 memset( hitpack.hit_result, 0, sizeof(hitpack.hit_result) );
+
                 packsize = 0;
             }
         }

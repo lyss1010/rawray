@@ -5,7 +5,6 @@
 #include "triangle_barycentric.h"
 #include "math/tuple3.h"
 #include "material.h"
-#include <xmmintrin.h>
 
 namespace rawray {
 

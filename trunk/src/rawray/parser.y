@@ -2,9 +2,6 @@
 #ifdef WIN32
 #pragma warning(disable:4244) // smaller type conversion warnings
 #pragma warning(disable:4701) // variable used without being initialized
-#ifdef NDEBUG
-#pragma warning(disable:4702) // unreachable code in release
-#endif
 #endif
 
 #include "parser.h"
@@ -382,8 +379,13 @@ object_triangle:
 			}
 			triangle_stuff YY_RCURLY
 			{
-				g_scene->AddMesh( g_mesh );
-				rawray::AddTrianglesOfMesh();
+				if( g_mesh->GetNumTriangles() > 0 ) {
+					g_scene->AddMesh( g_mesh );
+					rawray::AddTrianglesOfMesh();
+				} else {
+					delete g_mesh;
+					g_mesh = NULL;
+				}
 			}
 
 		| YY_S_TRIANGLE YY_STRING YY_LCURLY
@@ -398,8 +400,13 @@ object_triangle:
 			}
 			triangle_stuff YY_RCURLY
 			{
-				g_scene->AddMesh( g_mesh );
-				rawray::AddTrianglesOfMesh();
+				if( g_mesh->GetNumTriangles() > 0 ) {
+					g_scene->AddMesh( g_mesh );
+					rawray::AddTrianglesOfMesh();
+				} else {
+					delete g_mesh;
+					g_mesh = NULL;
+				}
 			}
 ;
 
@@ -410,8 +417,13 @@ object_mesh:
 			}
 			mesh_stuff YY_RCURLY
 			{
-				g_scene->AddMesh( g_mesh );
-				rawray::AddTrianglesOfMesh();
+				if( g_mesh->GetNumTriangles() > 0 ) {
+					g_scene->AddMesh( g_mesh );
+					rawray::AddTrianglesOfMesh();
+				} else {
+					delete g_mesh;
+					g_mesh = NULL;
+				}
 			}
 		| YY_S_MESH YY_STRING YY_LCURLY
 			{
@@ -424,8 +436,13 @@ object_mesh:
 			}
 			mesh_stuff YY_RCURLY
 			{
-				g_scene->AddMesh( g_mesh );
-				rawray::AddTrianglesOfMesh();
+				if( g_mesh->GetNumTriangles() > 0 ) {
+					g_scene->AddMesh( g_mesh );
+					rawray::AddTrianglesOfMesh();
+				} else {
+					delete g_mesh;
+					g_mesh = NULL;
+				}
 			}
 ;
 
@@ -595,6 +612,7 @@ void AddTrianglesOfMesh() {
 }
 
 void SetConfigSources(Scene* scene, Camera* cam, Image* img) {
+	printf( "Setting config sources\n");
     g_scene = scene;
     g_camera = cam;
     g_image = img;
@@ -615,13 +633,14 @@ bool ConfigParser(const char* filename) {
         return false;
 
     yyparse();
-    
     fclose( yyin );
+    
+    printf( "Done Parsing...\n" );
 	return yyerr == 0;
 }
 
 void DoneParsing() {
-	printf( "Done Parsing\n" );
+	printf( "Cleaning up parser...\n" );
 	yy_done_parsing();
 }
 

@@ -28,16 +28,7 @@ public:
     const std::vector<Light*>& GetLights() const { return lights_; }
 	const std::vector<Material*>& GetMaterials() const { return materials_; }
 
-    Object* AddObject(Object* object) { 
-        objects_.push_back(object); 
-
-		for( std::vector<Object*>::iterator iter = objects_.begin(); iter != objects_.end(); ++iter ) {
-			(*iter)->GetMaterial();
-		}
-
-        return object;
-    }
-
+    Object* AddObject(Object* object) { objects_.push_back(object); return object; }
     Light* AddLight(Light* light) { lights_.push_back(light); return light; }
 	Material* AddMaterial(Material* mat) { materials_.push_back(mat); return mat; }
 	TriangleMesh* AddMesh(TriangleMesh* mesh) { meshes_.push_back(mesh); return mesh; }

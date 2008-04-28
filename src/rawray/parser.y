@@ -584,7 +584,7 @@ namespace rawray {
 
 void AddTrianglesOfMesh() {
     for( int i=0; i<g_mesh->GetNumTriangles(); ++i ) {
-        Triangle* t = rawray::TriangleFactory::NewTriangle( *g_mesh, i, g_material );
+        Triangle* t = rawray::TriangleFactory::NewTriangle( g_mesh, i, g_material );
         g_scene->AddObject( t );
     }
     

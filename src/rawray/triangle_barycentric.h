@@ -14,22 +14,25 @@
 /////////////////////////////////////////////////////////////////////////////
 namespace rawray {
 
-class DllExport TriangleBarycentric : public Triangle
+class SSE_ALIGN DllExport TriangleBarycentric : public Triangle
 {
 public:
-	TriangleBarycentric(TriangleMesh& mesh, int index, const Material* material)
-		: Triangle(mesh, index, material) { }
-
-	virtual ~TriangleBarycentric() { }
+    static TriangleBarycentric* newTriangle(TriangleMesh* mesh, int index, Material* material);
 
     //virtual void RenderGL();
     virtual void PreCalc();
     virtual bool Intersect(HitInfo& hit, float minDistance, float maxDistance);
     //virtual void IntersectPack(HitPack& hitpack, float minDistance, float maxDistance);
 
+protected:
+    TriangleBarycentric(TriangleMesh* mesh, int index, Material* material)
+		: Triangle(mesh, index, material) { }
+
+	virtual ~TriangleBarycentric() { }
+
 private:
     DISALLOW_IMPLICIT_CONSTRUCTORS(TriangleBarycentric);
-
+    
 }; // class TriangleBarycentric
 
 

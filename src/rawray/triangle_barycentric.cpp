@@ -8,8 +8,17 @@
 
 namespace rawray {
 
-void TriangleBarycentric::PreCalc() { }
+TriangleBarycentric* TriangleBarycentric::newTriangle(TriangleMesh* mesh, int index, Material* material) {
+    TriangleBarycentric* t = static_cast<TriangleBarycentric*>(
+        _aligned_malloc( sizeof(TriangleBarycentric), ALIGNMENT ));
 
+    assert( t );
+    t->Set( mesh, index, material );
+    return t;
+}
+
+
+void TriangleBarycentric::PreCalc() { }
 
 // Ray-Plane intersection with barycentric coordinate test
 // See: Fundamentals of Computer Graphics, Peter Shirley p206
@@ -19,10 +28,10 @@ bool TriangleBarycentric::Intersect(HitInfo& hit, float minDistance, float maxDi
 
 // TODO: Rewrite the SSE Intersection!!!
 //#ifndef SSE
-    const Tuple3I vertexIndices = mesh_.GetVertexIndices()[ index_ ];
-    const Vector3& v0 = mesh_.GetVertices()[ vertexIndices.x ];
-    const Vector3& v1 = mesh_.GetVertices()[ vertexIndices.y ];
-    const Vector3& v2 = mesh_.GetVertices()[ vertexIndices.z ];
+    const Tuple3I vertexIndices = mesh_->GetVertexIndices()[ index_ ];
+    const Vector3& v0 = mesh_->GetVertices()[ vertexIndices.x ];
+    const Vector3& v1 = mesh_->GetVertices()[ vertexIndices.y ];
+    const Vector3& v2 = mesh_->GetVertices()[ vertexIndices.z ];
 
     // Manually compute determinants to avoid redundant calculations
     // See Moller intersection for cleaner (slower) code which does the same test
@@ -66,10 +75,10 @@ bool TriangleBarycentric::Intersect(HitInfo& hit, float minDistance, float maxDi
 //
 //#else // ifndef SSE
 //
-//    const Tuple3I vertexIndices = mesh_.GetVertexIndices()[ index_ ];
-//    const float* v0 = mesh_.GetVertices()[ vertexIndices.x ].vec;
-//    const float* v1 = mesh_.GetVertices()[ vertexIndices.y ].vec;
-//    const float* v2 = mesh_.GetVertices()[ vertexIndices.z ].vec;
+//    const Tuple3I vertexIndices = mesh_->GetVertexIndices()[ index_ ];
+//    const float* v0 = mesh_->GetVertices()[ vertexIndices.x ].vec;
+//    const float* v1 = mesh_->GetVertices()[ vertexIndices.y ].vec;
+//    const float* v2 = mesh_->GetVertices()[ vertexIndices.z ].vec;
 //    const float* ray_origin = ray.origin.vec;
 //    const float* ray_direction = ray.direction.vec;
 //    __m128 zero;

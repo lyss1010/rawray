@@ -8,11 +8,21 @@
 
 namespace rawray {
 
+TriangleBarycentricProjection* TriangleBarycentricProjection::newTriangle(TriangleMesh* mesh, int index, Material* material) {
+    TriangleBarycentricProjection* t = static_cast<TriangleBarycentricProjection*>(
+        _aligned_malloc( sizeof(TriangleBarycentricProjection), ALIGNMENT ));
+
+    assert( t );
+    t->Set( mesh, index, material );
+    return t;
+}
+
+
 void TriangleBarycentricProjection::PreCalc() {
-    const Tuple3I vertexIndices = mesh_.GetVertexIndices()[ index_ ];
-    const Vector3& v0 = mesh_.GetVertices()[ vertexIndices.x ];
-    const Vector3& v1 = mesh_.GetVertices()[ vertexIndices.y ];
-    const Vector3& v2 = mesh_.GetVertices()[ vertexIndices.z ];
+    const Tuple3I vertexIndices = mesh_->GetVertexIndices()[ index_ ];
+    const Vector3& v0 = mesh_->GetVertices()[ vertexIndices.x ];
+    const Vector3& v1 = mesh_->GetVertices()[ vertexIndices.y ];
+    const Vector3& v2 = mesh_->GetVertices()[ vertexIndices.z ];
 
     b_ = v2 - v0;
     c_ = v1 - v0;
@@ -35,8 +45,8 @@ bool TriangleBarycentricProjection::Intersect(HitInfo& hit, float minDistance, f
     const Ray& ray = hit.eyeRay;
 
     // Compute distance to the plane along the ray
-	const Tuple3I vertexIndices = mesh_.GetVertexIndices()[ index_ ];
-    const Vector3& v0 = mesh_.GetVertices()[ vertexIndices.x ];
+	const Tuple3I vertexIndices = mesh_->GetVertexIndices()[ index_ ];
+    const Vector3& v0 = mesh_->GetVertices()[ vertexIndices.x ];
 
     // NOTE: We will allow division by zero, which will give infinity and fail in the distance tests
     const float t = math::Dot( ray.origin-v0, n_ ) / math::Dot( ray.direction, n_ );

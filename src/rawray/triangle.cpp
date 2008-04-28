@@ -20,16 +20,16 @@ float PluckerCoord::GetOrientation(const PluckerCoord& p) {
 /////////////////////////////////////////////////////////////////////////////
 
 void Triangle::RenderGL() {
-    Tuple3I indicies = mesh_.GetVertexIndices()[ index_ ];
+    Tuple3I indicies = mesh_->GetVertexIndices()[ index_ ];
 
-    const Vector3& v0 = mesh_.GetVertices()[ indicies.x ];
-    const Vector3& v1 = mesh_.GetVertices()[ indicies.y ];
-    const Vector3& v2 = mesh_.GetVertices()[ indicies.z ];
+    const Vector3& v0 = mesh_->GetVertices()[ indicies.x ];
+    const Vector3& v1 = mesh_->GetVertices()[ indicies.y ];
+    const Vector3& v2 = mesh_->GetVertices()[ indicies.z ];
 
-	indicies = mesh_.GetNormalIndices()[ index_ ];
-	const Vector3& n0 = mesh_.GetNormals()[ indicies.x ];
-	const Vector3& n1 = mesh_.GetNormals()[ indicies.y ];
-	const Vector3& n2 = mesh_.GetNormals()[ indicies.z ];
+	indicies = mesh_->GetNormalIndices()[ index_ ];
+	const Vector3& n0 = mesh_->GetNormals()[ indicies.x ];
+	const Vector3& n1 = mesh_->GetNormals()[ indicies.y ];
+	const Vector3& n2 = mesh_->GetNormals()[ indicies.z ];
 
     const Vector3& color = material_ ? material_->BaseColor() : Vector3(1);
 
@@ -55,18 +55,18 @@ void Triangle::IntersectPack(HitPack& hitpack, float minDistance, float maxDista
 }
 
 void Triangle::Interpolate(HitInfo& hit, float alpha, float beta, float gamma) {
-    const Tuple3I normalIndices = mesh_.GetNormalIndices()[ index_ ];
-    hit.normal = alpha * mesh_.GetNormals()[ normalIndices.x ] +
-                 beta  * mesh_.GetNormals()[ normalIndices.y ] +
-                 gamma * mesh_.GetNormals()[ normalIndices.z ];
+    const Tuple3I normalIndices = mesh_->GetNormalIndices()[ index_ ];
+    hit.normal = alpha * mesh_->GetNormals()[ normalIndices.x ] +
+                 beta  * mesh_->GetNormals()[ normalIndices.y ] +
+                 gamma * mesh_->GetNormals()[ normalIndices.z ];
 
 	hit.normal.Normalize();
 
-    if( mesh_.GetTexCoordIndices() != NULL ) {
-        const Tuple3I texCoordIndices = mesh_.GetTexCoordIndices()[ index_ ];
-        hit.texCoord = alpha * mesh_.GetTexCoords()[ texCoordIndices.x ] +
-                       beta  * mesh_.GetTexCoords()[ texCoordIndices.y ] +
-                       gamma * mesh_.GetTexCoords()[ texCoordIndices.z ];
+    if( mesh_->GetTexCoordIndices() != NULL ) {
+        const Tuple3I texCoordIndices = mesh_->GetTexCoordIndices()[ index_ ];
+        hit.texCoord = alpha * mesh_->GetTexCoords()[ texCoordIndices.x ] +
+                       beta  * mesh_->GetTexCoords()[ texCoordIndices.y ] +
+                       gamma * mesh_->GetTexCoords()[ texCoordIndices.z ];
     } else
         hit.texCoord = Vector2();
 }
@@ -74,10 +74,10 @@ void Triangle::Interpolate(HitInfo& hit, float alpha, float beta, float gamma) {
 // Do not use in intersection tests, it doesn't bail out at first sign of miss
 // See: http://en.wikipedia.org/wiki/Barycentric_coordinates_(mathematics)
 Vector3 Triangle::ComputeBarycentric(const Vector3& point) const {
-	const Tuple3I vertexIndices = mesh_.GetVertexIndices()[ index_ ];
-    const Vector3& v0 = mesh_.GetVertices()[ vertexIndices.x ];
-    const Vector3& v1 = mesh_.GetVertices()[ vertexIndices.y ];
-    const Vector3& v2 = mesh_.GetVertices()[ vertexIndices.z ];
+	const Tuple3I vertexIndices = mesh_->GetVertexIndices()[ index_ ];
+    const Vector3& v0 = mesh_->GetVertices()[ vertexIndices.x ];
+    const Vector3& v1 = mesh_->GetVertices()[ vertexIndices.y ];
+    const Vector3& v2 = mesh_->GetVertices()[ vertexIndices.z ];
 
 	const float a = v0.x - v2.x;
 	const float b = v1.x - v2.x;

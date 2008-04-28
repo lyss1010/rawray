@@ -13,11 +13,14 @@ namespace rawray {
 
 class Material;
 
-class DllExport Object
+class SSE_ALIGN DllExport Object
 {
 public:
-    Object(const Material* material) : material_(material) { }
+    Object(Material* material) : material_(material) { }
     virtual ~Object() { }
+
+    void SetMaterial(Material* material) { material_ = material; }
+    Material* GetMaterial() { return material_; }
 
     virtual void RenderGL()=0;
     virtual void PreCalc()=0;
@@ -26,7 +29,7 @@ public:
     virtual void IntersectPack(HitPack& hitpack, float minDistance, float maxDistance)=0;
 
 protected:
-    const Material* material_;
+    Material* material_;
 
 private:
     DISALLOW_IMPLICIT_CONSTRUCTORS(Object);

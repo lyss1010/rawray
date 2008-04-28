@@ -24,7 +24,7 @@ public:
     Vector2 texCoord;
     Tuple2I imgCoord;
     float distance;
-    const Material* material;
+    Material* material;
 
     HitInfo() : material(NULL) { }
 

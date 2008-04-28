@@ -19,9 +19,9 @@ public:
         normalIndices_(NULL), vertexIndices_(NULL), texCoordIndices_(NULL),
         numTriangles_(0) { }
 
-    TriangleMesh(TriangleMesh& m)
-        : normals_(m.normals_), vertices_(m.vertices_), texCoords_(m.texCoords_),
-        normalIndices_(m.normalIndices_), vertexIndices_(m.vertexIndices_), texCoordIndices_(m.texCoordIndices_),
+    TriangleMesh(TriangleMesh* m)
+        : normals_(m->normals_), vertices_(m->vertices_), texCoords_(m->texCoords_),
+        normalIndices_(m->normalIndices_), vertexIndices_(m->vertexIndices_), texCoordIndices_(m->texCoordIndices_),
         numTriangles_(0) { }
 
     ~TriangleMesh();

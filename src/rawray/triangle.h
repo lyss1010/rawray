@@ -28,13 +28,12 @@ private:
 class DllExport Triangle : public Object
 {
 public:
-	virtual ~Triangle() { }
-
-    TriangleMesh& GetMesh() { return mesh_; }
+    TriangleMesh* GetMesh() { return mesh_; }
     int GetIndex() const { return index_; }
 
-    void SetMesh(TriangleMesh& mesh) { mesh_=mesh; }
+    void SetMesh(TriangleMesh* mesh) { mesh_=mesh; }
     void SetIndex(int index) { index_=index; }
+    void Set(TriangleMesh* mesh, int index, Material* material) { mesh_=mesh; index_=index; material_=material; }
 
     virtual void RenderGL();
     virtual void PreCalc()=0;
@@ -45,13 +44,15 @@ public:
 	Vector3 ComputeBarycentric(const Vector3& point) const;
 
 protected:
-	Triangle(TriangleMesh& mesh, int index, const Material* material)
-		: Object(material), mesh_(mesh), index_(index) { }
-	
     void Interpolate(HitInfo& hit, float alpha, float beta, float gamma);
 
-	TriangleMesh& mesh_;
+	TriangleMesh* mesh_;
     int index_;
+
+    Triangle(TriangleMesh* mesh, int index, Material* material)
+		: Object(material), mesh_(mesh), index_(index) { }
+
+    virtual ~Triangle() { }
 
 private:
 	DISALLOW_IMPLICIT_CONSTRUCTORS(Triangle);

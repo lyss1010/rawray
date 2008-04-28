@@ -14,7 +14,7 @@
 /////////////////////////////////////////////////////////////////////////////
 namespace rawray {
 
-class ALIGN16 DllExport TriangleMoller : public Triangle
+class SSE_ALIGN DllExport TriangleMoller : public Triangle
 {
 public:
     TriangleMoller(TriangleMesh& mesh, int index, const Material* material)
@@ -32,7 +32,7 @@ public:
 #endif // SSE
 
 private:
-    Vector3 n_;
+    SSE_ALIGN Vector3 n_;
 
     DISALLOW_IMPLICIT_CONSTRUCTORS(TriangleMoller);
 

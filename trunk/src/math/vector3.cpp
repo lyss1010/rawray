@@ -41,53 +41,9 @@ Vector3& Cross(const Vector3& a, const Vector3& b, Vector3& out) {
     out.z = a.x*b.y - a.y*b.x;
 
     return out;
-//
-//#else // SSE
-//    const float* pa = &a.x;
-//    const float* pb = &b.x;
-//    float* pout = &out.x;
-//
-//    __asm {
-//        mov    esi, pa;
-//        movaps xmm0, [esi];
-//        movaps xmm1, xmm0;
-//
-//        mov    esi, pb;
-//        movaps xmm2, [esi];
-//        movaps xmm3, xmm2;
-//
-//        // xmm2 = [ by bz bx . ]
-//        shufps xmm2, xmm2, 201; // 11:00:10:01
-//
-//        // xmm3 = [ bz bx by . ]
-//        shufps xmm3, xmm3, 210; // 11:01:00:10
-//
-//        // xmm0 = [ ax*by ay*bz az*bx ]
-//        mulps xmm0, xmm2;
-//
-//        // xmm1 = [ ax*bz ay*bx az*by ]
-//        mulps xmm1, xmm3;
-//
-//        // xmm1 = [ ay*bx az*by ax*bz ]
-//        shufps xmm1, xmm1, 201; // 11:00:10:01
-//
-//        // xmm0 = [ ax*by-ay*bx ay*bz-az*by az*bx-az*bz ]
-//        subps xmm0, xmm1;
-//
-//        // xmm0 = [ ay*bz-az*by az*bx-az*bz ax*by-ay*bx ]
-//        shufps xmm0, xmm0, 201; // 11:00:10:01
-//
-//        // Export data
-//        movaps [pout], xmm0;
-//    }
-//
-//    return out;
-//#endif
 }
 
-
 } // namespace math
-
 
 
 inline std::ostream& operator<<(std::ostream& out, const math::Vector3& v) {

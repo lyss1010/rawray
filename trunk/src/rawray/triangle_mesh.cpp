@@ -10,13 +10,8 @@
 namespace rawray {
 
 TriangleMesh::~TriangleMesh() {
-#ifdef SSE
     _aligned_free( normals_ );   normals_ = NULL;
     _aligned_free( vertices_ );  vertices_ = NULL;
-#else
-    SAFE_DELETE_ARRAY( normals_ );
-    SAFE_DELETE_ARRAY( vertices_ );
-#endif
 
     SAFE_DELETE_ARRAY( texCoords_ );
     SAFE_DELETE_ARRAY( normalIndices_ );
@@ -59,13 +54,8 @@ void TriangleMesh::LoadOBJFile(FILE* fp, const Matrix4x4& ctm) {
 
     fseek(fp, 0, 0);
 
-#ifdef SSE
     normals_ = (Vector3*)_aligned_malloc( sizeof(*normals_)*std::max(nv, nf), 16 );
     vertices_ = (Vector3*)_aligned_malloc( sizeof(*vertices_)*nv, 16 );
-#else
-    normals_ = new Vector3[ std::max(nv, nf) ];
-    vertices_ = new Vector3[ nv ];
-#endif
 
     if (nt) {
         texCoords_ = new Vector2[ nt ];

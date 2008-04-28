@@ -254,8 +254,8 @@ void GlutWindow::Idle() {
     if( !renderGL_ ) {
         glutPostRedisplay();
 
-        if( render_ && !render_->IsDone() )
-            std::cout << "Raytrace Progress: " << (int)render_->Progress() << "%\r" << std::flush;
+        //if( render_ && !render_->IsDone() )
+            //std::cout << "Raytrace Progress: " << (int)render_->Progress() << "%\r" << std::flush;
     }
 }
 

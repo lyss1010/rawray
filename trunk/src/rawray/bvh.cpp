@@ -29,17 +29,25 @@ void BVH::IntersectPack(HitPack& hitpack, float minDistance, float maxDistance) 
     for( size_t i=0; i< objects_->size(); ++i ) {
         (*objects_)[i]->IntersectPack( tempHitpack, minDistance, maxDistance );
 
-        if( tempHitpack.hits[0].distance < hitpack.hits[0].distance )
+        if( tempHitpack.hit_result[0] && tempHitpack.hits[0].distance < hitpack.hits[0].distance ) {
             hitpack.hits[0] = tempHitpack.hits[0];
+            hitpack.hit_result[0] = tempHitpack.hit_result[0];
+        }
 
-        if( tempHitpack.hits[1].distance < hitpack.hits[1].distance )
+        if( tempHitpack.hit_result[1] && tempHitpack.hits[1].distance < hitpack.hits[1].distance ) {
             hitpack.hits[1] = tempHitpack.hits[1];
+            hitpack.hit_result[1] = tempHitpack.hit_result[1];
+        }
 
-        if( tempHitpack.hits[2].distance < hitpack.hits[2].distance )
+        if( tempHitpack.hit_result[2] && tempHitpack.hits[2].distance < hitpack.hits[2].distance ) {
             hitpack.hits[2] = tempHitpack.hits[2];
+            hitpack.hit_result[2] = tempHitpack.hit_result[2];
+        }
 
-        if( tempHitpack.hits[3].distance < hitpack.hits[3].distance )
+        if( tempHitpack.hit_result[3] && tempHitpack.hits[3].distance < hitpack.hits[3].distance ) {
             hitpack.hits[3] = tempHitpack.hits[3];
+            hitpack.hit_result[3] = tempHitpack.hit_result[3];
+        }
     }
 }
 

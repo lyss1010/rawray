@@ -14,12 +14,14 @@
 namespace rawray {
 
 void GlutWindow::MakeScene(int* argc, char* argv[]) {
-    for(int i=1; i<*argc; ++i ) {
-        std::cout << "Loading config file '" << argv[i] << "'..." << std::endl;
-        if( !ConfigParser( argv[i] ) )
-			std::cout << "FAILED" << std::endl;
-		else
-			std::cout << "SUCCESS" << std::endl;
+	int numArgs = *argc;
+
+    for(int i=1; i<numArgs; ++i ) {
+		char* filename = argv[i];
+		if( filename ) {
+			std::cout << "Loading config file '" << filename << "'..." << std::endl;
+			ConfigParser( filename );
+		}
 	}
 
 	DoneParsing();

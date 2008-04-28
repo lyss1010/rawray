@@ -14,14 +14,14 @@
 /////////////////////////////////////////////////////////////////////////////
 namespace rawray {
 
-class PluckerCoord {
+class SSE_ALIGN PluckerCoord {
 public:
     PluckerCoord() { }
     PluckerCoord(const Vector3& direction, const Vector3& point);
 
     float GetOrientation(const PluckerCoord& p);
 
-private:
+public:
     Vector3 u_, v_;
 };
 
@@ -35,6 +35,7 @@ public:
     void SetIndex(int index) { index_=index; }
     void Set(TriangleMesh* mesh, int index, Material* material) { mesh_=mesh; index_=index; material_=material; }
 
+	virtual void deleteObject()=0;
     virtual void RenderGL();
     virtual void PreCalc()=0;
 

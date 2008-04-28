@@ -13,6 +13,7 @@
 #pragma warning(disable:4505) // unreferenced local function
 #pragma warning(disable:4267) // smaller type conversion warnings
 #pragma warning(disable:4244) // smaller type conversion warnings
+#pragma warning(disable:4702) // unreachable code in stl library on relesae
 #endif
 
 #include <cstdlib>

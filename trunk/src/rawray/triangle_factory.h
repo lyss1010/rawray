@@ -21,8 +21,8 @@ class Triangle;
 
 namespace TriangleFactory {
 
-Triangle* NewTriangle(TriangleMesh* mesh, int index, Material* material);
-void DeleteTriangle(Triangle* t);
+DllExport Triangle* NewTriangle(TriangleMesh* mesh, int index, Material* material);
+DllExport void DeleteTriangle(Triangle* t);
 
 } // namespace rawray::TriangleFactory
 

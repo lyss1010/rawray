@@ -30,6 +30,7 @@ public:
 
     virtual void RenderGL();
     virtual void PreCalc() { }
+	virtual void deleteObject() { delete this; }
 
     virtual bool Intersect(HitInfo& hit, float minDistance, float maxDistance);
     virtual void IntersectPack(HitPack& hitpack, float minDistance, float maxDistance);

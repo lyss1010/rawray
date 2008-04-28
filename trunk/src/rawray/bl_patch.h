@@ -39,6 +39,7 @@ public:
     void SetP10(const Vector3& v) { P10_ = v; }
     void SetP11(const Vector3& v) { P11_ = v; }
 
+	virtual void deleteObject() { delete this; }
     virtual void RenderGL();
     virtual void PreCalc();
 

@@ -38,9 +38,6 @@ GlutWindow::GlutWindow(int* argc, char* argv[]) : cam_(), img_(), scene_(),
     activeButton_(0), mouseX_(0), mouseY_(0), render_(NULL)
 {
     SetConfigSources(&scene_, &cam_, &img_);
-
-    //MakeLorenzScene();
-    //MakeSpiralScene();
     MakeScene(argc,argv);
     scene_.PreCalc();
 

@@ -7,6 +7,10 @@
 #include "rawray/options.h"
 #include "tools/sse.h"
 
+#include "rawray/object.h"
+#include "rawray/triangle.h"
+#include "rawray/triangle_factory.h"
+#include <vector>
 
 // Exit point
 void exit_cleanup(void) {
@@ -14,27 +18,6 @@ void exit_cleanup(void) {
     _CrtDumpMemoryLeaks();
 }
 
-struct cVector
-{
-	float x,y,z;
-};
-
-// See: http://www.3dbuzz.com/vbforum/showthread.php?t=104753
-void VectorTest()
-{
-	cVector vec1;
-	vec1.x=0.5;
-	vec1.y=1.5;
-	vec1.z=-3.141;
-
-	__asm {
-	    movups xmm1, vec1
-		mulps xmm1, xmm1
-		movups vec1, xmm1
-	}
-
-    //std::cout << vec1.x << " " << vec1.y << " " << vec1.z << '\n';
-}
 
 void SSETest() {
     std::cout << "Testing SSE Version... ";
@@ -73,7 +56,6 @@ int _tmain( int argc, _TCHAR* argv[] )
 	//_CrtSetBreakAlloc( 143 );
 
     SSETest();
-    VectorTest();
     tools::sse::SetFastFPU();
 
     // Initialize options defaults

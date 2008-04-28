@@ -14,8 +14,9 @@ Scene::~Scene() {
 		delete lights_[i];
 	lights_.clear();
 
+	// NOTE: We can not use the 'delete' call because some objects are created memory aligned
 	for( size_t i=0; i<objects_.size(); ++i )
-		delete objects_[i];
+		objects_[i]->deleteObject();
 	objects_.clear();
 
 	for( size_t i=0; i<materials_.size(); ++i )
@@ -37,8 +38,10 @@ void Scene::RenderGL() {
 
 void Scene::PreCalc() {
     std::vector<Object*>::iterator obj_it;
-    for (obj_it = objects_.begin(); obj_it != objects_.end(); ++obj_it)
-        (*obj_it)->PreCalc();
+	for (obj_it = objects_.begin(); obj_it != objects_.end(); ++obj_it) {
+		Object* obj = (*obj_it);
+        obj->PreCalc();
+	}
 
     std::vector<Light*>::iterator light_it;
     for (light_it = lights_.begin(); light_it != lights_.end(); ++light_it)

@@ -2,6 +2,9 @@
 #ifdef WIN32
 #pragma warning(disable:4244) // smaller type conversion warnings
 #pragma warning(disable:4701) // variable used without being initialized
+#ifdef NDEBUG
+#pragma warning(disable:4702) // unreachable code in release
+#endif
 #endif
 
 #include "parser.h"
@@ -612,12 +615,13 @@ bool ConfigParser(const char* filename) {
         return false;
 
     yyparse();
+    
     fclose( yyin );
-
 	return yyerr == 0;
 }
 
 void DoneParsing() {
+	printf( "Done Parsing\n" );
 	yy_done_parsing();
 }
 

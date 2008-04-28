@@ -5,16 +5,23 @@
 #include "triangle_moller.h"
 #include "math/tuple3.h"
 #include "material.h"
+#include <new>
 
 namespace rawray {
 
 TriangleMoller* TriangleMoller::newTriangle(TriangleMesh* mesh, int index, Material* material) {
-    TriangleMoller* t = static_cast<TriangleMoller*>(
+    uint8* memory = static_cast<uint8*>(
         _aligned_malloc( sizeof(TriangleMoller), ALIGNMENT ));
+    
+	if( !memory ) return NULL;
+	
+	// Call constructor with placement new
+	return new (memory) TriangleMoller(mesh, index, material);
+}
 
-    assert( t );
-    t->Set( mesh, index, material );
-    return t;
+void TriangleMoller::deleteObject() {
+	this->~TriangleMoller();
+	_aligned_free( this );
 }
 
 void TriangleMoller::PreCalc() {
@@ -40,7 +47,7 @@ void TriangleMoller::IntersectPack(HitPack& hitpack, float minDistance, float ma
     const __m128& ray_o_x = hitpack.ray_o_x;
     const __m128& ray_o_y = hitpack.ray_o_y;
     const __m128& ray_o_z = hitpack.ray_o_z;
-    const __m128 n = {n_.x, n_.y, n_.z, 0}; // TODO: WTF?
+    __m128 n; memcpy( &n, &n_, sizeof(n) );		// No idea why this is faster than referencing n_
     
     __m128 temp_vec = {0};
     __m128 o_min_v0_x, o_min_v0_y, o_min_v0_z;

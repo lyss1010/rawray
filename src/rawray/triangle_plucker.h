@@ -19,11 +19,14 @@ class SSE_ALIGN DllExport TrianglePlucker : public Triangle
 public:
     static TrianglePlucker* newTriangle(TriangleMesh* mesh, int index, Material* material);
 
-    //virtual void RenderGL();
+    virtual void deleteObject();
+	//virtual void RenderGL();
     virtual void PreCalc();
-
     virtual bool Intersect(HitInfo& hit, float minDistance, float maxDistance);
-    //void IntersectPack(HitPack& hitpack, float minDistance, float maxDistance);
+    
+#ifdef SSE
+    virtual void IntersectPack(HitPack& hitpack, float minDistance, float maxDistance);
+#endif // SSE
 
 protected:
     TrianglePlucker(TriangleMesh* mesh, int index, Material* material)
@@ -32,9 +35,9 @@ protected:
 	virtual ~TrianglePlucker() { }
 
 private:
-    PluckerCoord pluckA_;
-    PluckerCoord pluckB_;
-    PluckerCoord pluckC_;
+    SSE_ALIGN PluckerCoord pluckA_;
+    SSE_ALIGN PluckerCoord pluckB_;
+    SSE_ALIGN PluckerCoord pluckC_;
 
     DISALLOW_IMPLICIT_CONSTRUCTORS(TrianglePlucker);
 

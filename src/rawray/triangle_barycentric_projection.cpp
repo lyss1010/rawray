@@ -5,18 +5,24 @@
 #include "triangle_barycentric_projection.h"
 #include "math/tuple3.h"
 #include "material.h"
+#include <new>
 
 namespace rawray {
 
 TriangleBarycentricProjection* TriangleBarycentricProjection::newTriangle(TriangleMesh* mesh, int index, Material* material) {
-    TriangleBarycentricProjection* t = static_cast<TriangleBarycentricProjection*>(
+    uint8* memory = static_cast<uint8*>(
         _aligned_malloc( sizeof(TriangleBarycentricProjection), ALIGNMENT ));
-
-    assert( t );
-    t->Set( mesh, index, material );
-    return t;
+    
+	if( !memory ) return NULL;
+	
+	// Call constructor with placement new
+	return new (memory) TriangleBarycentricProjection(mesh, index, material);
 }
 
+void TriangleBarycentricProjection::deleteObject() {
+	this->~TriangleBarycentricProjection();
+	_aligned_free( this );
+}
 
 void TriangleBarycentricProjection::PreCalc() {
     const Tuple3I vertexIndices = mesh_->GetVertexIndices()[ index_ ];

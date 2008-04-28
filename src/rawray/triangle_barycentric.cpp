@@ -5,18 +5,24 @@
 #include "triangle_barycentric.h"
 #include "math/tuple3.h"
 #include "material.h"
+#include <new>
 
 namespace rawray {
 
 TriangleBarycentric* TriangleBarycentric::newTriangle(TriangleMesh* mesh, int index, Material* material) {
-    TriangleBarycentric* t = static_cast<TriangleBarycentric*>(
+    uint8* memory = static_cast<uint8*>(
         _aligned_malloc( sizeof(TriangleBarycentric), ALIGNMENT ));
-
-    assert( t );
-    t->Set( mesh, index, material );
-    return t;
+    
+	if( !memory ) return NULL;
+	
+	// Call constructor with placement new
+	return new (memory) TriangleBarycentric(mesh, index, material);
 }
 
+void TriangleBarycentric::deleteObject() {
+	this->~TriangleBarycentric();
+	_aligned_free( this );
+}
 
 void TriangleBarycentric::PreCalc() { }
 
@@ -26,8 +32,6 @@ void TriangleBarycentric::PreCalc() { }
 bool TriangleBarycentric::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
     const Ray& ray = hit.eyeRay;
 
-// TODO: Rewrite the SSE Intersection!!!
-//#ifndef SSE
     const Tuple3I vertexIndices = mesh_->GetVertexIndices()[ index_ ];
     const Vector3& v0 = mesh_->GetVertices()[ vertexIndices.x ];
     const Vector3& v1 = mesh_->GetVertices()[ vertexIndices.y ];
@@ -72,201 +76,6 @@ bool TriangleBarycentric::Intersect(HitInfo& hit, float minDistance, float maxDi
     Interpolate(hit, 1-beta-gamma, beta, gamma);
 
     return true;
-//
-//#else // ifndef SSE
-//
-//    const Tuple3I vertexIndices = mesh_->GetVertexIndices()[ index_ ];
-//    const float* v0 = mesh_->GetVertices()[ vertexIndices.x ].vec;
-//    const float* v1 = mesh_->GetVertices()[ vertexIndices.y ].vec;
-//    const float* v2 = mesh_->GetVertices()[ vertexIndices.z ].vec;
-//    const float* ray_origin = ray.origin.vec;
-//    const float* ray_direction = ray.direction.vec;
-//    __m128 zero;
-//    memset( &zero, 0, sizeof(zero) );
-//
-//    // Compute temporay values for computing determinants
-//    __asm {
-//        // a = v0[0] - v1[0];
-//        // b = v0[1] - v1[1];
-//        // c = v0[2] - v1[2];
-//        mov    eax,  v0;
-//        mov    esi,  v1;
-//        movaps xmm0, [eax];
-//        subps  xmm0, [esi];
-//
-//        // d = v0[0] - v2[0];
-//        // e = v0[1] - v2[1];
-//        // f = v0[2] - v2[2];
-//        mov    esi,  v2;
-//        movaps xmm1, [eax];
-//        subps  xmm1, [esi];
-//
-//        // g = -ray.direction.x
-//	    // h = -ray.direction.y
-//	    // i = -ray.direction.z
-//        mov    esi,  ray_direction;
-//        movaps xmm2, zero;
-//        subps  xmm2, [esi];
-//
-//        // j = v0[0] - ray.origin.x;
-//        // k = v0[1] - ray.origin.y;
-//        // l = v0[2] - ray.origin.z;
-//        mov    esi,  ray_origin;
-//        movaps xmm3, [eax];
-//        subps  xmm3, [esi];
-//
-//        // xmm4 = [ f d  e  .]
-//        // xmm4 = [gf dh ei .]
-//        movaps xmm4, xmm1;
-//        shufps xmm4, xmm4, 210; // 11:01:00:10
-//        mulps  xmm4, xmm2;
-//
-//        // xmm5 = [e   f d .]
-//        // xmm5 = [eg hf di .]
-//        movaps xmm5, xmm1;
-//        shufps xmm5, xmm5, 201; // 11:00:10:01
-//        mulps  xmm5, xmm2;
-//
-//        // xmm5 = [di eg hf]
-//        // xmm4 = [gf-di dh-eg ei-hf]
-//        shufps xmm5, xmm5, 210; // 11:01:00:10
-//        subps  xmm4, xmm5;
-//
-//        // xmm5 = [ k  l  j .]
-//        // xmm5 = [ak bl cj .]
-//        movaps xmm5, xmm3;
-//        shufps xmm5, xmm5, 201; // 11:00:10:01
-//        mulps  xmm5, xmm0;
-//
-//        // xmm6 = [b  c  a  .]
-//        // xmm6 = [bj ck al .]
-//        movaps xmm6, xmm0;
-//        shufps xmm6, xmm6, 201; // 11:00:10:01
-//        mulps  xmm6, xmm3;
-//
-//        // xmm5 = [ak-bj bl-ck cj-al]
-//        subps xmm5, xmm6;
-//    }
-//
-//    // xmm0 = [a     b     c     .]
-//    // xmm1 = [d     e     f     .]
-//    // xmm2 = [g     h     i     .]
-//    // xmm3 = [j     k     l     .]
-//    // xmm4 = [gf-di dh-eg ei-hf .]
-//    // xmm5 = [ak-bj bl-ck cj-al .]
-//
-//    // Compute denominator determinent
-//    __asm {
-//        // xmm0 = [b c a .]
-//        // xmm0 = [b*(gf-di) c*(dh-eg) a*(ei-hf) .]
-//        shufps xmm0, xmm0, 201; // 11:00:10:01
-//        mulps  xmm0, xmm4;
-//
-//        // Calculate the inverse denominator (inv_den)
-//        // xmm6[0] = c*(dh-eg)
-//        // xmm7[0] = a*(ei-hf)
-//        // xmm0[0] = 1.0f / (b*(gf-di) + c*(dh-eg) + a*(ei-hf))
-//        movaps xmm6, xmm0;
-//        movaps xmm7, xmm0;
-//        shufps xmm6, xmm6,  85; // 01:01:01:01
-//        shufps xmm7, xmm7, 170; // 10:10:10:10
-//
-//        addss  xmm0, xmm6;
-//        addss  xmm0, xmm7;
-//        rcpss  xmm0, xmm0;
-//    }
-//
-//    // Compute distance
-//    __m128 distance;
-//    __asm {
-//        // xmm1 = [f d e .]
-//        // xmm1 = [f*(ak-bj) d*(bl-ck) e*(cj-al) .]
-//        shufps xmm1, xmm1, 210; // 11:01:00:10
-//        mulps  xmm1, xmm5;
-//
-//        // xmm6[0] = d*(bl-ck)
-//        // xmm7[0] = e*(cj-al)
-//        // xmm1[0] = inv_den * (f*(ak-bj) + d*(bl-ck) + e*(cj-al))
-//        movaps xmm6, xmm1;
-//        movaps xmm7, xmm1;
-//        shufps xmm6, xmm6,  85; // 01:01:01:01
-//        shufps xmm7, xmm7, 170; // 10:10:10:10
-//
-//        addss  xmm1, xmm6;
-//        addss  xmm1, xmm7;
-//        mulss  xmm1, xmm0;
-//
-//        // Export xmm1[0] which is the distance
-//        movaps distance, xmm1;
-//    }
-//    if( distance.m128_f32[0] < minDistance || distance.m128_f32[0] > maxDistance )
-//        return false;
-//
-//    // Compute gamma
-//    __m128 gamma;
-//    __asm {
-//        // xmm2 = [i g h .]
-//        // xmm2 = [i*(ak-bj) g*(bl-ck) h*(cj-al) .]
-//        shufps xmm2, xmm2, 210; // 11:01:00:10
-//        mulps  xmm2, xmm5;
-//
-//        // calculate gamma
-//        // xmm6[0] = g*(bl-ck)
-//        // xmm7[0] = h*(cj-al)
-//        // xmm2[0] = inv_den * (i*(ak-bj) + g*(bl-ck) + h*(cj-al))
-//        movaps xmm6, xmm2;
-//        movaps xmm7, xmm2;
-//        shufps xmm6, xmm6,  85; // 01:01:01:01
-//        shufps xmm7, xmm7, 170; // 10:10:10:10
-//
-//        addss  xmm2, xmm6;
-//        addss  xmm2, xmm7;
-//        mulss  xmm2, xmm0;
-//
-//        // Export xmm2[0] which is gamma
-//        movaps gamma, xmm2;
-//    }
-//    if( gamma.m128_f32[0] < 0.0f || gamma.m128_f32[0] > 1.0f ) 
-//        return false;
-//
-//
-//    // Compute beta
-//    __m128 beta;
-//    __asm {
-//        // xmm3 = [k l j .]
-//        // xmm3 = [k*(gf-di) l*(dh-eg) j*(ei-hf) .]
-//        shufps xmm3, xmm3, 201; // 11:00:10:01
-//        mulps  xmm3, xmm4;
-//
-//        // calculate beta
-//        // xmm6[0] = l*(dh-eg)
-//        // xmm7[0] = j*(ei-hf)
-//        // xmm3[0] = inv_den * (k*(gf-di) l*(dh-eg) j*(ei-hf))
-//        movaps xmm6, xmm3;
-//        movaps xmm7, xmm3;
-//        shufps xmm6, xmm6,  85; // 01:01:01:01
-//        shufps xmm7, xmm7, 170; // 10:10:10:10
-//
-//        addss  xmm3, xmm6;
-//        addss  xmm3, xmm7;
-//        mulss  xmm3, xmm0;
-//
-//        // Export xmm3[0] which is beta
-//        movaps beta, xmm3;
-//    }
-//
-//    const float beta_plus_gamma = beta.m128_f32[0] + gamma.m128_f32[0];
-//    if( beta.m128_f32[0] < 0.0f || beta_plus_gamma > 1.0f )
-//        return false;
-//
-//    hit.point = ray.origin + distance.m128_f32[0] * ray.direction;
-//    hit.distance = distance.m128_f32[0];
-//    hit.material = material_;
-//    Interpolate( hit, 1-beta_plus_gamma, beta.m128_f32[0], gamma.m128_f32[0] );
-//
-//    return true;
-//
-//#endif // ifndef SSE
 }
 
 

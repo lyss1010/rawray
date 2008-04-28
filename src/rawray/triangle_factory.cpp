@@ -22,14 +22,14 @@ Triangle* NewTriangle(TriangleMesh* mesh, int index, Material* material) {
         return dynamic_cast<Triangle*>(
             TriangleBarycentricProjection::newTriangle(mesh, index, material) );
 
-	case rawray::options::MOLLER:
-        return dynamic_cast<Triangle*>(
-            TriangleMoller::newTriangle(mesh, index, material) );
-
-	default:
 	case rawray::options::PLUCKER:
 		return dynamic_cast<Triangle*>(
             TrianglePlucker::newTriangle(mesh, index, material) );
+
+	default:
+	case rawray::options::MOLLER:
+        return dynamic_cast<Triangle*>(
+            TriangleMoller::newTriangle(mesh, index, material) );
 	}
 }
 

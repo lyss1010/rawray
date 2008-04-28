@@ -30,6 +30,11 @@ public:
 
     Object* AddObject(Object* object) { 
         objects_.push_back(object); 
+
+		for( std::vector<Object*>::iterator iter = objects_.begin(); iter != objects_.end(); ++iter ) {
+			(*iter)->GetMaterial();
+		}
+
         return object;
     }
 

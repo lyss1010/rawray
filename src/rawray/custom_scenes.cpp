@@ -20,7 +20,7 @@ void GlutWindow::MakeScene(int* argc, char* argv[]) {
 			std::cout << "FAILED" << std::endl;
 		else
 			std::cout << "SUCCESS" << std::endl;
-    }
+	}
 
 	DoneParsing();
 }

@@ -19,9 +19,9 @@ class SSE_ALIGN DllExport TriangleMoller : public Triangle
 public:
     static TriangleMoller* newTriangle(TriangleMesh* mesh, int index, Material* material);
 
+	virtual void deleteObject();
     //virtual void RenderGL();
     virtual void PreCalc();
-
     virtual bool Intersect(HitInfo& hit, float minDistance, float maxDistance);
 
 #ifdef SSE

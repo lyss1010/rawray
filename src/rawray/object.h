@@ -17,11 +17,11 @@ class SSE_ALIGN DllExport Object
 {
 public:
     Object(Material* material) : material_(material) { }
-    virtual ~Object() { }
 
     void SetMaterial(Material* material) { material_ = material; }
     Material* GetMaterial() { return material_; }
 
+	virtual void deleteObject() { delete this; }
     virtual void RenderGL()=0;
     virtual void PreCalc()=0;
 
@@ -30,12 +30,12 @@ public:
 
 protected:
     Material* material_;
+	virtual ~Object() { }; // Because some objects are memory aligned, we must invoke custom delete functions
 
 private:
     DISALLOW_IMPLICIT_CONSTRUCTORS(Object);
 
 }; // class Object
-
 
 } // namespace rawray
 /////////////////////////////////////////////////////////////////////////////

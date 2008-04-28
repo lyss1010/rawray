@@ -81,14 +81,9 @@ void Image::ScreenShot() {
     // Save the current packing value for pixel storage
     glPushClientAttrib( GL_CLIENT_PIXEL_STORE_BIT );
 
-    // If SSE is enabled, Vector3 is really 4 float
-#ifdef SSE
+    // Vector3 is padded and is really 4 floats
     glPixelStorei(GL_PACK_ALIGNMENT, 4);
     glReadPixels( 0, 0, width_, height_, GL_RGBA, GL_FLOAT, pixels_ );
-#else
-    glPixelStorei(GL_PACK_ALIGNMENT, 1);
-    glReadPixels( 0, 0, width_, height_, GL_RGB, GL_FLOAT, pixels_ );
-#endif
 
     // Enable the default packing
     glPopClientAttrib();
@@ -161,12 +156,8 @@ void Image::RenderGL() {
 void Image::RenderScanlineGL(int y) {
     glRasterPos2f(-1, -1 + 2*y / float(height_));
 
-    // If SSE is enabled, Vector3 is really 4 float
-#ifdef SSE
+    // Vector3 is padded so it is in effect 4floats
     glDrawPixels(width_, 1, GL_RGBA, GL_FLOAT, &pixels_[y*width_]);
-#else
-    glDrawPixels(width_, 1, GL_RGB, GL_FLOAT, &pixels_[y*width_]);
-#endif
 }
 
 void Image::WritePPM( ) {

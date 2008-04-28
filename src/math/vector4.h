@@ -13,14 +13,19 @@
 /////////////////////////////////////////////////////////////////////////////
 namespace math {
 
-#ifdef SSE
-class ALIGN16 DllExport Vector4
-#else
-class DllExport Vector4
-#endif
+class SSE_ALIGN DllExport Vector4
 {
 public:
-    float x, y, z, w;
+#pragma warning(push)
+#pragma warning(disable:4201)
+    union {
+        __m128 v;
+        float vec[4];
+        struct {
+            float x, y, z, w;
+        };
+    };
+#pragma warning(pop)
 
     Vector4() : x(0.0f), y(0.0f), z(0.0f), w(0.0f) { }
     explicit Vector4(float f) : x(f), y(f), z(f), w(1.0f) { }

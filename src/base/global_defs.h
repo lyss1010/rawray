@@ -13,8 +13,10 @@
 #define DllExport __declspec( dllimport )
 #endif
 
+// NOTE: We will align data even if we're not using SSE
+// This is because we're lazy and will only use SSE :)
 #define SSE
-#define ALIGN16 __declspec(align(16))
+#define SSE_ALIGN __declspec(align(16))
 
 // Tell code we're using Windows XP or later
 #define CORE_WINDOWS_VERSION 0x0501

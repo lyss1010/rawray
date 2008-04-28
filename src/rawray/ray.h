@@ -11,10 +11,10 @@
 namespace rawray {
 
 // struct means default public access, but don't change direction or abs!
-struct DllExport Ray
+struct SSE_ALIGN DllExport Ray
 {
-    ALIGN16 Vector3 origin;
-    ALIGN16 Vector3 direction;
+    Vector3 origin;
+    Vector3 direction;
 
     Ray() 
 		: origin(), 
@@ -31,7 +31,7 @@ struct DllExport Ray
 }; // struct Ray
 
 // Packet of 4 rays used for SSE optimizations
-class DllExport RayPack {
+class SSE_ALIGN DllExport RayPack {
 public:
     Ray rays[4];
 };

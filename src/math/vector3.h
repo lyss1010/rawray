@@ -11,26 +11,19 @@
 /////////////////////////////////////////////////////////////////////////////
 namespace math {
 
-#ifdef SSE
-class ALIGN16 DllExport Vector3
-#else
-class DllExport Vector3
-#endif
+class SSE_ALIGN DllExport Vector3
 {
 public:
-#ifdef SSE
 #pragma warning(push)
 #pragma warning(disable:4201)
     union {
+        __m128 v;
         float vec[4];
         struct {
             float x, y, z, w;
         };
     };
 #pragma warning(pop)
-#else
-    float x, y, z;
-#endif
 
     Vector3() : x(0.0f), y(0.0f), z(0.0f) { }
     explicit Vector3(float f) : x(f), y(f), z(f) { }

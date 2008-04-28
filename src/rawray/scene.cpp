@@ -81,15 +81,12 @@ void Scene::Raytrace(const Camera& cam, Image& image, int xStart, int yStart, in
             if( packsize == 4 ) {
                 // Compute pre-compacted data for SIMD instructions
                 hitpack.PackData();
+                memset( hitpack.hit_result, 0, sizeof(hitpack.hit_result) );
+                packsize = 0;
                 
                 // Shoot off pack if it is full
                 IntersectPack( hitpack );
                 ShadePack( hitpack, image );
-
-                // Clear out old values from pack (TODO: Required?)
-                memset( hitpack.hit_result, 0, sizeof(hitpack.hit_result) );
-
-                packsize = 0;
             }
         }
     }
@@ -99,9 +96,14 @@ void Scene::ShadePack( const HitPack& hitpack, Image& image ) {
     for( int pack=0; pack<4; ++pack ) {
         if( hitpack.hit_result[pack] != 0.0f ) {
             // NOTE: It's the users's fault if the material is null
-            image.SetPixel( hitpack.hits[pack].imgCoord.x, 
-                            hitpack.hits[pack].imgCoord.y, 
-                            hitpack.hits[pack].material->Shade(hitpack.hits[pack], *this) );
+            if( hitpack.hits[pack].material ) {
+                image.SetPixel( hitpack.hits[pack].imgCoord.x, 
+                                hitpack.hits[pack].imgCoord.y, 
+                                hitpack.hits[pack].material->Shade(hitpack.hits[pack], *this) );
+            } else
+                image.SetPixel( hitpack.hits[pack].imgCoord.x,
+                                hitpack.hits[pack].imgCoord.y,
+                                options::global::img_fg_color );
         } else {
             image.SetPixel( hitpack.hits[pack].imgCoord.x,
                             hitpack.hits[pack].imgCoord.y,

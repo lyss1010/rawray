@@ -8,11 +8,20 @@
 
 namespace rawray {
 
+TriangleMoller* TriangleMoller::newTriangle(TriangleMesh* mesh, int index, Material* material) {
+    TriangleMoller* t = static_cast<TriangleMoller*>(
+        _aligned_malloc( sizeof(TriangleMoller), ALIGNMENT ));
+
+    assert( t );
+    t->Set( mesh, index, material );
+    return t;
+}
+
 void TriangleMoller::PreCalc() {
-    const Tuple3I vertexIndices = mesh_.GetVertexIndices()[ index_ ];
-    const Vector3& v0 = mesh_.GetVertices()[ vertexIndices.x ];
-    const Vector3& v1 = mesh_.GetVertices()[ vertexIndices.y ];
-    const Vector3& v2 = mesh_.GetVertices()[ vertexIndices.z ];
+    const Tuple3I vertexIndices = mesh_->GetVertexIndices()[ index_ ];
+    const Vector3& v0 = mesh_->GetVertices()[ vertexIndices.x ];
+    const Vector3& v1 = mesh_->GetVertices()[ vertexIndices.y ];
+    const Vector3& v2 = mesh_->GetVertices()[ vertexIndices.z ];
 
     math::Cross(v2 - v0, v1 - v0, n_);
 }
@@ -20,10 +29,10 @@ void TriangleMoller::PreCalc() {
 // SSE Enhanced intersection of 4x rays simultaneously
 #ifdef SSE
 void TriangleMoller::IntersectPack(HitPack& hitpack, float minDistance, float maxDistance) {
-    const Tuple3I vertexIndices = mesh_.GetVertexIndices()[ index_ ];
-    const __m128& v0 = mesh_.GetVertices()[ vertexIndices.x ].v;
-    const __m128& v1 = mesh_.GetVertices()[ vertexIndices.y ].v;
-    const __m128& v2 = mesh_.GetVertices()[ vertexIndices.z ].v;
+    const Tuple3I vertexIndices = mesh_->GetVertexIndices()[ index_ ];
+    const __m128& v0 = mesh_->GetVertices()[ vertexIndices.x ].v;
+    const __m128& v1 = mesh_->GetVertices()[ vertexIndices.y ].v;
+    const __m128& v2 = mesh_->GetVertices()[ vertexIndices.z ].v;
 
     const __m128& ray_d_x = hitpack.ray_d_x;
     const __m128& ray_d_y = hitpack.ray_d_y;
@@ -150,7 +159,7 @@ void TriangleMoller::IntersectPack(HitPack& hitpack, float minDistance, float ma
     // xmm7 = -1 / n.d
 
 	// Compute distance t = n.(o-v0) / -n.d
-	__m128 t, hitpoint;
+	__m128 t;
 	__asm {
 		mulps  xmm0, xmm7;
 		movaps t, xmm0;
@@ -320,10 +329,10 @@ void TriangleMoller::IntersectPack(HitPack& hitpack, float minDistance, float ma
 // See: Fundamentals of Computer Graphics, Peter Shirley p206
 bool TriangleMoller::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
     const Ray& ray = hit.eyeRay;
-	const Tuple3I vertexIndices = mesh_.GetVertexIndices()[ index_ ];
-    const Vector3& v0 = mesh_.GetVertices()[ vertexIndices.x ];
-    const Vector3& v1 = mesh_.GetVertices()[ vertexIndices.y ];
-    const Vector3& v2 = mesh_.GetVertices()[ vertexIndices.z ];
+	const Tuple3I vertexIndices = mesh_->GetVertexIndices()[ index_ ];
+    const Vector3& v0 = mesh_->GetVertices()[ vertexIndices.x ];
+    const Vector3& v1 = mesh_->GetVertices()[ vertexIndices.y ];
+    const Vector3& v2 = mesh_->GetVertices()[ vertexIndices.z ];
 
 	const Vector3& b = v1 - v0;
 	const Vector3& c = v2 - v0;

@@ -8,11 +8,20 @@
 
 namespace rawray {
 
+TrianglePlucker* TrianglePlucker::newTriangle(TriangleMesh* mesh, int index, Material* material) {
+    TrianglePlucker* t = static_cast<TrianglePlucker*>(
+        _aligned_malloc( sizeof(TrianglePlucker), ALIGNMENT ));
+
+    assert( t );
+    t->Set( mesh, index, material );
+    return t;
+}
+
 void TrianglePlucker::PreCalc() {
-    const Tuple3I vertexIndices = mesh_.GetVertexIndices()[ index_ ];
-    const Vector3& v0 = mesh_.GetVertices()[ vertexIndices.x ];
-    const Vector3& v1 = mesh_.GetVertices()[ vertexIndices.y ];
-    const Vector3& v2 = mesh_.GetVertices()[ vertexIndices.z ];
+    const Tuple3I vertexIndices = mesh_->GetVertexIndices()[ index_ ];
+    const Vector3& v0 = mesh_->GetVertices()[ vertexIndices.x ];
+    const Vector3& v1 = mesh_->GetVertices()[ vertexIndices.y ];
+    const Vector3& v2 = mesh_->GetVertices()[ vertexIndices.z ];
     
     // Compute the plucker coords of the 3 lines representing edges
     pluckA_ = PluckerCoord( v2-v1, v1 );
@@ -57,10 +66,10 @@ bool TrianglePlucker::Intersect(HitInfo& hit, float minDistance, float maxDistan
     const float gamma = dirC * norm;
 
     // Compute the hit point by interpolation based by our barycentric coords
-    const Tuple3I vertexIndices = mesh_.GetVertexIndices()[ index_ ];
-    hit.point = alpha * mesh_.GetVertices()[ vertexIndices.x ] + 
-                beta  * mesh_.GetVertices()[ vertexIndices.y ] + 
-                gamma * mesh_.GetVertices()[ vertexIndices.z ];
+    const Tuple3I vertexIndices = mesh_->GetVertexIndices()[ index_ ];
+    hit.point = alpha * mesh_->GetVertices()[ vertexIndices.x ] + 
+                beta  * mesh_->GetVertices()[ vertexIndices.y ] + 
+                gamma * mesh_->GetVertices()[ vertexIndices.z ];
 
     // Assuming ray.direction is normalized, dot prodcut will give us length of (hit.point - ray.origin)
     hit.distance = math::Dot( (hit.point - ray.origin), ray.direction );

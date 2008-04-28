@@ -17,10 +17,7 @@ namespace rawray {
 class SSE_ALIGN DllExport TriangleMoller : public Triangle
 {
 public:
-    TriangleMoller(TriangleMesh& mesh, int index, const Material* material)
-		: Triangle(mesh, index, material) { }
-
-    virtual ~TriangleMoller() { }
+    static TriangleMoller* newTriangle(TriangleMesh* mesh, int index, Material* material);
 
     //virtual void RenderGL();
     virtual void PreCalc();
@@ -30,6 +27,12 @@ public:
 #ifdef SSE
     virtual void IntersectPack(HitPack& hitpack, float minDistance, float maxDistance);
 #endif // SSE
+
+protected:
+    TriangleMoller(TriangleMesh* mesh, int index, Material* material)
+		: Triangle(mesh, index, material) { }
+
+    virtual ~TriangleMoller() { }
 
 private:
     SSE_ALIGN Vector3 n_;

@@ -14,19 +14,22 @@
 /////////////////////////////////////////////////////////////////////////////
 namespace rawray {
 
-class DllExport TrianglePlucker : public Triangle
+class SSE_ALIGN DllExport TrianglePlucker : public Triangle
 {
 public:
-    TrianglePlucker(TriangleMesh& mesh, int index, const Material* material)
-		: Triangle(mesh, index, material) { }
-
-	virtual ~TrianglePlucker() { }
+    static TrianglePlucker* newTriangle(TriangleMesh* mesh, int index, Material* material);
 
     //virtual void RenderGL();
     virtual void PreCalc();
 
     virtual bool Intersect(HitInfo& hit, float minDistance, float maxDistance);
     //void IntersectPack(HitPack& hitpack, float minDistance, float maxDistance);
+
+protected:
+    TrianglePlucker(TriangleMesh* mesh, int index, Material* material)
+		: Triangle(mesh, index, material) { }
+
+	virtual ~TrianglePlucker() { }
 
 private:
     PluckerCoord pluckA_;

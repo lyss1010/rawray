@@ -12,21 +12,29 @@
 namespace rawray {
 namespace TriangleFactory {
 
-Triangle* NewTriangle(TriangleMesh& mesh, int index, const Material* material) {
+Triangle* NewTriangle(TriangleMesh* mesh, int index, Material* material) {
 	switch( rawray::options::global::triangle_intersection_algorithm ) {
 	case rawray::options::BARYCENTRIC:
-		return new TriangleBarycentric(mesh, index, material);
+        return dynamic_cast<Triangle*>(
+            TriangleBarycentric::newTriangle(mesh, index, material) );
 
 	case rawray::options::BARYCENTRIC_PROJECTION:
-		return new TriangleBarycentricProjection(mesh, index, material);
+        return dynamic_cast<Triangle*>(
+            TriangleBarycentricProjection::newTriangle(mesh, index, material) );
 
 	case rawray::options::MOLLER:
-		return new TriangleMoller(mesh, index, material);
+        return dynamic_cast<Triangle*>(
+            TriangleMoller::newTriangle(mesh, index, material) );
 
 	default:
 	case rawray::options::PLUCKER:
-		return new TrianglePlucker(mesh, index, material);
+		return dynamic_cast<Triangle*>(
+            TrianglePlucker::newTriangle(mesh, index, material) );
 	}
+}
+
+void DeleteTriangle(Triangle* t) {
+    _aligned_free(t);
 }
 
 } // namespace rawray::TriangleFactory

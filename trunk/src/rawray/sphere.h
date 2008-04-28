@@ -17,7 +17,7 @@ namespace rawray {
 class DllExport Sphere : public Object
 {
 public:
-    Sphere(const Vector3& center, float radius, const Material* material) :
+    Sphere(const Vector3& center, float radius, Material* material) :
         Object(material), center_(center), radius_(radius) { }
 
     virtual ~Sphere() { }

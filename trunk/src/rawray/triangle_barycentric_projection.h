@@ -14,19 +14,22 @@
 /////////////////////////////////////////////////////////////////////////////
 namespace rawray {
 
-class DllExport TriangleBarycentricProjection : public Triangle
+class SSE_ALIGN DllExport TriangleBarycentricProjection : public Triangle
 {
 public:
-    TriangleBarycentricProjection(TriangleMesh& mesh, int index, const Material* material)
-		: Triangle(mesh, index, material) { }
-
-	virtual ~TriangleBarycentricProjection() { }
+    static TriangleBarycentricProjection* newTriangle(TriangleMesh* mesh, int index, Material* material);
 
     //virtual void RenderGL();
     virtual void PreCalc();
 
     virtual bool Intersect(HitInfo& hit, float minDistance, float maxDistance);
     //void IntersectPack(HitPack& hitpack, float minDistance, float maxDistance);
+
+protected:
+    TriangleBarycentricProjection(TriangleMesh* mesh, int index, Material* material)
+		: Triangle(mesh, index, material) { }
+
+	virtual ~TriangleBarycentricProjection() { }
 
 private:
 	Vector3 n_, b_, c_;

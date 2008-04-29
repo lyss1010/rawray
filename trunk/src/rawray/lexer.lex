@@ -51,6 +51,7 @@ STRING      '([^']*)'|\"([^\"]*)\"
 %x s_global
 %x s_camera
 %x s_triangle
+%x s_bbox
 %x s_mesh
 %x s_instance
 %x s_light
@@ -107,6 +108,8 @@ STRING      '([^']*)'|\"([^\"]*)\"
 <s_global>image{WS}foreground{WS}		{ return YY_IMG_FGCOLOR; }
 <s_global>gl{WS}background{WS}			{ return YY_GL_BGCOLOR; }
 <s_global>gl{WS}sphere{WS}sections		{ return YY_GL_SPHERE_SECTIONS; }
+<s_global>gl{WS}render{WS}lights		{ return YY_GL_RENDER_LIGHTS; }
+<s_global>gl{WS}render{WS}bbox  		{ return YY_GL_RENDER_BBOX; }
 <s_global>num{WS}threads				{ return YY_NUM_THREADS; }
 <s_global>render{WS}x{WS}block			{ return YY_RENDER_X_BLOCK; }
 <s_global>render{WS}y{WS}block			{ return YY_RENDER_Y_BLOCK; }
@@ -115,7 +118,6 @@ STRING      '([^']*)'|\"([^\"]*)\"
 <s_global>render{WS}spinlock{WS}sleep	{ return YY_RENDER_SPINLOCK_SLEEP; }
 <s_global>gaussian{WS}blur{WS}max		{ return YY_GAUSSIAN_BLUR_MAX; }
 <s_global>gaussian{WS}blur{WS}sigma		{ return YY_GAUSSIAN_BLUR_SIGMA; }
-<s_global>gl{WS}render{WS}lights		{ return YY_GL_RENDER_LIGHTS; }
 <s_global>headless{WS}					{ return YY_HEADLESS; }
 <s_global>triangle{WS}test{WS}			{ return YY_TRIANGLE_TEST; }
 <s_global>projection					{ return YY_PROJECTION; }
@@ -154,6 +156,10 @@ STRING      '([^']*)'|\"([^\"]*)\"
 <s_triangle>n1{WS}						{ return YY_N1; }
 <s_triangle>n2{WS}						{ return YY_N2; }
 <s_triangle>n3{WS}						{ return YY_N3; }
+
+<INITIAL>bbox{WS}                       { yy_push_state(s_bbox); return YY_S_BBOX; }
+<s_bbox>min{WS}                         { return YY_MIN; }
+<s_bbox>max{WS}                         { return YY_MAX; }
 
 <INITIAL>mesh{WS}						{ yy_push_state(s_mesh); return YY_S_MESH; }
 <s_mesh>load{WS}						{ return YY_LOAD; }

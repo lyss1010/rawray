@@ -111,4 +111,40 @@ Vector3 Triangle::ComputeBarycentric(const Vector3& point) const {
 	return Vector3( alpha, beta, 1-alpha-beta );
 }
 
+Vector3 Triangle::GetMin() {
+    const Tuple3I vertexIndices = mesh_->GetVertexIndices()[ index_ ];
+    const Vector3& v0 = mesh_->GetVertices()[ vertexIndices.x ];
+    const Vector3& v1 = mesh_->GetVertices()[ vertexIndices.y ];
+    const Vector3& v2 = mesh_->GetVertices()[ vertexIndices.z ];
+
+    float min[3];
+    for( int i=0; i<3; ++i ) {
+        if( v0[i] < v1[i] ) {
+            min[i] = (v0[i] < v2[i]) ? v0[i] : v2[i];
+        } else {
+            min[i] = (v1[i] < v2[i]) ? v1[i] : v2[i];
+        }
+    }
+
+    return Vector3( min[0], min[1], min[2] );
+}
+
+Vector3 Triangle::GetMax() {
+    const Tuple3I vertexIndices = mesh_->GetVertexIndices()[ index_ ];
+    const Vector3& v0 = mesh_->GetVertices()[ vertexIndices.x ];
+    const Vector3& v1 = mesh_->GetVertices()[ vertexIndices.y ];
+    const Vector3& v2 = mesh_->GetVertices()[ vertexIndices.z ];
+
+    float max[3];
+    for( int i=0; i<3; ++i ) {
+        if( v0[i] > v1[i] ) {
+            max[i] = (v0[i] > v2[i]) ? v0[i] : v2[i];
+        } else {
+            max[i] = (v1[i] > v2[i]) ? v1[i] : v2[i];
+        }
+    }
+
+    return Vector3( max[0], max[1], max[2] );
+}
+
 } // namespace rawray

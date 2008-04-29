@@ -108,6 +108,8 @@ public:
 
 inline float Dot(const Vector3& a, const Vector3& b) { return a.x*b.x + a.y*b.y + a.z*b.z; }
 
+inline Vector3 operator/(float f, const Vector3& v) { return Vector3(f/v.x, f/v.y, f/v.z); }
+
 DllExport Vector3& Cross(const Vector3& a, const Vector3& b, Vector3& out);
 
 } // namespace math

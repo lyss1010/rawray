@@ -28,9 +28,11 @@ public:
     const Vector3& GetCenter() const { return center_; }
     float GetRadius() const { return radius_; }
 
+	virtual void deleteObject() { delete this; }
     virtual void RenderGL();
     virtual void PreCalc() { }
-	virtual void deleteObject() { delete this; }
+    virtual Vector3 GetMin() { return center_ - radius_; }
+    virtual Vector3 GetMax() { return center_ + radius_; }
 
     virtual bool Intersect(HitInfo& hit, float minDistance, float maxDistance);
     virtual void IntersectPack(HitPack& hitpack, float minDistance, float maxDistance);

@@ -23,6 +23,10 @@ public:
     virtual void PreCalc();
     virtual void RenderGL();
 
+    // TODO: Write me
+    virtual Vector3 GetMin() { return Vector3(-MAX_DISTANCE); }
+    virtual Vector3 GetMax() { return Vector3( MAX_DISTANCE); }
+
     virtual bool Intersect(HitInfo& hit, float minDistance, float maxDistance);
     virtual void IntersectPack(HitPack& hitpack, float minDistance, float maxDistance);
 

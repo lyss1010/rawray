@@ -42,6 +42,8 @@ public:
 	virtual void deleteObject() { delete this; }
     virtual void RenderGL();
     virtual void PreCalc();
+    virtual Vector3 GetMin();
+    virtual Vector3 GetMax();
 
     virtual bool Intersect(HitInfo& hit, float minDistance, float maxDistance);
     virtual void IntersectPack(HitPack& hitpack, float minDistance, float maxDistance);

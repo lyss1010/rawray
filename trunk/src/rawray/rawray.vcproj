@@ -167,6 +167,9 @@
 				Name="geometry"
 				Filter="">
 				<File
+					RelativePath=".\bbox_aa.cpp">
+				</File>
+				<File
 					RelativePath=".\bl_patch.cpp">
 				</File>
 				<File
@@ -272,6 +275,9 @@
 			<Filter
 				Name="geometry"
 				Filter="">
+				<File
+					RelativePath=".\bbox_aa.h">
+				</File>
 				<File
 					RelativePath=".\bl_patch.h">
 				</File>

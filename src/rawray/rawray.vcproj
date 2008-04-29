@@ -173,6 +173,9 @@
 					RelativePath=".\bl_patch.cpp">
 				</File>
 				<File
+					RelativePath=".\instance.cpp">
+				</File>
+				<File
 					RelativePath=".\sphere.cpp">
 				</File>
 				<File
@@ -283,6 +286,9 @@
 				</File>
 				<File
 					RelativePath=".\hit_info.h">
+				</File>
+				<File
+					RelativePath=".\instance.h">
 				</File>
 				<File
 					RelativePath=".\object.h">

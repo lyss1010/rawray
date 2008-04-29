@@ -5,7 +5,7 @@
 #include "bvh.h"
 
 namespace rawray {
-   
+
 void BVH::Rebuild(std::vector<Object*>* objects) {
     objects_ = objects;
 }

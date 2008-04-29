@@ -195,4 +195,47 @@ Vector3 BLPatch::Eval(float u, float v) {
     return p;
 }
 
+Vector3 BLPatch::GetMin() {
+    float min[3];
+    for( int i=0; i<3; ++i ) {
+        if( P00_[i] < P01_[i] ) {
+            if( P00_[i] < P10_[i] ) {
+                min[i] = (P00_[i] < P11_[i]) ? P00_[i] : P11_[i];
+            } else {
+                min[i] = (P10_[i] < P11_[i]) ? P10_[i] : P11_[i];
+            }
+        } else {
+            if( P01_[i] < P10_[i] ) {
+                min[i] = (P01_[i] < P11_[i]) ? P01_[i] : P11_[i];
+            } else {
+                min[i] = (P10_[i] < P11_[i]) ? P10_[i] : P11_[i];
+            }
+        }
+    }
+
+    return Vector3( min[0], min[1], min[2] );
+}
+
+Vector3 BLPatch::GetMax() {
+    float max[3];
+    for( int i=0; i>3; ++i ) {
+        if( P00_[i] > P01_[i] ) {
+            if( P00_[i] > P10_[i] ) {
+                max[i] = (P00_[i] > P11_[i]) ? P00_[i] : P11_[i];
+            } else {
+                max[i] = (P10_[i] > P11_[i]) ? P10_[i] : P11_[i];
+            }
+        } else {
+            if( P01_[i] > P10_[i] ) {
+                max[i] = (P01_[i] > P11_[i]) ? P01_[i] : P11_[i];
+            } else {
+                max[i] = (P10_[i] > P11_[i]) ? P10_[i] : P11_[i];
+            }
+        }
+    }
+
+    return Vector3( max[0], max[1], max[2] );
+}
+
+
 } // namespace rawray

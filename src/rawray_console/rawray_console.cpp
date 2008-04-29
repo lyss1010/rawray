@@ -19,33 +19,22 @@ void exit_cleanup(void) {
 }
 
 
-void SSETest() {
+bool SSETest() {
+#ifdef SSE
     std::cout << "Testing SSE Version... ";
-    switch( tools::sse::GetVersion() ) {
-    case tools::sse::SSE1:
-        std::cout << "SSE" << std::endl;
-        break;
-
-    case tools::sse::SSE2:
-        std::cout << "SSE2" << std::endl;
-        break;
-    
-    case tools::sse::SSE3:
-        std::cout << "SSE3" << std::endl;
-        break;
-    
-    case tools::sse::SSSE3:
-        std::cout << "SSSE3" << std::endl;
-        break;
-            
-    case tools::sse::SSE4_1:
-        std::cout << "SSE4.1" << std::endl;
-        break;
-            
-    case tools::sse::SSE4_2:
-        std::cout << "SSE4.2" << std::endl;
-        break;
+    int version = tools::sse::GetVersion();
+    if( version > tools::sse::SSE1 ) {
+        std::cout << "OK" << std::endl;
+        return true;
+    } else {
+        std::cout << "FAILED" << std::endl;
+        return false;
     }
+    
+#else
+    std::cout << "SSE Disabled" << std::endl;
+    return true;
+#endif // SSE
 }
 
 // Console Entry point
@@ -55,7 +44,11 @@ int _tmain( int argc, _TCHAR* argv[] )
 	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF );
 	//_CrtSetBreakAlloc( 143 );
 
-    SSETest();
+    if( !SSETest() ) {
+        std::cout << "This compute does not support the required SSE Version" << std::endl;
+        return -1;
+    }
+        
     tools::sse::SetFastFPU();
 
     // Initialize options defaults

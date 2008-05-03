@@ -9,24 +9,34 @@
 
 namespace rawray {
 
-BBoxAA* BBoxAA::newBBoxAA(Material* material) {
+BBoxAA* BBoxAA::newBBoxAA() {
     uint8* memory = static_cast<uint8*>(
         _aligned_malloc( sizeof(BBoxAA), ALIGNMENT ));
 
     if( !memory ) return NULL;
 
     // Call constructor with placement new
-    return new (memory) BBoxAA(material);
+    return new (memory) BBoxAA();
 }
 
-BBoxAA* BBoxAA::newBBoxAA(Material* material, const Vector3& min, const Vector3& max) {
+BBoxAA* BBoxAA::newBBoxAA(Object* child) {
     uint8* memory = static_cast<uint8*>(
         _aligned_malloc( sizeof(BBoxAA), ALIGNMENT ));
 
     if( !memory ) return NULL;
 
     // Call constructor with placement new
-    return new (memory) BBoxAA(material, min, max);
+    return new (memory) BBoxAA(child);
+}
+
+BBoxAA* BBoxAA::newBBoxAA(const Vector3& min, const Vector3& max) {
+    uint8* memory = static_cast<uint8*>(
+        _aligned_malloc( sizeof(BBoxAA), ALIGNMENT ));
+
+    if( !memory ) return NULL;
+
+    // Call constructor with placement new
+    return new (memory) BBoxAA(min, max);
 }
 
 void BBoxAA::deleteObject() {
@@ -34,66 +44,6 @@ void BBoxAA::deleteObject() {
 	_aligned_free( this );
 }
 
-void BBoxAA::RenderGL() {
-    if( !options::global::gl_render_bbox )
-        return;
-
-    const Vector3& color = material_ ? material_->BaseColor() : Vector3(1);
-
-    const Vector3 p1( bounds_[0].x, bounds_[0].y, bounds_[0].z );
-    const Vector3 p2( bounds_[0].x, bounds_[1].y, bounds_[0].z );
-    const Vector3 p3( bounds_[1].x, bounds_[1].y, bounds_[0].z );
-    const Vector3 p4( bounds_[1].x, bounds_[0].y, bounds_[0].z );
-
-    const Vector3 p5( bounds_[0].x, bounds_[0].y, bounds_[1].z );
-    const Vector3 p6( bounds_[0].x, bounds_[1].y, bounds_[1].z );
-    const Vector3 p7( bounds_[1].x, bounds_[1].y, bounds_[1].z );
-    const Vector3 p8( bounds_[1].x, bounds_[0].y, bounds_[1].z );
-
-    // Draw the bounding box
-    glBegin(GL_QUADS);
-        glColor3f( color.x, color.y, color.z );
-
-        // Back plane
-        glVertex3f( p1.x, p1.y, p1.z );
-        glVertex3f( p2.x, p2.y, p2.z );
-        glVertex3f( p3.x, p3.y, p3.z );
-        glVertex3f( p4.x, p4.y, p4.z );
-
-        // Front plane
-        glVertex3f( p5.x, p5.y, p5.z );
-        glVertex3f( p8.x, p8.y, p8.z );
-        glVertex3f( p7.x, p7.y, p7.z );
-        glVertex3f( p6.x, p6.y, p6.z );
-
-        // Bottom plane
-        glVertex3f( p1.x, p1.y, p1.z );
-        glVertex3f( p4.x, p4.y, p4.z );
-        glVertex3f( p8.x, p8.y, p8.z );
-        glVertex3f( p5.x, p5.y, p5.z );
-
-        // Top plane
-        glVertex3f( p2.x, p2.y, p2.z );
-        glVertex3f( p6.x, p6.y, p6.z );
-        glVertex3f( p7.x, p7.y, p7.z );
-        glVertex3f( p3.x, p3.y, p3.z );
-
-        // Right plane
-        glVertex3f( p7.x, p7.y, p7.z );
-        glVertex3f( p8.x, p8.y, p8.z );
-        glVertex3f( p4.x, p4.y, p4.z );
-        glVertex3f( p3.x, p3.y, p3.z );
-
-        // Left plane
-        glVertex3f( p1.x, p1.y, p1.z );
-        glVertex3f( p5.x, p5.y, p5.z );
-        glVertex3f( p6.x, p6.y, p6.z );
-        glVertex3f( p2.x, p2.y, p2.z );
-    glEnd();
-}
-
-void BBoxAA::PreCalc() {
-}
 
 void BBoxAA::IntersectPack(HitPack& hitpack, float minDistance, float maxDistance) {
     hitpack.hit_result[0] = Intersect( hitpack.hits[0], minDistance, maxDistance );
@@ -147,22 +97,8 @@ bool BBoxAA::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
     if( txmin > maxDistance || txmax < minDistance )
         return false;
 
-    // We had a hit with the box, intersect with all elements inside
-    uint32 numHits = 0;
-    HitInfo tempHit = hit;
-    
-    hit.distance = MAX_DISTANCE;
-    tempHit.distance = MAX_DISTANCE;
-    for (size_t i = 0; i < objects_.size(); ++i)
-    {
-        if( objects_[i]->Intersect( tempHit, minDistance, maxDistance) ) {
-            ++numHits;
-            if( tempHit.distance < hit.distance )
-                hit = tempHit;
-        }
-    }
-    
-    return numHits > 0;
+    // We had a hit with the box, intersect with our child
+    return child_->Intersect( hit, minDistance, maxDistance );
 }
 
 float BBoxAA::GetSurfaceArea() {

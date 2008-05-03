@@ -43,6 +43,9 @@ namespace global {
     extern float gaussian_blur_max;
     extern float gaussian_blur_sigma;
 
+    extern float bvh_box_cost;
+    extern float bvh_obj_cost;
+
 } // namespace global
 
 namespace camera {

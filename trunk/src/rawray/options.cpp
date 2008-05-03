@@ -34,6 +34,9 @@ namespace global {
     float gaussian_blur_max;
     float gaussian_blur_sigma;
 
+    float bvh_box_cost;
+    float bvh_obj_cost;
+
 } // namespace global
 
 
@@ -87,6 +90,9 @@ void init() {
     global::render_handler_sleep = 256;
     global::render_thread_sleep = 256;
     global::render_spinlock_sleep = 256;
+
+    global::bvh_box_cost = 1.0f;
+    global::bvh_obj_cost = 1.0f;
 
     global::gaussian_blur_max = 2.0f;
 	global::gaussian_blur_sigma = 1.0f;

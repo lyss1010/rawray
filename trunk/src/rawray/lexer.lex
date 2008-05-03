@@ -157,10 +157,6 @@ STRING      '([^']*)'|\"([^\"]*)\"
 <s_triangle>n2{WS}						{ return YY_N2; }
 <s_triangle>n3{WS}						{ return YY_N3; }
 
-<INITIAL>bbox{WS}                       { yy_push_state(s_bbox); return YY_S_BBOX; }
-<s_bbox>min{WS}                         { return YY_MIN; }
-<s_bbox>max{WS}                         { return YY_MAX; }
-
 <INITIAL>mesh{WS}						{ yy_push_state(s_mesh); return YY_S_MESH; }
 <s_mesh>load{WS}						{ return YY_LOAD; }
 

@@ -34,7 +34,6 @@
 #include "triangle_factory.h"
 #include "sphere.h"
 #include "bl_patch.h"
-#include "bbox_aa.h"
 
 //#define YYDEBUG 1
 
@@ -167,10 +166,6 @@ std::stack<math::Matrix4x4>             g_matrixStack;
 %token YY_N2
 %token YY_N3
 
-%token YY_S_BBOX
-%token YY_MIN
-%token YY_MAX
-
 %token YY_S_MESH
 %token YY_LOAD
 
@@ -232,7 +227,6 @@ p0_stuff:			p0_option			| p0_stuff				p0_option;
 mesh_stuff:			mesh_option			| mesh_stuff			mesh_option;
 sphere_stuff:		sphere_option		| sphere_stuff			sphere_option;
 triangle_stuff:		triangle_option		| triangle_stuff		triangle_option;
-bbox_stuff:         bbox_option         | bbox_stuff            bbox_option;
 blpatch_stuff:		blpatch_option		| blpatch_stuff			blpatch_option;
 
 
@@ -252,7 +246,6 @@ object_type:
 		| object_mesh
 		| object_sphere
 		| object_blpatch
-		| object_bbox
 ;
 
 global_option: 
@@ -373,11 +366,6 @@ triangle_option:
 		| YY_N3 vector3									{ } 
 ;
 
-bbox_option:
-          YY_MIN vector3                                { ((rawray::BBoxAA*)g_obj)->SetMin( math::Vector3( $2[0], $2[1], $2[2] ) ); }
-        | YY_MAX vector3                                { ((rawray::BBoxAA*)g_obj)->SetMax( math::Vector3( $2[0], $2[1], $2[2] ) ); }
-;
-
 blpatch_option:
 		  YY_P00 vector3								{ ((rawray::BLPatch*)g_obj)->SetP00( math::Vector3( $2[0], $2[1], $2[2] ) ); }
 		| YY_P01 vector3								{ ((rawray::BLPatch*)g_obj)->SetP01( math::Vector3( $2[0], $2[1], $2[2] ) ); }
@@ -428,29 +416,6 @@ object_triangle:
 			}
 ;
 
-object_bbox:
-          YY_S_BBOX YY_LCURLY
-            {
-                g_obj = rawray::BBoxAA::newBBoxAA( g_material );
-            }
-            bbox_stuff YY_RCURLY
-            {
-                g_scene->AddObject( g_obj );
-				g_obj = NULL;
-            }
-        | YY_S_BBOX YY_STRING YY_LCURLY
-            {
-                g_obj = rawray::BBoxAA::newBBoxAA( g_material );
-				g_objectMap[$2] = g_obj;
-				
-				delete $2;
-            }
-            bbox_stuff YY_RCURLY
-            {
-                g_scene->AddObject( g_obj );
-				g_obj = NULL;
-            }
-;
 
 object_mesh:
 		  YY_S_MESH YY_LCURLY

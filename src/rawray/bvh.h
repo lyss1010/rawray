@@ -12,10 +12,21 @@
 /////////////////////////////////////////////////////////////////////////////
 namespace rawray {
 
+class BBoxAA;
+
+struct BVHNode {
+    Vector3 min, max;
+
+    union {
+        BBoxAA*  bbox;
+        BVHNode* children; // [left, right]
+    };
+};
+
 class DllExport BVH : public Object
 {
 public:
-    BVH(std::vector<Object*>* objects) : Object(NULL), objects_(objects) { }
+    BVH(std::vector<Object*>* objects) : Object(NULL), singleton_(NULL) { }
     virtual ~BVH() { }
 
     void Rebuild(std::vector<Object*>* objects);
@@ -31,7 +42,9 @@ public:
     virtual void IntersectPack(HitPack& hitpack, float minDistance, float maxDistance);
 
 private:
-    std::vector<Object*>* objects_;
+    Object* singleton_; // 
+
+    std::vector<BBoxAA*>::iterator FindSplit( std::vector<BBoxAA*> sorted );
 
     DISALLOW_IMPLICIT_CONSTRUCTORS(BVH);
 

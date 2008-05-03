@@ -46,6 +46,9 @@ public:
     static bool GreaterY(BBoxAA* a, BBoxAA* b) { return a->GetMid().y > b->GetMid().y; }
     static bool GreaterZ(BBoxAA* a, BBoxAA* b) { return a->GetMid().z > b->GetMid().z; }
 
+    static float SurfaceArea(const Vector3& size);
+    static float Volume(const Vector3& size);
+
 private:
     BBoxAA(Object* child) : Object(NULL), child_(child) {
         SetBounds( child->GetMin(), child->GetMax() );

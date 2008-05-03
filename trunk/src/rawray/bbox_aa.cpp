@@ -101,20 +101,22 @@ bool BBoxAA::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
     return child_->Intersect( hit, minDistance, maxDistance );
 }
 
-float BBoxAA::GetSurfaceArea() {
-    const float l = bounds_[1].x - bounds_[0].x;
-    const float h = bounds_[1].y - bounds_[0].y;
-    const float w = bounds_[1].z - bounds_[0].z;
+float BBoxAA::SurfaceArea(const Vector3& size) {
+    //     2 * ( height*width + length*width + height*length )
+    return 2 * ( size.y*size.z + size.x*size.z + size.y*size.x );
+}
 
-    return 2*h*w + 2*l*w + 2*h*l;
+float BBoxAA::Volume(const Vector3& size) {
+    // length * width * height
+    return size.x * size.y * size.z;
+}
+
+float BBoxAA::GetSurfaceArea() {
+    return SurfaceArea(bounds_[1]-bounds_[0]);
 }
 
 float BBoxAA::GetVolume() {
-    const float l = bounds_[1].x - bounds_[0].x;
-    const float h = bounds_[1].y - bounds_[0].y;
-    const float w = bounds_[1].z - bounds_[0].z;
-
-    return l*w*h;
+    return Volume(bounds_[1]-bounds_[0]);
 }
 
 } // namespace rawray

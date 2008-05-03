@@ -12,81 +12,99 @@ void BVH::Rebuild(std::vector<Object*>* objects) {
     singleton_ = ( objects.size() > 1 ) ? NULL : objects
 
     // Create forrests of all objects bounded by single boxes
-    std::vector<BBoxAA*> xSorted, ySorted, zSorted;
+    std::vector<BBoxAA*> sorted[3];
     for( std::vector<Object*>::iterator iter = objects->begin(); iter != objects->end(); ++iter ) {
         Object* obj = (*iter);
         BBoxAA* box = BBoxAA::newBBoxAA(obj);
-        xSorted.push_back( box );
-        ySorted.push_back( box );
-        zSorted.push_back( box );
+
+        sorted[0].push_back( box );
+        sorted[1].push_back( box );
+        sorted[2].push_back( box );
     }
 
     // Sort forrests by each axis
-    std::sort( xSorted.begin(), xSorted.end(), BBoxAA::GreaterX );
-    std::sort( ySorted.begin(), xSorted.end(), BBoxAA::GreaterY );
-    std::sort( zSorted.begin(), xSorted.end(), BBoxAA::GreaterZ );
+    std::sort( sorted[0].begin(), sorted[0].end(), BBoxAA::GreaterX );
+    std::sort( sorted[1].begin(), sorted[1].end(), BBoxAA::GreaterY );
+    std::sort( sorted[2].begin(), sorted[2].end(), BBoxAA::GreaterZ );
 
     // TODO: loop end condition
     // Continually find appropriate split points
     while( true ) {
-        // Last element in the left bounding volume
-        std::vector<BBoxAA*>::iterator last_left[3];
-        last_left[0] = FindSplit( xSorted );
-        last_left[1] = FindSplit( xSorted );
-        last_left[2] = FindSplit( xSorted );
+        std::vector<BBoxAA*>::iterator split;
+        int8 axis = DetermineSplit( split, sorted[0], sorted[1], sorted[2] );
 
-        // First element in the right bounding volume
-        std::vector<BBoxAA*>::iterator first_right[3];
-        first_right[0] = last_left[0] + 1;
-        first_right[1] = last_left[1] + 1;
-        first_right[2] = last_left[2] + 1;
+        if( axis < 0 ) {
+            // We are not splitting
+            
 
-        // TODO: Case where we are at end of splitting
-
-        // Find the extents of the different options we have for bounding volumes
-        BBoxAA* leftX  = BBoxAA::newBBoxAA( xSorted.front()->GetMin(), (*lastLeftX)->GetMax() );
-        BBoxAA* rightX = BBoxAA::newBBoxAA( (*firstRightX)->GetMin(),  xSorted.back()->GetMax() );
-
-        BBoxAA* leftY  = BBoxAA::newBBoxAA( ySorted.front()->GetMin(), (*lastLeftX)->GetMax() );
-        BBoxAA* rightY = BBoxAA::newBBoxAA( (*firstRightY)->GetMin(),  xSorted.back()->GetMax() );
-
-        BBoxAA* leftZ  = BBoxAA::newBBoxAA( zSorted.front()->GetMin(), (*lastLeftZ)->GetMax() );
-        BBoxAA* rightZ = BBoxAA::newBBoxAA( (*firstRightZ)->GetMin(),  zSorted.back()->GetMax() );
-
-        // Find surface areas of the potential bounding volumes
-        const float sizeLeftX  = leftX->GetSurfaceArea();
-        const float sizeRightX = rightX->GetSurfaceArea();
-
-        const float sizeLeftY  = leftY->GetSurfaceArea();
-        const float sizeRightY = rightY->GetSurfaceArea();
-
-        const float sizeLeftZ  = leftZ->GetSurfaceArea();
-        const float sizeRightZ = rightZ->GetSurfaceArea();
-
-        const float box_cost = options::global::bvh_box_cost;
-        const float obj_cost = options::global::bvh_obj_cost;
-
-        // Find the sizes of the possible bounding boxes
-        float costX = box_cost * ( sizeLeftX + sizeRightX ) + obj_cost;
-        float costY = box_cost * ( sizeLeftY + sizeRightY ) + obj_cost;
-        float costZ = box_cost * ( sizeLeftZ + sizeRightZ ) + obj_cost;
-
-        // Find the best axis to split on
-        uint8 axis;
-        if( costX < costY ) {
-            axis = (costX < costZ) ? 0 : 2;
         } else {
-            axis = (costY < costZ) ? 1 : 2;
+            // We are splitting
+            
+
         }
 
-        // TODO: do actual split
-        // TODO: what if not splitting is better?
+    }
+
+
+    // Clean up our temporary sorted data
+    for( int i=0; i<3; ++i ) {
+        std::vector<BBoxAA*>::iterator iter = sorted[i].begin();
+        while( iter != sorted[i].end() ) {
+            BBoxAA* box = (*iter);
+            ++iter;
+            
+            box->deleteObject();
+        }
     }
 }
 
-bool CreateBVHNode( BVHNode& node, std::vector<BBoxAA*>& xSorted, std::vector<BBoxAA*>& ySorted, std::vector<BBoxAA*>& zSorted ) {
-    
+uint8 DetermineSplit( std::vector<BBoxAA*>::iterator split, std::vector<BBoxAA*>& xSorted, std::vector<BBoxAA*>& ySorted, std::vector<BBoxAA*>& zSorted ) {
+    // assume all vectors are same size
+    if( xSorted.size() < 2 ) return -1;
 
+    // Last element in the left bounding volume [x,y,z]
+    std::vector<BBoxAA*>::iterator last_left[3];
+    last_left[0] = FindSplit( xSorted );
+    last_left[1] = FindSplit( ySorted );
+    last_left[2] = FindSplit( zSorted );
+
+    // First element in the right bounding volume [x,y,z]
+    std::vector<BBoxAA*>::iterator first_right[3];
+    first_right[0] = last_left[0] + 1;
+    first_right[1] = last_left[1] + 1;
+    first_right[2] = last_left[2] + 1;
+
+    // Find surface areas of the potential bounding volumes
+    float size_left[3];
+    size_left[0] = BBoxAA::SurfaceArea( (*lastLeftX)->GetMax() - xSorted.front()->GetMin() );
+    size_left[1] = BBoxAA::SurfaceArea( (*lastLeftY)->GetMax() - ySorted.front()->GetMin() );
+    size_left[2] = BBoxAA::SurfaceArea( (*lastLeftZ)->GetMax() - zSorted.front()->GetMin() );
+
+    float size_right[3];
+    size_right[0] = BBoxAA::SurfaceArea( xSorted.back()->GetMax() - (*firstRightX)->GetMin() );
+    size_right[1] = BBoxAA::SurfaceArea( ySorted.back()->GetMax() - (*firstRightY)->GetMin() );
+    size_right[2] = BBoxAA::SurfaceArea( zSorted.back()->GetMax() - (*firstRightZ)->GetMin() );
+
+    const float box_cost = options::global::bvh_box_cost;
+    const float obj_cost = options::global::bvh_obj_cost;
+
+    // Find the costs of the possible bounding boxes
+    float cost[3];
+    float cost[0] = box_cost * ( sizeLeftX + sizeRightX ) + obj_cost;
+    float cost[1] = box_cost * ( sizeLeftY + sizeRightY ) + obj_cost;
+    float cost[2] = box_cost * ( sizeLeftZ + sizeRightZ ) + obj_cost;
+
+    // Find the best axis to split on
+    uint8 axis;
+    if( cost[0] < cost[1] ) {
+        axis = (cost[0] < cost[2]) ? 0 : 2;
+    } else {
+        axis = (cost[1] < cost[2]) ? 1 : 2;
+    }
+ 
+    // Find the elements on the left and right
+    split = last_left[axis];
+    return axis;
 }
 
 std::vector<BBoxAA*>::iterator FindSplit( std::vector<BBoxAA*> sorted ) {

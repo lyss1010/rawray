@@ -8,8 +8,14 @@
 
 namespace rawray {
 
+BVH::~BVH() {
+    // TODO: Cleanup
+}
+
 void BVH::Rebuild(std::vector<Object*>* objects) {
     // Create a forest of bounding boxes around all objects
+    std::cout << "Creating BVH of " << objects->size() << " objects" << std::endl;
+
     std::vector<BBoxAA*> forest;
     for( std::vector<Object*>::iterator iter = objects->begin(); iter != objects->end(); ++iter )
         forest.push_back( BBoxAA::newBBoxAA( (*iter) ) );
@@ -58,25 +64,28 @@ int8 BVHNode::Split( std::vector<BBoxAA*>::iterator split, std::vector<BBoxAA*>*
     // assume all vectors are same size
     if( sorted[0].size() < 2 ) return -1;
 
-    // Last element in the left bounding volume [x,y,z]
-    std::vector<BBoxAA*>::iterator last_left[3];
-    std::vector<BBoxAA*>::iterator first_right[3];
-    float size_left[3];
-    float size_right[3];
-    float cost[3];
-
     // Compute the best cost we can find for each axis
+    float cost[3];
+    std::vector<BBoxAA*>::iterator last_left[3];
     for( int i=0; i<3; ++i ) {
         // Find the best way to split the objects along this axis
         last_left[i] = FindSplittingPlane( sorted[i] );
-        first_right[i] = last_left[i] + 1;
-        
+        std::vector<BBoxAA*>::iterator first_right = last_left[i] + 1;
+
+        // TODO: FIX CRASH HERE
+
         // Find surface areas of the potential bounding volumes
-        size_left[i] = BBoxAA::SurfaceArea( (*last_left[i])->GetMax() - sorted[i].front()->GetMin() );
-        size_right[i] = BBoxAA::SurfaceArea( sorted[i].back()->GetMax() - (*first_right[i])->GetMin() );
+        BBoxAA* left_max  = *(last_left[i]);
+        BBoxAA* left_min = sorted[i].front();
+
+        BBoxAA* right_max  = sorted[i].back();
+        BBoxAA* right_min = *(first_right);
+
+        float size_left = BBoxAA::SurfaceArea( left_max->GetMax() - left_min->GetMin() );
+        float size_right = BBoxAA::SurfaceArea( right_max->GetMax() - right_min->GetMin() );
 
         // Compute the cost of the bounding volumes of this split
-        cost[i] = Cost( size_left[i], size_right[i] );
+        cost[i] = Cost( size_left, size_right );
     }
 
     // Find the best axis to split on
@@ -115,6 +124,7 @@ std::vector<BBoxAA*>::iterator BVHNode::FindSplittingPlane( std::vector<BBoxAA*>
             split = curr;
         }
 
+        curr++; next++;
     } while( next != sorted.end() );
 
     return curr;

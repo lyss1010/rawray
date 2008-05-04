@@ -36,7 +36,7 @@ class DllExport BVH : public Object
 {
 public:
     BVH(std::vector<Object*>* objects) : Object(NULL), objects_(objects) { }
-    virtual ~BVH() { }
+    virtual ~BVH();
 
     void Rebuild(std::vector<Object*>* objects);
 
@@ -52,6 +52,7 @@ public:
 
 private:
     BVHNode root_;
+    float ojb_cost, box_cost;
     std::vector<Object*>* objects_;
     
     

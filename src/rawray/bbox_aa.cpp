@@ -103,12 +103,12 @@ bool BBoxAA::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
 
 float BBoxAA::SurfaceArea(const Vector3& size) {
     //     2 * ( height*width + length*width + height*length )
-    return 2 * ( size.y*size.z + size.x*size.z + size.y*size.x );
+    return fabs( 2 * ( size.y*size.z + size.x*size.z + size.y*size.x ) );
 }
 
 float BBoxAA::Volume(const Vector3& size) {
     // length * width * height
-    return size.x * size.y * size.z;
+    return fabs( size.x * size.y * size.z );
 }
 
 float BBoxAA::GetSurfaceArea() {

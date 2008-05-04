@@ -15,18 +15,27 @@ namespace rawray {
 class BBoxAA;
 
 struct BVHNode {
-    Vector3 min, max;
+    bool isLeaf;
 
     union {
         BBoxAA*  bbox;
         BVHNode* children; // [left, right]
     };
+
+    bool Intersect(HitInfo& hit, float minDistance, float maxDistance);
+    void IntersectPack(HitPack& hitpack, float minDistance, float maxDistance);
+    void BuildBVH( std::vector<BBoxAA*>& forrset );
+
+private:
+    int8 Split( std::vector<BBoxAA*>::iterator split, std::vector<BBoxAA*>* sorted );
+    std::vector<BBoxAA*>::iterator FindSplittingPlane( std::vector<BBoxAA*> sorted );
+    float Cost(float areaLeft, float areaRight);
 };
 
 class DllExport BVH : public Object
 {
 public:
-    BVH(std::vector<Object*>* objects) : Object(NULL), singleton_(NULL) { }
+    BVH(std::vector<Object*>* objects) : Object(NULL), objects_(objects) { }
     virtual ~BVH() { }
 
     void Rebuild(std::vector<Object*>* objects);
@@ -42,11 +51,11 @@ public:
     virtual void IntersectPack(HitPack& hitpack, float minDistance, float maxDistance);
 
 private:
-    Object* singleton_; // 
-
-    std::vector<BBoxAA*>::iterator FindSplit( std::vector<BBoxAA*> sorted );
-
-    DISALLOW_IMPLICIT_CONSTRUCTORS(BVH);
+    BVHNode root_;
+    std::vector<Object*>* objects_;
+    
+    
+    DISALLOW_COPY_CONSTRUCTORS(BVH);
 
 }; // class BVH
 

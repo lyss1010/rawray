@@ -4,95 +4,80 @@
 /////////////////////////////////////////////////////////////////////////////
 #include "bvh.h"
 #include "bbox_aa.h"
+#include "float.h"
 
 namespace rawray {
 
 void BVH::Rebuild(std::vector<Object*>* objects) {
-    // Skip hierarchy if we have only 1 object
-    singleton_ = ( objects.size() > 1 ) ? NULL : objects
+    // Create a forest of bounding boxes around all objects
+    std::vector<BBoxAA*> forest;
+    for( std::vector<Object*>::iterator iter = objects->begin(); iter != objects->end(); ++iter )
+        forest.push_back( BBoxAA::newBBoxAA( (*iter) ) );
 
-    // Create forrests of all objects bounded by single boxes
-    std::vector<BBoxAA*> sorted[3];
-    for( std::vector<Object*>::iterator iter = objects->begin(); iter != objects->end(); ++iter ) {
-        Object* obj = (*iter);
-        BBoxAA* box = BBoxAA::newBBoxAA(obj);
+    root_.BuildBVH( forest );
+}
 
-        sorted[0].push_back( box );
-        sorted[1].push_back( box );
-        sorted[2].push_back( box );
+void BVHNode::BuildBVH( std::vector<BBoxAA*>& forest ) {
+    // TODO: Cleanup old data
+
+    // If there is only 1 box, we can not split it further
+    if( forest.size() == 1 ) {
+        isLeaf = true;
+        bbox = forest[0];
+        return;
     }
 
-    // Sort forrests by each axis
+    // We must split into left and right bounding volumes
+    isLeaf = false;
+    children = new BVHNode[2];
+        
+    // Create sorted forests
+    std::vector<BBoxAA*> sorted[3] = { 
+        std::vector<BBoxAA*>( forest.begin(), forest.end() ), 
+        std::vector<BBoxAA*>( forest.begin(), forest.end() ), 
+        std::vector<BBoxAA*>( forest.begin(), forest.end() ) };
+
     std::sort( sorted[0].begin(), sorted[0].end(), BBoxAA::GreaterX );
     std::sort( sorted[1].begin(), sorted[1].end(), BBoxAA::GreaterY );
     std::sort( sorted[2].begin(), sorted[2].end(), BBoxAA::GreaterZ );
 
-    // TODO: loop end condition
-    // Continually find appropriate split points
-    while( true ) {
-        std::vector<BBoxAA*>::iterator split;
-        int8 axis = DetermineSplit( split, sorted[0], sorted[1], sorted[2] );
+    std::vector<BBoxAA*>::iterator split;
+    int8 axis = Split( split, sorted );
+    assert( axis >= 0 );
 
-        if( axis < 0 ) {
-            // We are not splitting
-            
+    // Split forrest into left and right parts
+    std::vector<BBoxAA*> left(  sorted[axis].begin(), split );
+    std::vector<BBoxAA*> right( split+1, sorted[axis].end() );
 
-        } else {
-            // We are splitting
-            
-
-        }
-
-    }
-
-
-    // Clean up our temporary sorted data
-    for( int i=0; i<3; ++i ) {
-        std::vector<BBoxAA*>::iterator iter = sorted[i].begin();
-        while( iter != sorted[i].end() ) {
-            BBoxAA* box = (*iter);
-            ++iter;
-            
-            box->deleteObject();
-        }
-    }
+    // Recursively build left and right sub nodes
+    children[0].BuildBVH( left );
+    children[1].BuildBVH( right );
 }
 
-uint8 DetermineSplit( std::vector<BBoxAA*>::iterator split, std::vector<BBoxAA*>& xSorted, std::vector<BBoxAA*>& ySorted, std::vector<BBoxAA*>& zSorted ) {
+int8 BVHNode::Split( std::vector<BBoxAA*>::iterator split, std::vector<BBoxAA*>* sorted ) {
     // assume all vectors are same size
-    if( xSorted.size() < 2 ) return -1;
+    if( sorted[0].size() < 2 ) return -1;
 
     // Last element in the left bounding volume [x,y,z]
     std::vector<BBoxAA*>::iterator last_left[3];
-    last_left[0] = FindSplit( xSorted );
-    last_left[1] = FindSplit( ySorted );
-    last_left[2] = FindSplit( zSorted );
-
-    // First element in the right bounding volume [x,y,z]
     std::vector<BBoxAA*>::iterator first_right[3];
-    first_right[0] = last_left[0] + 1;
-    first_right[1] = last_left[1] + 1;
-    first_right[2] = last_left[2] + 1;
-
-    // Find surface areas of the potential bounding volumes
     float size_left[3];
-    size_left[0] = BBoxAA::SurfaceArea( (*lastLeftX)->GetMax() - xSorted.front()->GetMin() );
-    size_left[1] = BBoxAA::SurfaceArea( (*lastLeftY)->GetMax() - ySorted.front()->GetMin() );
-    size_left[2] = BBoxAA::SurfaceArea( (*lastLeftZ)->GetMax() - zSorted.front()->GetMin() );
-
     float size_right[3];
-    size_right[0] = BBoxAA::SurfaceArea( xSorted.back()->GetMax() - (*firstRightX)->GetMin() );
-    size_right[1] = BBoxAA::SurfaceArea( ySorted.back()->GetMax() - (*firstRightY)->GetMin() );
-    size_right[2] = BBoxAA::SurfaceArea( zSorted.back()->GetMax() - (*firstRightZ)->GetMin() );
-
-    const float box_cost = options::global::bvh_box_cost;
-    const float obj_cost = options::global::bvh_obj_cost;
-
-    // Find the costs of the possible bounding boxes
     float cost[3];
-    float cost[0] = box_cost * ( sizeLeftX + sizeRightX ) + obj_cost;
-    float cost[1] = box_cost * ( sizeLeftY + sizeRightY ) + obj_cost;
-    float cost[2] = box_cost * ( sizeLeftZ + sizeRightZ ) + obj_cost;
+
+    // Compute the best cost we can find for each axis
+    for( int i=0; i<3; ++i ) {
+        // Find the best way to split the objects along this axis
+        last_left[i] = FindSplittingPlane( sorted[i] );
+        first_right[i] = last_left[i] + 1;
+        
+        // Find surface areas of the potential bounding volumes
+        size_left[i] = BBoxAA::SurfaceArea( (*last_left[i])->GetMax() - sorted[i].front()->GetMin() );
+        size_right[i] = BBoxAA::SurfaceArea( sorted[i].back()->GetMax() - (*first_right[i])->GetMin() );
+
+        // Compute the cost of the bounding volumes of this split
+        cost[i] = Cost( size_left[i], size_right[i] );
+    }
 
     // Find the best axis to split on
     uint8 axis;
@@ -107,7 +92,7 @@ uint8 DetermineSplit( std::vector<BBoxAA*>::iterator split, std::vector<BBoxAA*>
     return axis;
 }
 
-std::vector<BBoxAA*>::iterator FindSplit( std::vector<BBoxAA*> sorted ) {
+std::vector<BBoxAA*>::iterator BVHNode::FindSplittingPlane( std::vector<BBoxAA*> sorted ) {
     if( sorted.size() < 2 ) return sorted.end();
     
     BBoxAA left, right;
@@ -124,7 +109,7 @@ std::vector<BBoxAA*>::iterator FindSplit( std::vector<BBoxAA*> sorted ) {
         left.SetMax(  (*curr)->GetMax() );
         right.SetMin( (*curr)->GetMin() );
 
-        float cost = box_cost * ( left.GetSurfaceArea() + right.GetSurfaceArea() ) + obj_cost;
+        float cost = Cost( left.GetSurfaceArea(), right.GetSurfaceArea() );
         if( cost < min_cost ) {
             min_cost = cost;
             split = curr;
@@ -135,11 +120,40 @@ std::vector<BBoxAA*>::iterator FindSplit( std::vector<BBoxAA*> sorted ) {
     return curr;
 }
 
+float BVHNode::Cost(float areaLeft, float areaRight) {
+    return areaLeft + areaRight;
+}
+
 void BVH::PreCalc() {
     Rebuild(objects_);
 }
 
 void BVH::RenderGL() {
+}
+
+bool BVHNode::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
+    if( isLeaf ) {
+        return bbox->Intersect(hit, minDistance, maxDistance);
+    } else {
+        if( children[0].Intersect(hit, minDistance, maxDistance) ) {
+            // We hit the left node, check if a right hit would be closer
+            HitInfo hit2 = hit;
+            if( children[1].Intersect(hit2, minDistance, maxDistance) ) {
+                // Check which hit is closer
+                if( hit2.distance < hit.distance )
+                    hit = hit2;
+            }
+            return true;
+        } else {
+            // We did not hit the left node, only possible hit is on right
+            return children[1].Intersect(hit, minDistance, maxDistance);
+        }
+    }
+}
+
+void BVHNode::IntersectPack(HitPack& hitpack, float minDistance, float maxDistance) {
+    // TODO: Write me
+    return;
 }
 
 void BVH::IntersectPack(HitPack& hitpack, float minDistance, float maxDistance) {
@@ -177,21 +191,7 @@ void BVH::IntersectPack(HitPack& hitpack, float minDistance, float maxDistance) 
 }
 
 bool BVH::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
-    // TODO: Actual Bounding Volume Hierarchy, not test of all objects
-    uint32 numHits = 0;
-    HitInfo tempHit = hit;
-    
-    tempHit.distance = MAX_DISTANCE;
-    for (size_t i = 0; i < objects_->size(); ++i)
-    {
-        if( (*objects_)[i]->Intersect( tempHit, minDistance, maxDistance) ) {
-            ++numHits;
-            if( tempHit.distance < hit.distance )
-                hit = tempHit;
-        }
-    }
-    
-    return numHits > 0;
+    return root_.Intersect(hit, minDistance, maxDistance);
 }
 
 } // namespace rawray

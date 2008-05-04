@@ -54,7 +54,7 @@ private:
         SetBounds( child->GetMin(), child->GetMax() );
     }
 
-    BBoxAA(const Vector3& min, const Vector3& max) {
+    BBoxAA(const Vector3& min, const Vector3& max) : Object(NULL), child_(NULL) {
         SetBounds( min, max );
     }
 

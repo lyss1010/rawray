@@ -64,41 +64,39 @@ void BBoxAA::IntersectPack(HitPack& hitpack, float minDistance, float maxDistanc
  * 
  */
 bool BBoxAA::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
-    float txmin, txmax, tymin, tymax, tzmin, tzmax;
     const Ray& r = hit.eyeRay;
+    float tmin, tmax, tymin, tymax, tzmin, tzmax;
 
-    txmin = ( bounds_[     r.sign[0] ].x - r.origin.x ) * r.inv_direction.x;
-    txmax = ( bounds_[ 1 - r.sign[0] ].x - r.origin.x ) * r.inv_direction.x;
+	tmin  = (bounds_[ r.sign[0]   ].x - r.origin.x) * r.inv_direction.x;
+	tmax  = (bounds_[ 1-r.sign[0] ].x - r.origin.x) * r.inv_direction.x;
+	tymin = (bounds_[ r.sign[1]   ].y - r.origin.y) * r.inv_direction.y;
+	tymax = (bounds_[ 1-r.sign[1] ].y - r.origin.y) * r.inv_direction.y;
 
-    tymin = ( bounds_[     r.sign[1] ].y - r.origin.y ) * r.inv_direction.y;
-    tymax = ( bounds_[ 1 - r.sign[1] ].y - r.origin.y ) * r.inv_direction.y;
+	if ( (tmin > tymax) || (tymin > tmax) )
+		return false;
 
-    if( (txmin > tymax) || (tymin > txmax) )
-        return false;
+	if (tymin > tmin)
+		tmin = tymin;
 
-    // Compute the 'real' min/max values of both x&y combined
-    if( tymax > txmin )
-        txmin = tymin;
-    if( tymax < txmax )
-        txmax = tymax;
+	if (tymax < tmax)
+		tmax = tymax;
 
-    tzmin = ( bounds_[     r.sign[2] ].z - r.origin.z ) * r.inv_direction.z;
-    tzmax = ( bounds_[ 1 - r.sign[2] ].z - r.origin.z ) * r.inv_direction.z;
+	tzmin = (bounds_[ r.sign[2]   ].z - r.origin.z) * r.inv_direction.z;
+	tzmax = (bounds_[ 1-r.sign[2] ].z - r.origin.z) * r.inv_direction.z;
 
-    if( (txmin > tzmax) || (tzmin > txmax) )
-        return false;
+	if ( (tmin > tzmax) || (tzmin > tmax) )
+		return false;
 
-    // Compute the 'real' min/max values of x&y&z combined
-    if( tzmin > txmin )
-        txmin = tzmin;
-    if( tzmax < txmax )
-        txmax = tzmax;
+	if (tzmin > tmin)
+		tmin = tzmin;
+	if (tzmax < tmax)
+		tmax = tzmax;
+	
+	if( (tmin < minDistance) || (tmax > maxDistance) )
+		return false;
 
-    if( txmin > maxDistance || txmax < minDistance )
-        return false;
-
-    // We had a hit with the box, intersect with our child
-    return child_->Intersect( hit, minDistance, maxDistance );
+	// We had a hit with the box, intersect with our child
+	return child_->Intersect( hit, minDistance, maxDistance );
 }
 
 float BBoxAA::SurfaceArea(const Vector3& size) {

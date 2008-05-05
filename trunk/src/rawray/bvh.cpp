@@ -12,7 +12,7 @@ BVH::~BVH() {
 	ClearForest();
 }
 
-void ClearForest() {
+void BVH::ClearForest() {
 	for( std::vector<BBoxAA*>::iterator iter = forest_.begin(); iter != forest_.end(); ++iter ) {
 		BBoxAA* box = (*iter);
 		box->deleteObject();
@@ -172,42 +172,48 @@ bool BVHNode::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
 }
 
 void BVHNode::IntersectPack(HitPack& hitpack, float minDistance, float maxDistance) {
-    // TODO: Write me
+	for( int i=0; i<4; ++i ) {
+		hitpack.hit_result[i] = Intersect( hitpack.hits[i], minDistance, maxDistance );
+	}
+
+	// TODO: Write raypack intersection
+
+    //HitPack tempHitpack = hitpack;
+
+    //tempHitpack.hits[0].distance = MAX_DISTANCE;
+    //tempHitpack.hits[1].distance = MAX_DISTANCE;
+    //tempHitpack.hits[2].distance = MAX_DISTANCE;
+    //tempHitpack.hits[3].distance = MAX_DISTANCE;
+
+    //for( size_t i=0; i< objects_->size(); ++i ) {
+    //    (*objects_)[i]->IntersectPack( tempHitpack, minDistance, maxDistance );
+
+    //    if( tempHitpack.hit_result[0] && tempHitpack.hits[0].distance < hitpack.hits[0].distance ) {
+    //        hitpack.hits[0] = tempHitpack.hits[0];
+    //        hitpack.hit_result[0] = tempHitpack.hit_result[0];
+    //    }
+
+    //    if( tempHitpack.hit_result[1] && tempHitpack.hits[1].distance < hitpack.hits[1].distance ) {
+    //        hitpack.hits[1] = tempHitpack.hits[1];
+    //        hitpack.hit_result[1] = tempHitpack.hit_result[1];
+    //    }
+
+    //    if( tempHitpack.hit_result[2] && tempHitpack.hits[2].distance < hitpack.hits[2].distance ) {
+    //        hitpack.hits[2] = tempHitpack.hits[2];
+    //        hitpack.hit_result[2] = tempHitpack.hit_result[2];
+    //    }
+
+    //    if( tempHitpack.hit_result[3] && tempHitpack.hits[3].distance < hitpack.hits[3].distance ) {
+    //        hitpack.hits[3] = tempHitpack.hits[3];
+    //        hitpack.hit_result[3] = tempHitpack.hit_result[3];
+    //    }
+    //}
+
     return;
 }
 
 void BVH::IntersectPack(HitPack& hitpack, float minDistance, float maxDistance) {
-    // TODO: Actual Bounding Volume Hierarchy, not test of all objects
-    HitPack tempHitpack = hitpack;
-
-    tempHitpack.hits[0].distance = MAX_DISTANCE;
-    tempHitpack.hits[1].distance = MAX_DISTANCE;
-    tempHitpack.hits[2].distance = MAX_DISTANCE;
-    tempHitpack.hits[3].distance = MAX_DISTANCE;
-
-    for( size_t i=0; i< objects_->size(); ++i ) {
-        (*objects_)[i]->IntersectPack( tempHitpack, minDistance, maxDistance );
-
-        if( tempHitpack.hit_result[0] && tempHitpack.hits[0].distance < hitpack.hits[0].distance ) {
-            hitpack.hits[0] = tempHitpack.hits[0];
-            hitpack.hit_result[0] = tempHitpack.hit_result[0];
-        }
-
-        if( tempHitpack.hit_result[1] && tempHitpack.hits[1].distance < hitpack.hits[1].distance ) {
-            hitpack.hits[1] = tempHitpack.hits[1];
-            hitpack.hit_result[1] = tempHitpack.hit_result[1];
-        }
-
-        if( tempHitpack.hit_result[2] && tempHitpack.hits[2].distance < hitpack.hits[2].distance ) {
-            hitpack.hits[2] = tempHitpack.hits[2];
-            hitpack.hit_result[2] = tempHitpack.hit_result[2];
-        }
-
-        if( tempHitpack.hit_result[3] && tempHitpack.hits[3].distance < hitpack.hits[3].distance ) {
-            hitpack.hits[3] = tempHitpack.hits[3];
-            hitpack.hit_result[3] = tempHitpack.hit_result[3];
-        }
-    }
+	return root_.IntersectPack(hitpack, minDistance, maxDistance);
 }
 
 bool BVH::Intersect(HitInfo& hit, float minDistance, float maxDistance) {

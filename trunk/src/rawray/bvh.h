@@ -56,6 +56,7 @@ private:
     std::vector<Object*>* objects_;
 	std::vector<BBoxAA*> forest_;
     
+	void ClearForest();
     DISALLOW_COPY_CONSTRUCTORS(BVH);
 
 }; // class BVH

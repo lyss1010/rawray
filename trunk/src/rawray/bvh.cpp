@@ -47,39 +47,47 @@ void BVHNode::BuildBVH( std::vector<BBoxAA*>& forest ) {
     std::sort( sorted[1].begin(), sorted[1].end(), BBoxAA::GreaterY );
     std::sort( sorted[2].begin(), sorted[2].end(), BBoxAA::GreaterZ );
 
-    std::vector<BBoxAA*>::iterator split;
-    int8 axis = Split( split, sorted );
+    size_t splitIndex;
+    int8 axis = Split( splitIndex, sorted );
     assert( axis >= 0 );
 
-    // Split forrest into left and right parts
+	// The left forest will contain the split index and all before it
+	std::vector<BBoxAA*>::iterator split = sorted[axis].begin() + splitIndex + 1;
+
+	// Split forrest into left and right sections
     std::vector<BBoxAA*> left(  sorted[axis].begin(), split );
-    std::vector<BBoxAA*> right( split+1, sorted[axis].end() );
+    std::vector<BBoxAA*> right( split, sorted[axis].end() );
 
     // Recursively build left and right sub nodes
     children[0].BuildBVH( left );
     children[1].BuildBVH( right );
 }
 
-int8 BVHNode::Split( std::vector<BBoxAA*>::iterator split, std::vector<BBoxAA*>* sorted ) {
+int8 BVHNode::Split( size_t& splitIndex, std::vector<BBoxAA*>* sorted ) {
     // assume all vectors are same size
     if( sorted[0].size() < 2 ) return -1;
 
     // Compute the best cost we can find for each axis
     float cost[3];
-    std::vector<BBoxAA*>::iterator last_left[3];
+    size_t last_left[3];
     for( int i=0; i<3; ++i ) {
-        // Find the best way to split the objects along this axis
-        last_left[i] = FindSplittingPlane( sorted[i] );
-        std::vector<BBoxAA*>::iterator first_right = last_left[i] + 1;
+		std::vector<BBoxAA*>& forest = sorted[i];
 
-        // TODO: FIX CRASH HERE
+        // Find the best way to split the objects along this axis
+        last_left[i] = FindSplittingPlane( forest );
+
+		// Make sure there is at least 1 element in the left section
+		assert( last_left[i] >= 0 );
+
+		// Make sure there is at least 1 element in the right section
+		assert( last_left[i]+1 < forest.size() );
 
         // Find surface areas of the potential bounding volumes
-        BBoxAA* left_max  = *(last_left[i]);
-        BBoxAA* left_min = sorted[i].front();
+        BBoxAA* left_max  = forest[ last_left[i] ];
+        BBoxAA* left_min = forest[ 0 ];
 
-        BBoxAA* right_max  = sorted[i].back();
-        BBoxAA* right_min = *(first_right);
+        BBoxAA* right_max  = forest[ sorted[i].size() - 1 ];
+        BBoxAA* right_min = forest[ last_left[i] + 1 ];
 
         float size_left = BBoxAA::SurfaceArea( left_max->GetMax() - left_min->GetMin() );
         float size_right = BBoxAA::SurfaceArea( right_max->GetMax() - right_min->GetMin() );
@@ -97,37 +105,33 @@ int8 BVHNode::Split( std::vector<BBoxAA*>::iterator split, std::vector<BBoxAA*>*
     }
  
     // Find the elements on the left and right
-    split = last_left[axis];
+    splitIndex = last_left[axis];
     return axis;
 }
 
-std::vector<BBoxAA*>::iterator BVHNode::FindSplittingPlane( std::vector<BBoxAA*> sorted ) {
-    if( sorted.size() < 2 ) return sorted.end();
-    
-    BBoxAA left, right;
-    std::vector<BBoxAA*>::iterator split = sorted.end();
+size_t BVHNode::FindSplittingPlane( std::vector<BBoxAA*>& sorted ) {
+    assert( sorted.size() >= 2 );
 
+    BBoxAA left, right;
     left.SetMin( sorted.front()->GetMin() );
     right.SetMax( sorted.back()->GetMax() );
+    float min_cost = FLT_MAX;
+	size_t splitIndex = 0;
     
     // For all possible split points, compute the cost; finding the minimum
-    float min_cost = FLT_MAX;
-    std::vector<BBoxAA*>::iterator curr = sorted.begin();
-    std::vector<BBoxAA*>::iterator next = curr + 1;
-    do {
-        left.SetMax(  (*curr)->GetMax() );
-        right.SetMin( (*curr)->GetMin() );
+	for( size_t i=0; i<sorted.size()-1; ++i ) {
+        left.SetMax(  sorted[i]->GetMax() );
+        right.SetMin( sorted[i+1]->GetMin() );
 
         float cost = Cost( left.GetSurfaceArea(), right.GetSurfaceArea() );
         if( cost < min_cost ) {
             min_cost = cost;
-            split = curr;
+            splitIndex = i;
         }
 
-        curr++; next++;
-    } while( next != sorted.end() );
+    }
 
-    return curr;
+    return splitIndex;
 }
 
 float BVHNode::Cost(float areaLeft, float areaRight) {

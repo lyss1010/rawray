@@ -9,18 +9,21 @@
 namespace rawray {
 
 BVH::~BVH() {
-    // TODO: Cleanup
+	for( std::vector<BBoxAA*>::iterator iter = forest_.begin(); iter != forest_.end(); ++iter ) {
+		BBoxAA* box = (*iter);
+		box->deleteObject();
+	}
 }
 
 void BVH::Rebuild(std::vector<Object*>* objects) {
     // Create a forest of bounding boxes around all objects
     std::cout << "Creating BVH of " << objects->size() << " objects" << std::endl;
 
-    std::vector<BBoxAA*> forest;
+	forest_.clear();
     for( std::vector<Object*>::iterator iter = objects->begin(); iter != objects->end(); ++iter )
-        forest.push_back( BBoxAA::newBBoxAA( (*iter) ) );
+        forest_.push_back( BBoxAA::newBBoxAA( (*iter) ) );
 
-    root_.BuildBVH( forest );
+    root_.BuildBVH( forest_ );
 }
 
 void BVHNode::BuildBVH( std::vector<BBoxAA*>& forest ) {
@@ -54,7 +57,7 @@ void BVHNode::BuildBVH( std::vector<BBoxAA*>& forest ) {
 	// The left forest will contain the split index and all before it
 	std::vector<BBoxAA*>::iterator split = sorted[axis].begin() + splitIndex + 1;
 
-	// Split forrest into left and right sections
+	// Split forest into left and right sections
     std::vector<BBoxAA*> left(  sorted[axis].begin(), split );
     std::vector<BBoxAA*> right( split, sorted[axis].end() );
 

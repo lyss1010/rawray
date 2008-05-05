@@ -9,17 +9,22 @@
 namespace rawray {
 
 BVH::~BVH() {
+	ClearForest();
+}
+
+void ClearForest() {
 	for( std::vector<BBoxAA*>::iterator iter = forest_.begin(); iter != forest_.end(); ++iter ) {
 		BBoxAA* box = (*iter);
 		box->deleteObject();
 	}
+	forest_.clear();
 }
 
 void BVH::Rebuild(std::vector<Object*>* objects) {
     // Create a forest of bounding boxes around all objects
     std::cout << "Creating BVH of " << objects->size() << " objects" << std::endl;
 
-	forest_.clear();
+	ClearForest();
     for( std::vector<Object*>::iterator iter = objects->begin(); iter != objects->end(); ++iter )
         forest_.push_back( BBoxAA::newBBoxAA( (*iter) ) );
 
@@ -27,8 +32,6 @@ void BVH::Rebuild(std::vector<Object*>* objects) {
 }
 
 void BVHNode::BuildBVH( std::vector<BBoxAA*>& forest ) {
-    // TODO: Cleanup old data
-
     // If there is only 1 box, we can not split it further
     if( forest.size() == 1 ) {
         isLeaf = true;

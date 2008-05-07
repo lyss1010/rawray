@@ -26,9 +26,10 @@ namespace global {
     extern math::Vector3 img_fg_color;
     extern math::Vector3 img_bg_color;
     extern math::Vector3 gl_bg_color;
-    extern int gl_sphere_sections;
+    extern int  gl_sphere_sections;
 	extern bool gl_render_lights;
     extern bool gl_render_bbox;
+    extern bool gl_render_objects;
     extern bool headless;
 
     extern TriangleIntersection triangle_intersection_algorithm;

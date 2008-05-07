@@ -107,4 +107,18 @@ float BBoxAA::GetVolume() {
     return BoxAA::Volume( box_[1] - box_[0] );
 }
 
+
+namespace BBoxAA_Alg {
+    bool min_lt_x(BBoxAA* a, BBoxAA* b) { return a->GetMin().x < b->GetMin().x; }
+    bool min_lt_y(BBoxAA* a, BBoxAA* b) { return a->GetMin().y < b->GetMin().y; }
+    bool min_lt_z(BBoxAA* a, BBoxAA* b) { return a->GetMin().z < b->GetMin().z; }
+    bool max_lt_x(BBoxAA* a, BBoxAA* b) { return a->GetMax().x < b->GetMax().x; }
+    bool max_lt_y(BBoxAA* a, BBoxAA* b) { return a->GetMax().y < b->GetMax().y; }
+    bool max_lt_z(BBoxAA* a, BBoxAA* b) { return a->GetMax().z < b->GetMax().z; }
+    bool mid_lt_x(BBoxAA* a, BBoxAA* b) { return a->GetMid().x < b->GetMid().x; }
+    bool mid_lt_y(BBoxAA* a, BBoxAA* b) { return a->GetMid().y < b->GetMid().y; }
+    bool mid_lt_z(BBoxAA* a, BBoxAA* b) { return a->GetMid().z < b->GetMid().z; }
+} // namespace BBoxAA_Alg
+
+
 } // namespace rawray

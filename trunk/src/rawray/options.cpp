@@ -17,9 +17,10 @@ namespace global {
     math::Vector3 img_fg_color;
     math::Vector3 img_bg_color;
     math::Vector3 gl_bg_color;
-    int gl_sphere_sections;
+    int  gl_sphere_sections;
 	bool gl_render_lights;
     bool gl_render_bbox;
+    bool gl_render_objects;
     bool headless;
 
     TriangleIntersection triangle_intersection_algorithm;

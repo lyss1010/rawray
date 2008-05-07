@@ -29,6 +29,8 @@ void BVH::Rebuild(std::vector<Object*>* objects) {
         forest_.push_back( BBoxAA::newBBoxAA( (*iter) ) );
 
     root_.BuildBVH( forest_ );
+
+    std::cout << "Done creating BVH of " << objects->size() << "objects" << std::endl;
 }
 
 void BVHNode::BuildBVH( std::vector<BBoxAA*>& forest ) {
@@ -44,20 +46,30 @@ void BVHNode::BuildBVH( std::vector<BBoxAA*>& forest ) {
     // We must split into left and right bounding volumes
     isLeaf = false;
     children = new BVHNode[2];
-        
-    // Create sorted forests
-    std::vector<BBoxAA*> sorted[3] = { 
-        std::vector<BBoxAA*>( forest.begin(), forest.end() ), 
-        std::vector<BBoxAA*>( forest.begin(), forest.end() ), 
-        std::vector<BBoxAA*>( forest.begin(), forest.end() ) };
 
-    std::sort( sorted[0].begin(), sorted[0].end(), BBoxAA::GreaterX );
-    std::sort( sorted[1].begin(), sorted[1].end(), BBoxAA::GreaterY );
-    std::sort( sorted[2].begin(), sorted[2].end(), BBoxAA::GreaterZ );
+    // Create sorted forests
+    std::vector<BBoxAA*> sorted[6] = { 
+        std::vector<BBoxAA*>( forest.begin(), forest.end() ), 
+        std::vector<BBoxAA*>( forest.begin(), forest.end() ), 
+        std::vector<BBoxAA*>( forest.begin(), forest.end() ),
+        std::vector<BBoxAA*>( forest.begin(), forest.end() ), 
+        std::vector<BBoxAA*>( forest.begin(), forest.end() ), 
+        std::vector<BBoxAA*>( forest.begin(), forest.end() )
+    };
+
+    // Sort on every axis based on the min coordinate in that axis
+    std::sort( sorted[0].begin(), sorted[0].end(), BBoxAA_Alg::min_lt_x );
+    std::sort( sorted[1].begin(), sorted[1].end(), BBoxAA_Alg::min_lt_y );
+    std::sort( sorted[2].begin(), sorted[2].end(), BBoxAA_Alg::min_lt_z );
+
+    // Sort on every axis based on the max coordinate in that axis
+    std::sort( sorted[3].begin(), sorted[3].end(), BBoxAA_Alg::max_lt_x );
+    std::sort( sorted[4].begin(), sorted[4].end(), BBoxAA_Alg::max_lt_y );
+    std::sort( sorted[5].begin(), sorted[5].end(), BBoxAA_Alg::max_lt_z );
 
 	// Set the bounding volume now that we have everything sorted
 	const Vector3 min( sorted[0].front()->GetMin().x, sorted[1].front()->GetMin().y, sorted[2].front()->GetMin().z );
-	const Vector3 max( sorted[0].back()->GetMax().x, sorted[1].back()->GetMax().y, sorted[2].back()->GetMax().z );
+	const Vector3 max( sorted[3].back()->GetMax().x,  sorted[4].back()->GetMax().y,  sorted[5].back()->GetMax().z );
 	box.SetBounds( min, max );
 
     size_t splitIndex;
@@ -81,9 +93,9 @@ int8 BVHNode::Split( size_t& splitIndex, std::vector<BBoxAA*>* sorted ) {
     if( sorted[0].size() < 2 ) return -1;
 
     // Compute the best cost we can find for each axis
-    float cost[3];
-    size_t last_left[3];
-    for( int i=0; i<3; ++i ) {
+    float cost[6];
+    size_t last_left[6];
+    for( int i=0; i<6; ++i ) {
 		std::vector<BBoxAA*>& forest = sorted[i];
 
         // Find the best way to split the objects along this axis
@@ -102,29 +114,38 @@ int8 BVHNode::Split( size_t& splitIndex, std::vector<BBoxAA*>* sorted ) {
 		// Compute min/max values of the bounding volume around each forest
 		BoxAA leftVolume, rightVolume;
 
-		std::sort( leftForest.begin(),  leftForest.end(),  BBoxAA::GreaterX );
-		std::sort( rightForest.begin(), rightForest.end(), BBoxAA::GreaterX );
+		std::sort( leftForest.begin(),  leftForest.end(),  BBoxAA_Alg::min_lt_x );
+		std::sort( rightForest.begin(), rightForest.end(), BBoxAA_Alg::min_lt_x );
 		leftVolume[0].x  = leftForest[0]->GetMin().x;
-		leftVolume[1].x  = leftForest[lastIndexLeft]->GetMax().x;
 		rightVolume[0].x = rightForest[0]->GetMin().x;
+
+        std::sort( leftForest.begin(),  leftForest.end(),  BBoxAA_Alg::max_lt_x );
+		std::sort( rightForest.begin(), rightForest.end(), BBoxAA_Alg::max_lt_x );
+        leftVolume[1].x  = leftForest[lastIndexLeft]->GetMax().x;
 		rightVolume[1].x = rightForest[lastIndexRight]->GetMax().x;
 
-		std::sort( leftForest.begin(),  leftForest.end(),  BBoxAA::GreaterY );
-		std::sort( rightForest.begin(), rightForest.end(), BBoxAA::GreaterY );
+        std::sort( leftForest.begin(),  leftForest.end(),  BBoxAA_Alg::min_lt_y );
+		std::sort( rightForest.begin(), rightForest.end(), BBoxAA_Alg::min_lt_y );
 		leftVolume[0].y  = leftForest[0]->GetMin().y;
-		leftVolume[1].y  = leftForest[lastIndexLeft]->GetMax().y;
 		rightVolume[0].y = rightForest[0]->GetMin().y;
+
+        std::sort( leftForest.begin(),  leftForest.end(),  BBoxAA_Alg::max_lt_y );
+		std::sort( rightForest.begin(), rightForest.end(), BBoxAA_Alg::max_lt_y );
+        leftVolume[1].y  = leftForest[lastIndexLeft]->GetMax().y;
 		rightVolume[1].y = rightForest[lastIndexRight]->GetMax().y;
 
-		std::sort( leftForest.begin(),  leftForest.end(),  BBoxAA::GreaterZ );
-		std::sort( rightForest.begin(), rightForest.end(), BBoxAA::GreaterZ );
+        std::sort( leftForest.begin(),  leftForest.end(),  BBoxAA_Alg::min_lt_z );
+		std::sort( rightForest.begin(), rightForest.end(), BBoxAA_Alg::min_lt_z );
 		leftVolume[0].z  = leftForest[0]->GetMin().z;
-		leftVolume[1].z  = leftForest[lastIndexLeft]->GetMax().z;
 		rightVolume[0].z = rightForest[0]->GetMin().z;
+
+        std::sort( leftForest.begin(),  leftForest.end(),  BBoxAA_Alg::max_lt_z );
+		std::sort( rightForest.begin(), rightForest.end(), BBoxAA_Alg::max_lt_z );
+        leftVolume[1].z  = leftForest[lastIndexLeft]->GetMax().z;
 		rightVolume[1].z = rightForest[lastIndexRight]->GetMax().z;
 
         // Find surface areas of the potential bounding volumes
-        float size_left = BoxAA::SurfaceArea( leftVolume[1] - leftVolume[0] );
+        float size_left  = BoxAA::SurfaceArea( leftVolume[1] - leftVolume[0] );
         float size_right = BoxAA::SurfaceArea( rightVolume[1] - rightVolume[0] );
 
         // Compute the cost of the bounding volumes of this split
@@ -240,8 +261,8 @@ void BVHNode::RenderGL(const Vector3& color) {
 	// Render children
 	if( !isLeaf ) {
 		const Vector3 newColor( 0.9 * color );
-		//children[0].RenderGL( newColor );
-		//children[1].RenderGL( newColor );
+		children[0].RenderGL( newColor );
+		children[1].RenderGL( newColor );
 	}
 }
 

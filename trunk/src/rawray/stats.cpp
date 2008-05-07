@@ -4,7 +4,9 @@
 namespace rawray {
 namespace stats {
 
-uint32 triangleIntersections = 0;
+uint64 triangleIntersections = 0;
+uint64 primaryRays = 0;
+uint64 shadowRays = 0;
 
 } // namespace rawray::stats
 } // namespace rawray

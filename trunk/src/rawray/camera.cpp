@@ -4,7 +4,7 @@
 /////////////////////////////////////////////////////////////////////////////
 #include "camera.h"
 #include "float.h"
-
+#include "stats.h"
 
 namespace rawray {
 
@@ -62,6 +62,10 @@ void Camera::CalcLookAt() {
 }
 
 Ray Camera::EyeRay(int x, int y, float xOffset, float yOffset, int width, int height) const {
+#ifdef _DEBUG
+    stats::primaryRays++;
+#endif
+
     // Compute camera coordinate system
     Vector3 wDir(viewDir_);
     wDir.Negate();

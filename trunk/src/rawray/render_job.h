@@ -74,6 +74,7 @@ public:
     bool Run();
     bool IsDone() { return isDone_; }
     void Abort();
+    void DisplayStats();
 
     DWORD ThreadRoutine();
 

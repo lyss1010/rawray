@@ -209,6 +209,9 @@ copy &quot;$(SolutionDir)lib\tools.dll&quot; &quot;$(OutDir)&quot;
 				RelativePath="..\..\res\scenes\bunny.cfg">
 			</File>
 			<File
+				RelativePath="..\..\res\scenes\bunny20.cfg">
+			</File>
+			<File
 				RelativePath="..\..\res\scenes\empty.cfg">
 			</File>
 			<File
@@ -219,6 +222,9 @@ copy &quot;$(SolutionDir)lib\tools.dll&quot; &quot;$(OutDir)&quot;
 			</File>
 			<File
 				RelativePath="..\..\res\scenes\spiral.cfg">
+			</File>
+			<File
+				RelativePath="..\..\res\scenes\sponza.cfg">
 			</File>
 			<File
 				RelativePath="..\..\res\scenes\teapot.cfg">

@@ -47,6 +47,10 @@ void TriangleBarycentricProjection::PreCalc() {
 // Optimized Barycentric 2d projection test
 // See: http://www.mpi-inf.mpg.de/~wald/PhD/wald_phd.pdf p91
 bool TriangleBarycentricProjection::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
+#ifdef _DEBUG
+	stats::triangleIntersections++;
+#endif
+
 	if( det2d_ == 0.0f ) return false;
     const Ray& ray = hit.eyeRay;
 

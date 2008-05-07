@@ -12,6 +12,33 @@ namespace rawray {
 
 class Material;
 
+class SSE_ALIGN BoxAA {
+public:
+	BoxAA() { }
+	BoxAA(const Vector3& min, const Vector3& max) { bounds_[0]=min; bounds_[1]=max; CalcMidpoint(); }
+
+	void SetMin(const Vector3& min) { bounds_[0] = min; CalcMidpoint(); }
+	void SetMax(const Vector3& max) { bounds_[1] = max; CalcMidpoint(); }
+	void SetBounds(const Vector3& min, const Vector3& max) { bounds_[0] = min; bounds_[1] = max; CalcMidpoint(); }
+
+	void CalcMidpoint() { bounds_[2] = bounds_[0] + 0.5 * ( bounds_[1] - bounds_[0] ); }
+
+	bool Intersect(HitInfo& hit, float minDistance, float maxDistance);
+    void IntersectPack(HitPack& hitpack, float minDistance, float maxDistance);
+
+	static float SurfaceArea(const Vector3& size);
+    static float Volume(const Vector3& size);
+
+	Vector3& operator[](int i) { assert( i>=0 && i<=3 ); return bounds_[i]; }
+	const Vector3& operator[](int i) const { assert( i>=0 && i<=3 ); return bounds_[i]; }
+
+private:
+	SSE_ALIGN Vector3 bounds_[3]; // { min, max, mid }
+
+	DISALLOW_COPY_CONSTRUCTORS( BoxAA );
+};
+
+
 class SSE_ALIGN DllExport BBoxAA : public Object
 {
 public:
@@ -21,14 +48,14 @@ public:
     static BBoxAA* newBBoxAA(Object* child);
     static BBoxAA* newBBoxAA(const Vector3& min, const Vector3& max);
 
-    void SetMin(const Vector3& min) { bounds_[0] = min; CalcMidpoint(); }
-    void SetMax(const Vector3& max) { bounds_[1] = max; CalcMidpoint(); }
-    void SetBounds(const Vector3& min, const Vector3& max) { bounds_[0] = min; bounds_[1] = max; CalcMidpoint(); }
+    void SetMin(const Vector3& min) { box_[0] = min; box_.CalcMidpoint(); }
+    void SetMax(const Vector3& max) { box_[1] = max; box_.CalcMidpoint(); }
+    void SetBounds(const Vector3& min, const Vector3& max) { box_[0] = min; box_[1] = max; box_.CalcMidpoint(); }
     void SetObject(Object* child) { child_ = child; }
 
-    virtual Vector3 GetMin() { return bounds_[0]; }
-    virtual Vector3 GetMax() { return bounds_[1]; }
-    Vector3 GetMid() { return bounds_[2]; }
+    virtual Vector3 GetMin() { return box_[0]; }
+    virtual Vector3 GetMax() { return box_[1]; }
+    Vector3 GetMid() { return box_[2]; }
 
     float GetSurfaceArea();
     float GetVolume();
@@ -42,12 +69,9 @@ public:
     virtual bool Intersect(HitInfo& hit, float minDistance, float maxDistance);
     virtual void IntersectPack(HitPack& hitpack, float minDistance, float maxDistance);
 
-    static bool GreaterX(BBoxAA* a, BBoxAA* b) { return a->GetMid().x > b->GetMid().x; }
-    static bool GreaterY(BBoxAA* a, BBoxAA* b) { return a->GetMid().y > b->GetMid().y; }
-    static bool GreaterZ(BBoxAA* a, BBoxAA* b) { return a->GetMid().z > b->GetMid().z; }
-
-    static float SurfaceArea(const Vector3& size);
-    static float Volume(const Vector3& size);
+	static bool GreaterX(BBoxAA* a, BBoxAA* b) { return a->box_[2].x > b->box_[2].x; }
+    static bool GreaterY(BBoxAA* a, BBoxAA* b) { return a->box_[2].y > b->box_[2].y; }
+    static bool GreaterZ(BBoxAA* a, BBoxAA* b) { return a->box_[2].z > b->box_[2].z; }
 
 private:
     BBoxAA(Object* child) : Object(NULL), child_(child) {
@@ -58,9 +82,7 @@ private:
         SetBounds( min, max );
     }
 
-    void CalcMidpoint() { bounds_[2] = GetMin() + 0.5 * ( GetMax() - GetMin() ); }
-
-    SSE_ALIGN Vector3 bounds_[3]; // { min, max, mid }
+    BoxAA   box_;
     Object* child_;
 
     DISALLOW_COPY_CONSTRUCTORS(BBoxAA);

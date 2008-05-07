@@ -44,7 +44,6 @@ void BBoxAA::deleteObject() {
 	_aligned_free( this );
 }
 
-
 void BBoxAA::IntersectPack(HitPack& hitpack, float minDistance, float maxDistance) {
     hitpack.hit_result[0] = Intersect( hitpack.hits[0], minDistance, maxDistance );
     hitpack.hit_result[1] = Intersect( hitpack.hits[1], minDistance, maxDistance );
@@ -53,17 +52,10 @@ void BBoxAA::IntersectPack(HitPack& hitpack, float minDistance, float maxDistanc
 }
 
 
-
-/*
- * Ray class, for use with the optimized ray-box intersection test
- * described in:
- *
- *      Amy Williams, Steve Barrus, R. Keith Morley, and Peter Shirley
+/*      Amy Williams, Steve Barrus, R. Keith Morley, and Peter Shirley
  *      "An Efficient and Robust Ray-Box Intersection Algorithm"
- *      Journal of graphics tools, 10(1):49-54, 2005
- * 
  */
-bool BBoxAA::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
+bool BoxAA::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
     const Ray& r = hit.eyeRay;
     float tmin, tmax, tymin, tymax, tzmin, tzmax;
 
@@ -75,11 +67,8 @@ bool BBoxAA::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
 	if ( (tmin > tymax) || (tymin > tmax) )
 		return false;
 
-	if (tymin > tmin)
-		tmin = tymin;
-
-	if (tymax < tmax)
-		tmax = tymax;
+	if (tymin > tmin) tmin = tymin;
+	if (tymax < tmax) tmax = tymax;
 
 	tzmin = (bounds_[ r.sign[2]   ].z - r.origin.z) * r.inv_direction.z;
 	tzmax = (bounds_[ 1-r.sign[2] ].z - r.origin.z) * r.inv_direction.z;
@@ -87,34 +76,35 @@ bool BBoxAA::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
 	if ( (tmin > tzmax) || (tzmin > tmax) )
 		return false;
 
-	if (tzmin > tmin)
-		tmin = tzmin;
-	if (tzmax < tmax)
-		tmax = tzmax;
+	if (tzmin > tmin) tmin = tzmin;
+	if (tzmax < tmax) tmax = tzmax;
 	
-	if( (tmin < minDistance) || (tmax > maxDistance) )
-		return false;
-
-	// We had a hit with the box, intersect with our child
-	return child_->Intersect( hit, minDistance, maxDistance );
+	return ( (tmin > minDistance) && (tmax < maxDistance) );
 }
 
-float BBoxAA::SurfaceArea(const Vector3& size) {
-    //     2 * ( height*width + length*width + height*length )
+bool BBoxAA::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
+	if( box_.Intersect(hit, minDistance, maxDistance) )
+		return child_->Intersect(hit, minDistance, maxDistance);
+
+	return false;
+}
+
+float BoxAA::SurfaceArea(const Vector3& size) {
+    //           2 * ( height*width  + length*width  + height*length )
     return fabs( 2 * ( size.y*size.z + size.x*size.z + size.y*size.x ) );
 }
 
-float BBoxAA::Volume(const Vector3& size) {
-    // length * width * height
+float BoxAA::Volume(const Vector3& size) {
+    //           length * width  * height
     return fabs( size.x * size.y * size.z );
 }
 
 float BBoxAA::GetSurfaceArea() {
-    return SurfaceArea(bounds_[1]-bounds_[0]);
+	return BoxAA::SurfaceArea( box_[1] - box_[0] );
 }
 
 float BBoxAA::GetVolume() {
-    return Volume(bounds_[1]-bounds_[0]);
+    return BoxAA::Volume( box_[1] - box_[0] );
 }
 
 } // namespace rawray

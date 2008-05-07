@@ -5,6 +5,7 @@
 #include "glut_window.h"
 #include "render_job.h"
 #include "parser.h"
+#include "stats.h"
 
 namespace {
 
@@ -53,7 +54,10 @@ GlutWindow::GlutWindow(int* argc, char* argv[]) : cam_(), img_(), scene_(),
                 Sleep( 1000 );
             }
 
-            std::cout << std::endl;
+			std::cout << std::endl << std::endl;
+#ifdef _DEBUG
+			std::cout << "Number of intersections: " << rawray::stats::triangleIntersections << std::endl;
+#endif
         }
 
     } else {

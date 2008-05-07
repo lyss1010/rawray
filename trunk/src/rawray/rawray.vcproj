@@ -236,6 +236,9 @@
 					RelativePath=".\options.cpp">
 				</File>
 				<File
+					RelativePath=".\stats.cpp">
+				</File>
+				<File
 					RelativePath=".\stdafx.cpp">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -345,6 +348,9 @@
 				</File>
 				<File
 					RelativePath=".\options.h">
+				</File>
+				<File
+					RelativePath=".\stats.h">
 				</File>
 				<File
 					RelativePath=".\stdafx.h">

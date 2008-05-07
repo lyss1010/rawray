@@ -35,7 +35,9 @@ void BVHNode::BuildBVH( std::vector<BBoxAA*>& forest ) {
     // If there is only 1 box, we can not split it further
     if( forest.size() == 1 ) {
         isLeaf = true;
-        bbox = forest[0];
+        leaf = forest[0];
+		box.SetBounds( leaf->GetMin(), leaf->GetMax() );
+
         return;
     }
 
@@ -52,6 +54,11 @@ void BVHNode::BuildBVH( std::vector<BBoxAA*>& forest ) {
     std::sort( sorted[0].begin(), sorted[0].end(), BBoxAA::GreaterX );
     std::sort( sorted[1].begin(), sorted[1].end(), BBoxAA::GreaterY );
     std::sort( sorted[2].begin(), sorted[2].end(), BBoxAA::GreaterZ );
+
+	// Set the bounding volume now that we have everything sorted
+	const Vector3 min( sorted[0].front()->GetMin().x, sorted[1].front()->GetMin().y, sorted[2].front()->GetMin().z );
+	const Vector3 max( sorted[0].back()->GetMax().x, sorted[1].back()->GetMax().y, sorted[2].back()->GetMax().z );
+	box.SetBounds( min, max );
 
     size_t splitIndex;
     int8 axis = Split( splitIndex, sorted );
@@ -81,25 +88,47 @@ int8 BVHNode::Split( size_t& splitIndex, std::vector<BBoxAA*>* sorted ) {
 
         // Find the best way to split the objects along this axis
         last_left[i] = FindSplittingPlane( forest );
+		std::vector<BBoxAA*>::iterator split = sorted[i].begin() + last_left[i] + 1;
 
-		// Make sure there is at least 1 element in the left section
-		assert( last_left[i] >= 0 );
+		// Make sure there is at least 1 element in the left section and right section
+		assert( last_left[i] >= 0 && last_left[i]+1 < forest.size() );
 
-		// Make sure there is at least 1 element in the right section
-		assert( last_left[i]+1 < forest.size() );
+		// Create left and right sections
+		std::vector<BBoxAA*> leftForest(  sorted[i].begin(), split );
+		std::vector<BBoxAA*> rightForest( split, sorted[i].end() );
+		size_t lastIndexLeft  = leftForest.size() - 1;
+		size_t lastIndexRight = rightForest.size() - 1;
+
+		// Compute min/max values of the bounding volume around each forest
+		BoxAA leftVolume, rightVolume;
+
+		std::sort( leftForest.begin(),  leftForest.end(),  BBoxAA::GreaterX );
+		std::sort( rightForest.begin(), rightForest.end(), BBoxAA::GreaterX );
+		leftVolume[0].x  = leftForest[0]->GetMin().x;
+		leftVolume[1].x  = leftForest[lastIndexLeft]->GetMax().x;
+		rightVolume[0].x = rightForest[0]->GetMin().x;
+		rightVolume[1].x = rightForest[lastIndexRight]->GetMax().x;
+
+		std::sort( leftForest.begin(),  leftForest.end(),  BBoxAA::GreaterY );
+		std::sort( rightForest.begin(), rightForest.end(), BBoxAA::GreaterY );
+		leftVolume[0].y  = leftForest[0]->GetMin().y;
+		leftVolume[1].y  = leftForest[lastIndexLeft]->GetMax().y;
+		rightVolume[0].y = rightForest[0]->GetMin().y;
+		rightVolume[1].y = rightForest[lastIndexRight]->GetMax().y;
+
+		std::sort( leftForest.begin(),  leftForest.end(),  BBoxAA::GreaterZ );
+		std::sort( rightForest.begin(), rightForest.end(), BBoxAA::GreaterZ );
+		leftVolume[0].z  = leftForest[0]->GetMin().z;
+		leftVolume[1].z  = leftForest[lastIndexLeft]->GetMax().z;
+		rightVolume[0].z = rightForest[0]->GetMin().z;
+		rightVolume[1].z = rightForest[lastIndexRight]->GetMax().z;
 
         // Find surface areas of the potential bounding volumes
-        BBoxAA* left_max  = forest[ last_left[i] ];
-        BBoxAA* left_min = forest[ 0 ];
-
-        BBoxAA* right_max  = forest[ sorted[i].size() - 1 ];
-        BBoxAA* right_min = forest[ last_left[i] + 1 ];
-
-        float size_left = BBoxAA::SurfaceArea( left_max->GetMax() - left_min->GetMin() );
-        float size_right = BBoxAA::SurfaceArea( right_max->GetMax() - right_min->GetMin() );
+        float size_left = BoxAA::SurfaceArea( leftVolume[1] - leftVolume[0] );
+        float size_right = BoxAA::SurfaceArea( rightVolume[1] - rightVolume[0] );
 
         // Compute the cost of the bounding volumes of this split
-        cost[i] = Cost( size_left, size_right );
+        cost[i] = Cost( size_left, size_right, last_left[i]+1, forest.size()-last_left[i]-1 );
     }
 
     // Find the best axis to split on
@@ -109,8 +138,7 @@ int8 BVHNode::Split( size_t& splitIndex, std::vector<BBoxAA*>* sorted ) {
     } else {
         axis = (cost[1] < cost[2]) ? 1 : 2;
     }
- 
-    // Find the elements on the left and right
+
     splitIndex = last_left[axis];
     return axis;
 }
@@ -125,23 +153,24 @@ size_t BVHNode::FindSplittingPlane( std::vector<BBoxAA*>& sorted ) {
 	size_t splitIndex = 0;
     
     // For all possible split points, compute the cost; finding the minimum
+	int numLeft = 1;
+	int numRight = sorted.size()-1;
 	for( size_t i=0; i<sorted.size()-1; ++i ) {
         left.SetMax(  sorted[i]->GetMax() );
         right.SetMin( sorted[i+1]->GetMin() );
 
-        float cost = Cost( left.GetSurfaceArea(), right.GetSurfaceArea() );
+        float cost = Cost( left.GetSurfaceArea(), right.GetSurfaceArea(), numLeft++, numRight-- );
         if( cost < min_cost ) {
             min_cost = cost;
             splitIndex = i;
         }
-
     }
 
     return splitIndex;
 }
 
-float BVHNode::Cost(float areaLeft, float areaRight) {
-    return areaLeft + areaRight;
+float BVHNode::Cost(float areaLeft, float areaRight, int numLeft, int numRight) {
+    return (numLeft * areaLeft) + (numRight * areaRight);
 }
 
 void BVH::PreCalc() {
@@ -149,12 +178,80 @@ void BVH::PreCalc() {
 }
 
 void BVH::RenderGL() {
+	if( !options::global::gl_render_bbox )
+		return;
+ 
+	root_.RenderGL( Vector3( 0.0f, 1.0f, 0.0f ) );
+}
+
+void BVHNode::RenderGL(const Vector3& color) {
+
+    const Vector3 p1( box[0].x, box[0].y, box[0].z );
+    const Vector3 p2( box[0].x, box[1].y, box[0].z );
+    const Vector3 p3( box[1].x, box[1].y, box[0].z );
+    const Vector3 p4( box[1].x, box[0].y, box[0].z );
+
+    const Vector3 p5( box[0].x, box[0].y, box[1].z );
+    const Vector3 p6( box[0].x, box[1].y, box[1].z );
+    const Vector3 p7( box[1].x, box[1].y, box[1].z );
+    const Vector3 p8( box[1].x, box[0].y, box[1].z );
+
+	glBegin( GL_QUADS );
+	glColor3f( color.x, color.y, color.z );
+
+    // Back plane
+    glVertex3f( p1.x, p1.y, p1.z );
+    glVertex3f( p2.x, p2.y, p2.z );
+    glVertex3f( p3.x, p3.y, p3.z );
+    glVertex3f( p4.x, p4.y, p4.z );
+
+    // Front plane
+    glVertex3f( p5.x, p5.y, p5.z );
+    glVertex3f( p8.x, p8.y, p8.z );
+    glVertex3f( p7.x, p7.y, p7.z );
+    glVertex3f( p6.x, p6.y, p6.z );
+
+    // Bottom plane
+    glVertex3f( p1.x, p1.y, p1.z );
+    glVertex3f( p4.x, p4.y, p4.z );
+    glVertex3f( p8.x, p8.y, p8.z );
+    glVertex3f( p5.x, p5.y, p5.z );
+
+    // Top plane
+    glVertex3f( p2.x, p2.y, p2.z );
+    glVertex3f( p6.x, p6.y, p6.z );
+    glVertex3f( p7.x, p7.y, p7.z );
+    glVertex3f( p3.x, p3.y, p3.z );
+
+    // Right plane
+    glVertex3f( p7.x, p7.y, p7.z );
+    glVertex3f( p8.x, p8.y, p8.z );
+    glVertex3f( p4.x, p4.y, p4.z );
+    glVertex3f( p3.x, p3.y, p3.z );
+
+    // Left plane
+    glVertex3f( p1.x, p1.y, p1.z );
+    glVertex3f( p5.x, p5.y, p5.z );
+    glVertex3f( p6.x, p6.y, p6.z );
+    glVertex3f( p2.x, p2.y, p2.z );
+
+	glEnd();
+
+	// Render children
+	if( !isLeaf ) {
+		const Vector3 newColor( 0.9 * color );
+		//children[0].RenderGL( newColor );
+		//children[1].RenderGL( newColor );
+	}
 }
 
 bool BVHNode::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
     if( isLeaf ) {
-        return bbox->Intersect(hit, minDistance, maxDistance);
+        return leaf->Intersect(hit, minDistance, maxDistance);
     } else {
+		if( !box.Intersect(hit, minDistance, maxDistance) )
+			return false;
+
         if( children[0].Intersect(hit, minDistance, maxDistance) ) {
             // We hit the left node, check if a right hit would be closer
             HitInfo hit2 = hit;

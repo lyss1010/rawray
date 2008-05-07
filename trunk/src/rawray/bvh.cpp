@@ -5,6 +5,7 @@
 #include "bvh.h"
 #include "bbox_aa.h"
 #include "float.h"
+#include "time.h"
 
 namespace rawray {
 
@@ -28,9 +29,11 @@ void BVH::Rebuild(std::vector<Object*>* objects) {
     for( std::vector<Object*>::iterator iter = objects->begin(); iter != objects->end(); ++iter )
         forest_.push_back( BBoxAA::newBBoxAA( (*iter) ) );
 
+    clock_t startTime = clock();
     root_.BuildBVH( forest_ );
+    clock_t endTime = clock();
 
-    std::cout << "Done creating BVH of " << objects->size() << "objects" << std::endl;
+    std::cout << "Done creating BVH of " << objects->size() << "objects in " << (endTime-startTime)/CLOCKS_PER_SEC << " seconds" << std::endl;
 }
 
 void BVHNode::BuildBVH( std::vector<BBoxAA*>& forest ) {

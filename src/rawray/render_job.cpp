@@ -4,6 +4,8 @@
 /////////////////////////////////////////////////////////////////////////////
 #include "render_job.h"
 #include "time.h"
+#include "stats.h"
+
 
 namespace rawray {
 
@@ -220,11 +222,23 @@ DWORD RenderJob::ThreadRoutine() {
 
         std::cout << "Raytrace job of " << img_.GetWidth() << "x" << img_.GetHeight();
         std::cout << " done in " << float(endTime-startTime)/CLOCKS_PER_SEC << " seconds" << std::endl;
+
+        DisplayStats();
     }
 
     isDone_ = true;
     return 0;
 }
+
+void RenderJob::DisplayStats() {
+#ifdef _DEBUG
+		std::cout << "Number of intersections: " << rawray::stats::triangleIntersections << std::endl;
+        std::cout << "Number of rays: " << (rawray::stats::primaryRays + rawray::stats::shadowRays) << std::endl;
+        std::cout << "Average intersection/ray: " << float(rawray::stats::triangleIntersections)/(rawray::stats::primaryRays + rawray::stats::shadowRays) << std::endl;
+#endif
+}
+
+
 
 } // namespace rawray
 

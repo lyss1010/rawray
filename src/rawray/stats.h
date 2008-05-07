@@ -8,7 +8,9 @@
 namespace rawray {
 namespace stats {
 
-extern uint32 triangleIntersections;
+extern uint64 triangleIntersections;
+extern uint64 primaryRays;
+extern uint64 shadowRays;
 
 } // namespace rawray::stats
 } // namespace rawray

@@ -69,10 +69,6 @@ public:
     virtual bool Intersect(HitInfo& hit, float minDistance, float maxDistance);
     virtual void IntersectPack(HitPack& hitpack, float minDistance, float maxDistance);
 
-	static bool GreaterX(BBoxAA* a, BBoxAA* b) { return a->box_[2].x > b->box_[2].x; }
-    static bool GreaterY(BBoxAA* a, BBoxAA* b) { return a->box_[2].y > b->box_[2].y; }
-    static bool GreaterZ(BBoxAA* a, BBoxAA* b) { return a->box_[2].z > b->box_[2].z; }
-
 private:
     BBoxAA(Object* child) : Object(NULL), child_(child) {
         SetBounds( child->GetMin(), child->GetMax() );
@@ -88,6 +84,20 @@ private:
     DISALLOW_COPY_CONSTRUCTORS(BBoxAA);
 
 }; // class BBoxAA
+
+
+namespace BBoxAA_Alg {
+    bool min_lt_x(BBoxAA* a, BBoxAA* b);
+    bool min_lt_y(BBoxAA* a, BBoxAA* b);
+    bool min_lt_z(BBoxAA* a, BBoxAA* b);
+    bool max_lt_x(BBoxAA* a, BBoxAA* b);
+    bool max_lt_y(BBoxAA* a, BBoxAA* b);
+    bool max_lt_z(BBoxAA* a, BBoxAA* b);
+    bool mid_lt_x(BBoxAA* a, BBoxAA* b);
+    bool mid_lt_y(BBoxAA* a, BBoxAA* b);
+    bool mid_lt_z(BBoxAA* a, BBoxAA* b);
+} // namespace BBoxAA_Alg
+
 
 } // namespace rawray
 /////////////////////////////////////////////////////////////////////////////

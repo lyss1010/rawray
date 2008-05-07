@@ -48,6 +48,10 @@ void Triangle::RenderGL() {
 }
 
 void Triangle::IntersectPack(HitPack& hitpack, float minDistance, float maxDistance) {
+#ifdef _DEBUG
+	stats::triangleIntersections += 4;
+#endif
+
     hitpack.hit_result[0] = Intersect( hitpack.hits[0], minDistance, maxDistance );
     hitpack.hit_result[1] = Intersect( hitpack.hits[1], minDistance, maxDistance );
     hitpack.hit_result[2] = Intersect( hitpack.hits[2], minDistance, maxDistance );

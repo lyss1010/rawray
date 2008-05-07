@@ -34,6 +34,8 @@ void Scene::RenderGL() {
 
     for( size_t i=0; i<lights_.size(); ++i )
         lights_[i]->RenderGL();
+
+	bvh_.RenderGL();
 }
 
 void Scene::PreCalc() {

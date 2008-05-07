@@ -8,28 +8,30 @@
 #include "object.h"
 #include "hit_info.h"
 #include "ray.h"
+#include "bbox_aa.h"
 
 /////////////////////////////////////////////////////////////////////////////
 namespace rawray {
 
-class BBoxAA;
-
 struct BVHNode {
     bool isLeaf;
+	BoxAA box;
 	
     union {
-        BBoxAA*  bbox;
+        BBoxAA*  leaf;
         BVHNode* children; // [left, right]
     };
 	
+	void RenderGL(const Vector3& color);
     bool Intersect(HitInfo& hit, float minDistance, float maxDistance);
     void IntersectPack(HitPack& hitpack, float minDistance, float maxDistance);
+
     void BuildBVH( std::vector<BBoxAA*>& forrset );
 
 private:
     int8 Split( size_t& splitIndex, std::vector<BBoxAA*>* sorted );
     size_t FindSplittingPlane( std::vector<BBoxAA*>& sorted );
-    float Cost(float areaLeft, float areaRight);
+    float Cost(float areaLeft, float areaRight, int numLeft, int numRight);
 };
 
 class DllExport BVH : public Object

@@ -34,6 +34,7 @@ public:
     virtual Vector3 GetMin() { return center_ - radius_; }
     virtual Vector3 GetMax() { return center_ + radius_; }
 
+	virtual bool Hit(const Ray& ray, float minDistance, float maxDistance) const;
     virtual bool Intersect(HitInfo& hit, float minDistance, float maxDistance);
     virtual void IntersectPack(HitPack& hitpack, float minDistance, float maxDistance);
 

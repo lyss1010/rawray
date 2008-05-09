@@ -45,6 +45,7 @@ public:
     virtual Vector3 GetMin();
     virtual Vector3 GetMax();
 
+	virtual bool Hit(const Ray& ray, float minDistance, float maxDistance) const;
     virtual bool Intersect(HitInfo& hit, float minDistance, float maxDistance);
     virtual void IntersectPack(HitPack& hitpack, float minDistance, float maxDistance);
 
@@ -54,11 +55,11 @@ protected:
     float vMin_, vMax_;
 
 private:
-    int ComputeV(float* out1, float* out2, float a, float b, float c);
-    float ComputeT(const Ray& ray, const Vector3& point);
-    float ComputeU(float v, const BLPatchData& patch);
-    bool IsValid(float u, float v);
-    Vector3 Eval(float u, float v);
+    int ComputeV(float* out1, float* out2, float a, float b, float c) const;
+    float ComputeT(const Ray& ray, const Vector3& point) const;
+    float ComputeU(float v, const BLPatchData& patch) const;
+    bool IsValid(float u, float v) const;
+    Vector3 Eval(float u, float v) const;
 
     DISALLOW_COPY_CONSTRUCTORS(BLPatch);
 

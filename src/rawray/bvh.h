@@ -23,6 +23,8 @@ struct BVHNode {
     };
 	
 	void RenderGL(const Vector3& color);
+
+	bool Hit(const Ray& ray, float minDistance, float maxDistance) const;
     bool Intersect(HitInfo& hit, float minDistance, float maxDistance);
     void IntersectPack(HitPack& hitpack, float minDistance, float maxDistance);
 
@@ -46,9 +48,10 @@ public:
     virtual void RenderGL();
 
     // TODO: Write me
-    virtual Vector3 GetMin() { return Vector3(-MAX_DISTANCE); }
-    virtual Vector3 GetMax() { return Vector3( MAX_DISTANCE); }
+    virtual Vector3 GetMin() { return root_.box[0]; }
+    virtual Vector3 GetMax() { return root_.box[1]; }
 
+	virtual bool Hit(const Ray& ray, float minDistance, float maxDistance) const;
     virtual bool Intersect(HitInfo& hit, float minDistance, float maxDistance);
     virtual void IntersectPack(HitPack& hitpack, float minDistance, float maxDistance);
 

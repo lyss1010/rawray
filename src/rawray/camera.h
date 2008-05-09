@@ -22,7 +22,7 @@ public:
     inline void SetEye(const Vector3& eye) { eye_=eye; }
     inline void SetUp(const Vector3& up) { up_=up; }
     inline void SetViewDir(const Vector3& viewDir) { viewDir_=viewDir; }
-    inline void SetLookAt(const Vector3& lookAt) { lookAt_=lookAt; }
+	inline void SetLookAt(const Vector3& lookAt) { viewDir_ = lookAt - eye_; }
     inline void SetFOV(float fov) { fov_=fov; }
     inline void SetAspect(float aspect) { aspect_=aspect; }
     inline void SetMinDraw(float minDraw) { minDraw_=minDraw; }
@@ -31,7 +31,6 @@ public:
     inline const Vector3& GetEye() const { return eye_; }
     inline const Vector3& GetUp() const { return up_; }
     inline const Vector3& GetViewDir() const { return viewDir_; }
-    inline const Vector3& GetLookAt() const { return lookAt_; }
     inline float GetFOV() const { return fov_; }
     inline float GetAspect() const { return aspect_; }
     inline float GetMinDraw() const { return minDraw_; }
@@ -44,12 +43,9 @@ public:
     void RenderImage();
 
 private:
-    void CalcLookAt();
-
     Vector3 eye_;
     Vector3 up_;
     Vector3 viewDir_;
-    Vector3 lookAt_;
 
     float fov_;
     float aspect_;

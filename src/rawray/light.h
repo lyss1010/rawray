@@ -28,7 +28,7 @@ public:
 
     virtual void RenderGL();
     virtual void PreCalc()=0;
-	virtual float Falloff(const Vector3& direction)=0;
+	virtual float Falloff(float distance2)=0;
 
 protected:
     Vector3 position_;

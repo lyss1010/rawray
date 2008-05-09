@@ -83,6 +83,14 @@ public:
     Matrix4x4& Invert();
     Matrix4x4& Transpose();
 
+	Matrix4x4& Translate(float x, float y, float z)				{ *this *= Translation(x,y,z); return *this; }
+	Matrix4x4& Scale(float x, float y, float z)					{ *this *= Scaling(x,y,z); return *this; }
+	Matrix4x4& Rotate(float angle, float x, float y, float z)	{ *this *= Rotation(angle, x,y,z); return *this; }
+
+	static Matrix4x4 Translation(float x, float y, float z)				{ Matrix4x4 m; m.SetColumn4(x,y,z,1); return m; }
+	static Matrix4x4 Scaling(float x, float y, float z)					{ Matrix4x4 m; m.m11=x; m.m22=y; m.m33=z; return m; }
+	static Matrix4x4 Rotation(float angle, float x, float y, float z);
+
 }; // class Matrix4x4
 
 

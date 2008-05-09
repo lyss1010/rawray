@@ -1,17 +1,14 @@
 #	             Vertex list
-v -10 -5 -10
-v  10  0 -20
-v  10  5  15
-v -20  0  10
+v -10  0 -10
+v  0   0 -10
+v  10  0 -10
 
 #	             Normal list
-vn 0 1 0
 vn 0 1 0
 vn 0 1 0
 vn 0 1 0
 
 #	    Face list
 f 3//3 2//2 1//1
-f 4//4 3//3 1//1
 
 #	             End of file

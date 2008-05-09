@@ -24,6 +24,32 @@ void Sphere::IntersectPack(HitPack& hitpack, float minDistance, float maxDistanc
     hitpack.hit_result[3] = Intersect( hitpack.hits[3], minDistance, maxDistance );
 }
 
+bool Sphere::Hit(const Ray& ray, float minDistance, float maxDistance) const {
+    const Vector3 toCenter = ray.origin - center_;
+    const float a = ray.direction.Length2();
+    const float b = -math::Dot( 2*ray.direction, toCenter );
+    const float c = toCenter.Length2() - radius_*radius_;
+
+    const float discrim = b*b - 4.0f*a*c;
+    if( discrim < 0 ) // Sqrt would be imaginary
+        return false;
+
+    const float sqrt_discrim = sqrtf( discrim );
+
+    // Quadratic formula, because discrim >=0, root0 < root1
+    register float divisor = 0.5f / a;
+    const float root0 = (b-sqrt_discrim)*divisor;
+    const float root1 = (b+sqrt_discrim)*divisor;
+
+    // Return distance closest to us within range
+    if( root0 > minDistance && root0 < maxDistance )
+        return true;
+    if( root1 > minDistance && root1 < maxDistance )
+        return true;
+
+    return false;
+}
+
 bool Sphere::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
     const Ray& ray = hit.eyeRay;
     const Vector3 toCenter = ray.origin - center_;

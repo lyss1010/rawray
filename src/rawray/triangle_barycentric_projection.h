@@ -24,6 +24,7 @@ public:
     virtual void PreCalc();
     virtual bool Intersect(HitInfo& hit, float minDistance, float maxDistance);
     //void IntersectPack(HitPack& hitpack, float minDistance, float maxDistance);
+	virtual bool Hit(const Ray& ray, float minDistance, float maxDistance) const;
 
 protected:
     TriangleBarycentricProjection(TriangleMesh* mesh, int index, Material* material)

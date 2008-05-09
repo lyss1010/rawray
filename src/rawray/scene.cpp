@@ -60,6 +60,10 @@ bool Scene::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
     return bvh_.Intersect(hit, minDistance, maxDistance );
 }
 
+bool Scene::Hit(const Ray& ray, float minDistance, float maxDistance) const {
+	return bvh_.Hit(ray, minDistance, maxDistance);
+}
+
 void Scene::Raytrace(const Camera& cam, Image& image, int xStart, int yStart, int width, int height)
 {
     Vector3 shadedColor;

@@ -320,7 +320,7 @@ void GlutWindow::ToggleRenderGL() {
                                 scene_, cam_, img_);
         render_->Run();
     }
-
+	
     if( !options::global::headless )
         glutPostRedisplay();
 }

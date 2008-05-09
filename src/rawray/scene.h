@@ -38,6 +38,7 @@ public:
     virtual Vector3 GetMin() { return Vector3(-MAX_DISTANCE); }
     virtual Vector3 GetMax() { return Vector3( MAX_DISTANCE); }
 
+	virtual bool Hit(const Ray& ray, float minDistance = MIN_DISTANCE, float maxDistance = MAX_DISTANCE) const;
     virtual bool Intersect(HitInfo& hit, float minDistance = MIN_DISTANCE, float maxDistance = MAX_DISTANCE );
     virtual void IntersectPack(HitPack& hitpack, float minDistance = MIN_DISTANCE, float maxDistance = MAX_DISTANCE );
 

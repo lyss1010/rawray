@@ -481,4 +481,51 @@ bool TrianglePlucker::Intersect(HitInfo& hit, float minDistance, float maxDistan
     return true;
 }
 
+bool TrianglePlucker::Hit(const Ray& ray, float minDistance, float maxDistance) const {
+#ifdef _DEBUG
+	stats::triangleIntersections++;
+#endif
+
+    PluckerCoord pluckRay( ray.direction, ray.origin );
+    
+    const float dirA = pluckA_.GetOrientation( pluckRay );
+    const float dirB = pluckB_.GetOrientation( pluckRay );
+    float dirC;
+
+    // Favor larger code for less redundant operations
+    // Perform directionality tests as soon as possible and only if nesecary
+    // We will assume a dir == 0 is the same as dir > 0
+    if( dirA >= 0.0f ) { 
+        // Orientations must be positive
+        if( dirB < 0.0f ) return false;
+
+        dirC = pluckC_.GetOrientation( pluckRay );
+        if( dirC < 0.0f ) return false;
+
+    } else {
+        // Orientations must be negative
+        if( dirB >= 0.0f ) return false;
+
+        dirC = pluckC_.GetOrientation( pluckRay );
+        if( dirC >= 0.0f ) return false;
+    }
+
+    
+    // Our orientations are also unnormalized barycentric coordinates
+    const float norm = 1.0f / (dirA + dirB + dirC);
+    const float alpha = dirA * norm;
+    const float beta =  dirB * norm;
+    const float gamma = dirC * norm;
+
+    // Compute the hit point by interpolation based by our barycentric coords
+    const Tuple3I vertexIndices = mesh_->GetVertexIndices()[ index_ ];
+    Vector3 hit = alpha * mesh_->GetVertices()[ vertexIndices.x ] + 
+                  beta  * mesh_->GetVertices()[ vertexIndices.y ] + 
+                  gamma * mesh_->GetVertices()[ vertexIndices.z ];
+
+    // Assuming ray.direction is normalized, dot prodcut will give us length of (hit.point - ray.origin)
+    const float distance = math::Dot( (hit - ray.origin), ray.direction );
+    return ( distance > minDistance && distance < maxDistance );
+}
+
 } // namespace rayray

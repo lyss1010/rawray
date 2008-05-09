@@ -34,7 +34,7 @@ void BLPatch::IntersectPack(HitPack& hitpack, float minDistance, float maxDistan
 }
 
 
-float BLPatch::ComputeU(float v, const BLPatchData& patch) {
+float BLPatch::ComputeU(float v, const BLPatchData& patch) const {
     float denom_a = v*(patch.A1 - patch.A2) + patch.B1 - patch.B2;
     float denom_b = v*(patch.A1           ) + patch.B1;
 
@@ -44,11 +44,76 @@ float BLPatch::ComputeU(float v, const BLPatchData& patch) {
     return -(v*patch.C1 + patch.D1)/denom_b;
 }
 
-bool BLPatch::IsValid(float u, float v) {
+bool BLPatch::IsValid(float u, float v) const {
     if( u < 0.0f || u > 1.0f || v < 0.0f || v > 1.0f )
         return false;
 
     return (u < uMin_ || u > uMax_) || (v < uMin_ || v > uMax_);
+}
+
+bool BLPatch::Hit(const Ray& ray, float minDistance, float maxDistance) const {
+	Vector3 x1 = P11_; x1 -= P10_; x1 -= P01_; x1 += P00_;
+    const Vector3& x2 = P10_ - P00_;
+    const Vector3& x3 = P01_ - P00_;
+    const Vector3& x4 = P00_ - ray.origin;
+
+    BLPatchData patch;
+    patch.A1 = x1.x*ray.direction.z - x1.z*ray.direction.x;
+    patch.B1 = x2.x*ray.direction.z - x2.z*ray.direction.x;
+    patch.C1 = x3.x*ray.direction.z - x3.z*ray.direction.x;
+    patch.D1 = x4.x*ray.direction.z - x4.z*ray.direction.x;
+
+    patch.A2 = x1.y*ray.direction.z - x1.z*ray.direction.y;
+    patch.B2 = x2.y*ray.direction.z - x2.z*ray.direction.y;
+    patch.C2 = x3.y*ray.direction.z - x3.z*ray.direction.y;
+    patch.D2 = x4.y*ray.direction.z - x4.z*ray.direction.y;
+
+    float A = patch.A2*patch.C1 - patch.A1*patch.C2;
+    float B = patch.A2*patch.D1 - patch.A1*patch.D2 + patch.B2*patch.C1 - patch.B1*patch.C2;
+    float C = patch.B2*patch.D1 - patch.B1*patch.D2;
+
+    float v1, v2;
+    int roots = ComputeV( &v1, &v2, A, B, C );
+    uint8 axis = ray.direction.GetDominantAxis( );
+
+	Vector3 hit;
+	float distance;
+    float u = 0.0f;
+    float v = 0.0f;
+    switch( roots ) {
+    case 0:
+        return false;
+    case 1:
+        // There is only 1 root, so only 1 possible hit
+        v = v1;
+        u = ComputeU(v, patch);
+        hit = Eval(u, v);
+        distance = ( hit[axis] - ray.origin[axis] ) / ray.direction[axis];
+
+        return ( IsValid(u, v) && distance > minDistance && distance > maxDistance );
+
+    case 2:
+        // There are 2 roots, so we need to know which hit to use
+        v = v1;
+        u = ComputeU(v, patch);
+        hit = Eval(u, v);
+        distance = ( hit[axis] - ray.origin[axis] ) / ray.direction[axis];
+		
+		if( IsValid(u, v) && distance > minDistance && distance > maxDistance )
+			return true;
+
+        // hit 2 is the only possible valid hit
+        v = v2;
+        u = ComputeU(v, patch);
+        if( !IsValid(u, v) )
+            return false;
+
+        hit = Eval(u, v);
+        distance = ( hit[axis] - ray.origin[axis] ) / ray.direction[axis];
+        return ( IsValid(u, v) && distance > minDistance || distance > maxDistance );
+    }
+
+	return false;
 }
 
 bool BLPatch::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
@@ -157,7 +222,7 @@ bool BLPatch::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
 }
 
 int BLPatch::ComputeV(float* out1, float* out2,
-             float a, float b, float c)
+             float a, float b, float c) const
 {
     int numRoots = math::SolveQuadratic(out1, out2, a, b, c);
 
@@ -186,7 +251,7 @@ int BLPatch::ComputeV(float* out1, float* out2,
 }
 
 // What is the x,y,z position of a point at params u and v?
-Vector3 BLPatch::Eval(float u, float v) {
+Vector3 BLPatch::Eval(float u, float v) const {
     Vector3 p = (1-u) * (1-v) * P00_;
     p += (1-u) * ( v ) * P01_;
     p += ( u ) * (1-v) * P10_;

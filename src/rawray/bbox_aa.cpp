@@ -55,14 +55,13 @@ void BBoxAA::IntersectPack(HitPack& hitpack, float minDistance, float maxDistanc
 /*      Amy Williams, Steve Barrus, R. Keith Morley, and Peter Shirley
  *      "An Efficient and Robust Ray-Box Intersection Algorithm"
  */
-bool BoxAA::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
-    const Ray& r = hit.eyeRay;
-    float tmin, tmax, tymin, tymax, tzmin, tzmax;
+bool BoxAA::Hit(const Ray& ray, float minDistance, float maxDistance) const {
+	float tmin, tmax, tymin, tymax, tzmin, tzmax;
 
-	tmin  = (bounds_[ r.sign[0]   ].x - r.origin.x) * r.inv_direction.x;
-	tmax  = (bounds_[ 1-r.sign[0] ].x - r.origin.x) * r.inv_direction.x;
-	tymin = (bounds_[ r.sign[1]   ].y - r.origin.y) * r.inv_direction.y;
-	tymax = (bounds_[ 1-r.sign[1] ].y - r.origin.y) * r.inv_direction.y;
+	tmin  = (bounds_[ ray.sign[0]   ].x - ray.origin.x) * ray.inv_direction.x;
+	tmax  = (bounds_[ 1-ray.sign[0] ].x - ray.origin.x) * ray.inv_direction.x;
+	tymin = (bounds_[ ray.sign[1]   ].y - ray.origin.y) * ray.inv_direction.y;
+	tymax = (bounds_[ 1-ray.sign[1] ].y - ray.origin.y) * ray.inv_direction.y;
 
 	if ( (tmin > tymax) || (tymin > tmax) )
 		return false;
@@ -70,8 +69,8 @@ bool BoxAA::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
 	if (tymin > tmin) tmin = tymin;
 	if (tymax < tmax) tmax = tymax;
 
-	tzmin = (bounds_[ r.sign[2]   ].z - r.origin.z) * r.inv_direction.z;
-	tzmax = (bounds_[ 1-r.sign[2] ].z - r.origin.z) * r.inv_direction.z;
+	tzmin = (bounds_[ ray.sign[2]   ].z - ray.origin.z) * ray.inv_direction.z;
+	tzmax = (bounds_[ 1-ray.sign[2] ].z - ray.origin.z) * ray.inv_direction.z;
 
 	if ( (tmin > tzmax) || (tzmin > tmax) )
 		return false;
@@ -79,14 +78,20 @@ bool BoxAA::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
 	if (tzmin > tmin) tmin = tzmin;
 	if (tzmax < tmax) tmax = tzmax;
 	
-	return ( (tmin > minDistance) && (tmax < maxDistance) );
+	// If either is true we have a valid hit, if we required both to be true we would
+	// miss intersections where the camera starts out inside the box
+	return ( (tmin > minDistance) || (tmax < maxDistance) );
 }
 
 bool BBoxAA::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
-	if( box_.Intersect(hit, minDistance, maxDistance) )
+	if( box_.Hit(hit.eyeRay, minDistance, maxDistance) )
 		return child_->Intersect(hit, minDistance, maxDistance);
 
 	return false;
+}
+
+bool BBoxAA::Hit(const Ray& ray, float minDistance, float maxDistance) const {
+	return box_.Hit( ray, minDistance, maxDistance );
 }
 
 float BoxAA::SurfaceArea(const Vector3& size) {

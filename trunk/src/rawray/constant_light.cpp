@@ -6,8 +6,8 @@
 
 namespace rawray {
 
-float ConstantLight::Falloff(const Vector3& direction) {
-	UNREFERENCED_PARAMETER(direction);
+float ConstantLight::Falloff(float distance2) {
+	UNREFERENCED_PARAMETER(distance2);
 
 	return 1.0f;
 }

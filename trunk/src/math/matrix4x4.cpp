@@ -269,6 +269,31 @@ inline Matrix4x4& Matrix4x4::Transpose() {
     return *this;
 }
 
+Matrix4x4 Matrix4x4::Rotation(float angle, float x, float y, float z) {
+	const float rad = angle * DEG_TO_RAD;
+
+	const float x2 = x*x;
+	const float y2 = y*y;
+	const float z2 = z*z;
+	const float c = cos(rad);
+	const float s = sin(rad);
+	const float cinv = 1-c;
+	const float xy = x*y;
+	const float xz = x*z;
+	const float yz = y*z;
+	const float xs = x*s;
+	const float ys = y*s;
+	const float zs = z*s;
+	const float xzcinv = xz*cinv;
+	const float xycinv = xy*cinv;
+	const float yzcinv = yz*cinv;
+
+	return Matrix4x4(x2 + c*(1-x2), xy*cinv+zs,    xzcinv - ys,   0,
+					 xycinv - zs,   y2 + c*(1-y2), yzcinv + xs,   0,
+					 xzcinv + ys,   yzcinv - xs,   z2 + c*(1-z2), 0,
+					 0,             0,             0,             1);
+}
+
 } // namespace math
 
 inline math::Matrix4x4 operator*(const math::Matrix4x4& a, const math::Matrix4x4& b) {

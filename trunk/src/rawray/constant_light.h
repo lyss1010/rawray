@@ -24,7 +24,7 @@ public:
 
     //virtual void RenderGL();
 	virtual void PreCalc() { }
-	virtual float Falloff(const Vector3& direction);
+	virtual float Falloff(float distance2);
 
 private:
     DISALLOW_COPY_CONSTRUCTORS(ConstantLight);

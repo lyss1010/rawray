@@ -172,11 +172,13 @@ std::stack<math::Matrix4x4>             g_matrixStack;
 %token YY_S_INSTANCE
 %token YY_GEOMETRY
 
-%token YY_PUSHMATRIX
-%token YY_POPMATRIX
+%token YY_S_MATRIX
+%token YY_PUSH
+%token YY_POP
 %token YY_ROTATE
 %token YY_TRANSLATE
 %token YY_SCALE
+%token YY_SET_IDENTITY
 
 %token YY_S_LIGHT
 %token YY_S_POINTLIGHT
@@ -226,9 +228,8 @@ lambert_stuff:		lambert_option		| lambert_stuff			lambert_option;
 p0_stuff:			p0_option			| p0_stuff				p0_option;
 mesh_stuff:			mesh_option			| mesh_stuff			mesh_option;
 sphere_stuff:		sphere_option		| sphere_stuff			sphere_option;
-triangle_stuff:		triangle_option		| triangle_stuff		triangle_option;
 blpatch_stuff:		blpatch_option		| blpatch_stuff			blpatch_option;
-
+matrix_stuff:		matrix_option		| matrix_stuff			matrix_option;
 
 /* ----------------------- definitions ------------------------*/
 block:
@@ -237,13 +238,12 @@ block:
 		| YY_S_P0 YY_LCURLY p0_stuff YY_RCURLY				{ }
 		| YY_S_LIGHT light_type YY_RCURLY					{ }
 		| YY_S_MATERIAL material_type YY_RCURLY				{ }
-		| transformation									{ }
+		| YY_S_MATRIX YY_LCURLY matrix_stuff YY_RCURLY		{ }
 		| object_type										{ }
 ;
 
 object_type:
-		  object_triangle
-		| object_mesh
+		  object_mesh
 		| object_sphere
 		| object_blpatch
 ;
@@ -326,6 +326,15 @@ lambert_option:
 		| YY_AMBIENT vector3							{ ((rawray::Lambert*)g_material)->SetAmbient( math::Vector3( $2[0], $2[1], $2[2] ) ); }
 ;
 
+matrix_option:
+		  YY_PUSH										{ if( g_matrixStack.size() > 0 ) g_matrixStack.push( g_matrixStack.top() ); else g_matrixStack.push( math::Matrix4x4() ); }
+		| YY_POP										{ if( g_matrixStack.size() > 0 )g_matrixStack.pop(); else printf( "ERROR: Popping empty stack" ); }
+		| YY_SET_IDENTITY								{ g_matrixStack.top().SetIdentity(); }
+		| YY_TRANSLATE vector3							{ g_matrixStack.top().Translate( $2[0], $2[1], $2[2] ); }
+		| YY_SCALE vector3								{ g_matrixStack.top().Scale( $2[0], $2[1], $2[2] ); }
+		| YY_ROTATE vector4								{ g_matrixStack.top().Rotate( $2[0], $2[1], $2[2], $2[3] ); }
+;
+
 p0_option:
 		  YY_SPIRAL_NUM_SPHERES iExp					{ rawray::options::p0::spiral_num_spheres = $2; }
         | YY_SPIRAL_RADIUS rExp							{ rawray::options::p0::spiral_radius = $2; }
@@ -345,7 +354,12 @@ mesh_option:
 			{
 				$2[strlen($2)-1] = 0;
 				printf( "Loading Mesh: '%s'\n", $2+1 );
-				g_mesh->LoadOBJ( $2+1 );
+				
+				if( g_matrixStack.size() == 0 )
+					g_mesh->LoadOBJ( $2+1 );
+				else
+					g_mesh->LoadOBJ( $2+1, g_matrixStack.top() );
+					
 				printf( "Found %d triangles in mesh\n", g_mesh->GetNumTriangles() );
 				
 				delete $2;
@@ -357,15 +371,6 @@ sphere_option:
 		| YY_RADIUS rExp								{ ((rawray::Sphere*)g_obj)->SetRadius( $2 ); }
 ;
 
-triangle_option:
-		  YY_V1 vector3									{ }
-		| YY_V2 vector3									{ } 
-		| YY_V3 vector3									{ } 
-		| YY_N1 vector3									{ } 
-		| YY_N2 vector3									{ } 
-		| YY_N3 vector3									{ } 
-;
-
 blpatch_option:
 		  YY_P00 vector3								{ ((rawray::BLPatch*)g_obj)->SetP00( math::Vector3( $2[0], $2[1], $2[2] ) ); }
 		| YY_P01 vector3								{ ((rawray::BLPatch*)g_obj)->SetP01( math::Vector3( $2[0], $2[1], $2[2] ) ); }
@@ -373,49 +378,6 @@ blpatch_option:
 		| YY_P11 vector3								{ ((rawray::BLPatch*)g_obj)->SetP11( math::Vector3( $2[0], $2[1], $2[2] ) ); }
 		| YY_U_CONSTRAINT vector2                       { ((rawray::BLPatch*)g_obj)->SetUConstraint( $2[0], $2[1] ); }
 		| YY_V_CONSTRAINT vector2                       { ((rawray::BLPatch*)g_obj)->SetVConstraint( $2[0], $2[1] ); }
-
-
-object_triangle:
-		  YY_S_TRIANGLE YY_LCURLY
-			{
-				g_mesh = new rawray::TriangleMesh();
-				
-				// TODO: implement
-				// Create single triangle
-			}
-			triangle_stuff YY_RCURLY
-			{
-				if( g_mesh->GetNumTriangles() > 0 ) {
-					g_scene->AddMesh( g_mesh );
-					rawray::AddTrianglesOfMesh();
-				} else {
-					delete g_mesh;
-					g_mesh = NULL;
-				}
-			}
-
-		| YY_S_TRIANGLE YY_STRING YY_LCURLY
-			{
-				g_mesh = new rawray::TriangleMesh();
-				
-				// TODO: implement
-				//g_objectMap[$2] = g_obj;
-				// Create single triagnle
-				
-				delete $2;
-			}
-			triangle_stuff YY_RCURLY
-			{
-				if( g_mesh->GetNumTriangles() > 0 ) {
-					g_scene->AddMesh( g_mesh );
-					rawray::AddTrianglesOfMesh();
-				} else {
-					delete g_mesh;
-					g_mesh = NULL;
-				}
-			}
-;
-
 
 object_mesh:
 		  YY_S_MESH YY_LCURLY
@@ -500,13 +462,6 @@ object_blpatch:
 				g_obj = NULL;
 			}
 ;
-
-transformation:
-		  YY_PUSHMATRIX				{  }
-		| YY_POPMATRIX				{  }
-		| YY_ROTATE vector4			{  }
-		| YY_TRANSLATE vector3		{  }
-		| YY_SCALE vector3			{  }
 
 vector2:
           YY_LT rExp YY_COMMA rExp YY_GT                { $$[0] = $2; $$[1] = $4; }

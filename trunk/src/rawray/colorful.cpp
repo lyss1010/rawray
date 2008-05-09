@@ -20,23 +20,21 @@ Vector3 Colorful::Shade(const HitInfo& hit, const Scene& scene) const {
 		Light* light = *light_it;
 		Vector3 direction = light->GetPosition() - hit.point;
 
-		float falloff = light->Falloff(direction);
-
-		// Normalize the light direction vector before using
+		float distance2 = direction.Length2();
+		float falloff = light->Falloff(distance2);
 		direction.Normalize();
 
-		const float intensity = std::max( 
-						0.0f, 
-						hit.normal.Dot(direction) * falloff * light->GetWattage() * math::INV_PI );
+		const float intensity = hit.normal.Dot(direction) * falloff * light->GetWattage() * math::INV_PI;
+		if( intensity > 0.0f ) {
+			Vector3 color = light->GetColor();
+			color *= intensity;
 
-		Vector3 color = light->GetColor();
-		color *= intensity;
+			color = Vector3 (  (1-hit.texCoord.y)*(1-hit.texCoord.y),
+							hit.texCoord.x*hit.texCoord.x,
+							hit.texCoord.x );
 
-		color = Vector3 (  (1-hit.texCoord.y)*(1-hit.texCoord.y),
-                           hit.texCoord.x*hit.texCoord.x,
-                           hit.texCoord.x );
-
-		shadedColor += color;
+			shadedColor += color;
+		}
 	}
 
     return shadedColor;

@@ -30,7 +30,19 @@ void BVH::Rebuild(std::vector<Object*>* objects) {
         forest_.push_back( BBoxAA::newBBoxAA( (*iter) ) );
 
     clock_t startTime = clock();
-    root_.BuildBVH( forest_ );
+	if( forest_.size() < 1 ) {
+		std::cout << "" << std::endl;
+
+		// No objects for our bvh, make sure bounds are set so nothing can intersect
+		root_.isLeaf = false;
+		root_.box[0] = Vector3(0);
+		root_.box[1] = Vector3(0);
+		root_.box[2] = Vector3(0);
+		root_.children = NULL;
+	} else {
+		// Create the bvh using the entire forest of objects
+		root_.BuildBVH( forest_ );
+	}
     clock_t endTime = clock();
 
     std::cout << "Done creating BVH of " << objects->size() << "objects in " << (endTime-startTime)/CLOCKS_PER_SEC << " seconds" << std::endl;
@@ -269,12 +281,24 @@ void BVHNode::RenderGL(const Vector3& color) {
 	}
 }
 
+bool BVHNode::Hit(const Ray& ray, float minDistance, float maxDistance) const {
+    if( isLeaf ) {
+        return leaf->Hit(ray, minDistance, maxDistance);
+    } else {
+		if( !box.Hit(ray, minDistance, maxDistance) )
+			return false;
+
+        return ( children[0].Hit(ray, minDistance, maxDistance) || children[0].Hit(ray, minDistance, maxDistance) );
+    }
+}
+
 bool BVHNode::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
     if( isLeaf ) {
         return leaf->Intersect(hit, minDistance, maxDistance);
     } else {
-		if( !box.Intersect(hit, minDistance, maxDistance) )
+		if( !box.Hit(hit.eyeRay, minDistance, maxDistance) ) {
 			return false;
+		}
 
         if( children[0].Intersect(hit, minDistance, maxDistance) ) {
             // We hit the left node, check if a right hit would be closer
@@ -339,6 +363,10 @@ void BVH::IntersectPack(HitPack& hitpack, float minDistance, float maxDistance) 
 
 bool BVH::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
     return root_.Intersect(hit, minDistance, maxDistance);
+}
+
+bool BVH::Hit(const Ray& ray, float minDistance, float maxDistance) const {
+	return root_.Hit(ray, minDistance, maxDistance);
 }
 
 } // namespace rawray

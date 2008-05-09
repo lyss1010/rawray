@@ -23,8 +23,7 @@ public:
 
 	void CalcMidpoint() { bounds_[2] = bounds_[0] + 0.5 * ( bounds_[1] - bounds_[0] ); }
 
-	bool Intersect(HitInfo& hit, float minDistance, float maxDistance);
-    void IntersectPack(HitPack& hitpack, float minDistance, float maxDistance);
+	bool Hit(const Ray& ray, float minDistance, float maxDistance) const;
 
 	static float SurfaceArea(const Vector3& size);
     static float Volume(const Vector3& size);
@@ -66,6 +65,7 @@ public:
     virtual void RenderGL() { }
     virtual void PreCalc() { }
 
+	virtual bool Hit(const Ray& ray, float minDistance, float maxDistance) const;
     virtual bool Intersect(HitInfo& hit, float minDistance, float maxDistance);
     virtual void IntersectPack(HitPack& hitpack, float minDistance, float maxDistance);
 

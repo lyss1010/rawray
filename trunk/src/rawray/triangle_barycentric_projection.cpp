@@ -82,4 +82,35 @@ bool TriangleBarycentricProjection::Intersect(HitInfo& hit, float minDistance, f
     return true;
 }
 
+bool TriangleBarycentricProjection::Hit(const Ray& ray, float minDistance, float maxDistance) const {
+#ifdef _DEBUG
+	stats::triangleIntersections++;
+#endif
+
+	if( det2d_ == 0.0f ) return false;
+
+    // Compute distance to the plane along the ray
+	const Tuple3I vertexIndices = mesh_->GetVertexIndices()[ index_ ];
+    const Vector3& v0 = mesh_->GetVertices()[ vertexIndices.x ];
+
+    // NOTE: We will allow division by zero, which will give infinity and fail in the distance tests
+    const float t = math::Dot( ray.origin-v0, n_ ) / math::Dot( ray.direction, n_ );
+    if( t < minDistance || t > maxDistance ) return false;
+
+    // Compute the point on the plane where we intersect minus the first vertex
+    Vector3 hit( (ray.direction * t) + ray.origin );
+    
+    // Compute the 2d determinant get barycentric coordinates
+    const float hv = (hit[v_] - v0[v_]);
+    const float hu = (hit[u_] - v0[u_]);
+    const float beta = (hv * b_[u_] - hu * b_[v_]) * det2d_;
+    if( beta < 0.0f ) return false;
+
+    const float gamma = (hu * c_[v_] - hv * c_[u_]) * det2d_;
+    if( gamma < 0.0f ) return false;
+    if( beta+gamma > 1.0f ) return false;
+
+	return true;
+}
+
 } // namespace rayray

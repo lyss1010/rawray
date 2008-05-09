@@ -20,7 +20,7 @@ public:
     PluckerCoord() { }
     PluckerCoord(const Vector3& direction, const Vector3& point);
 
-    float GetOrientation(const PluckerCoord& p);
+    float GetOrientation(const PluckerCoord& p) const;
 
 public:
     Vector3 u_, v_;
@@ -42,6 +42,7 @@ public:
     virtual Vector3 GetMin();
     virtual Vector3 GetMax();
 
+	virtual bool Hit(const Ray& ray, float minDistance, float maxDistance) const=0;
     virtual bool Intersect(HitInfo& hit, float minDistance, float maxDistance)=0;
     virtual void IntersectPack(HitPack& hitpack, float minDistance, float maxDistance);
 

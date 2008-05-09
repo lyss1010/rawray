@@ -20,20 +20,30 @@ Vector3 Lambert::Shade(const HitInfo& hit, const Scene& scene) const {
 		Light* light = *light_it;
 		Vector3 direction = light->GetPosition() - hit.point;
 
-		float falloff = light->Falloff(direction);
-
-		// Normalize the light direction vector before using
+		float distance2 = direction.Length2();
+		float falloff = light->Falloff(distance2);
 		direction.Normalize();
 
-		const float intensity = std::max( 
-						0.0f, 
-						hit.normal.Dot(direction) * falloff * light->GetWattage() * math::INV_PI );
+		// See if we are in shadow
+		//Ray shadowRay = Ray( hit.point, direction );
+		//if( scene.Hit( shadowRay, MIN_DISTANCE, sqrt(distance2) ) )
+		//	continue;
 
-		Vector3 color = light->GetColor();
-		color *= diffuse_;
-		color *= intensity;
+		HitInfo tmp;
+		tmp.eyeRay = Ray( hit.point, direction );
+		Scene& s = const_cast<Scene&>(scene);
+		if( s.Intersect( tmp, MIN_DISTANCE, sqrt(distance2) ) ) {
+			continue;
+		}
+		
+		const float intensity = hit.normal.Dot(direction) * falloff * light->GetWattage() * math::INV_PI;
+		if( intensity > 0.0f ) {
+			Vector3 color = light->GetColor();
+			color *= diffuse_;
+			color *= intensity;
 
-		shadedColor += color;
+			shadedColor += color;
+		}
 	}
 
     // Add in ambient component regardless of lights

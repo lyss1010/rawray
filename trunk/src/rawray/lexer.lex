@@ -50,7 +50,6 @@ STRING      '([^']*)'|\"([^\"]*)\"
 
 %x s_global
 %x s_camera
-%x s_triangle
 %x s_bbox
 %x s_mesh
 %x s_instance
@@ -63,6 +62,7 @@ STRING      '([^']*)'|\"([^\"]*)\"
 %x s_sphere
 %x s_blpatch
 %x s_p0
+%x s_matrix
 %%
 
 <*>enable{WS}       { return YY_ENABLE; }
@@ -149,28 +149,13 @@ STRING      '([^']*)'|\"([^\"]*)\"
 <s_p0>lorenz{WS}num{WS}spheres			{ return YY_LORENZ_NUM_SPHERES; }
 <s_p0>lorenz{WS}start					{ return YY_LORENZ_START; }
 
-<INITIAL>triangle{WS}					{ yy_push_state(s_triangle); return YY_S_TRIANGLE; }
-<s_triangle>v1{WS}						{ return YY_V1; }
-<s_triangle>v2{WS}						{ return YY_V2; }
-<s_triangle>v3{WS}						{ return YY_V3; }
-<s_triangle>n1{WS}						{ return YY_N1; }
-<s_triangle>n2{WS}						{ return YY_N2; }
-<s_triangle>n3{WS}						{ return YY_N3; }
-
 <INITIAL>mesh{WS}						{ yy_push_state(s_mesh); return YY_S_MESH; }
 <s_mesh>load{WS}						{ return YY_LOAD; }
 
 <INITIAL>instance{WS}					{ yy_push_state(s_instance); return YY_S_INSTANCE; }
 <s_instance>geometry{WS}				{ return YY_GEOMETRY; }
 
-<INITIAL>push{WS}matrix{WS}				{ return YY_PUSHMATRIX; }
-<INITIAL>pop{WS}matrix{WS}				{ return YY_POPMATRIX; }
-<INITIAL>rotate{WS}						{ return YY_ROTATE; }
-<INITIAL>translate{WS}					{ return YY_TRANSLATE; }
-<INITIAL>scale{WS}						{ return YY_SCALE; }
-
 <INITIAL>light{WS}						{ yy_push_state(s_light); return YY_S_LIGHT; }
-
 <s_light>point{WS}						{ yy_pop_state(); yy_push_state(s_pointlight); return YY_S_POINTLIGHT; }
 <s_pointlight>color{WS}					{ return YY_COLOR; }
 <s_pointlight>pos{WS}					{ return YY_POS; }
@@ -199,13 +184,20 @@ STRING      '([^']*)'|\"([^\"]*)\"
 <s_blpatch>u{WS}constraint{WS}          { return YY_U_CONSTRAINT; }
 <s_blpatch>v{WS}constraint{WS}          { return YY_V_CONSTRAINT; }
 
+<INITIAL>matrix{WS}						{ yy_push_state(s_matrix); return YY_S_MATRIX; }
+<s_matrix>push{WS}						{ return YY_PUSH; }
+<s_matrix>pop{WS}						{ return YY_POP; }
+<s_matrix>set{WS}identity{WS}			{ return YY_SET_IDENTITY; }
+<s_matrix>rotate{WS}					{ return YY_ROTATE; }
+<s_matrix>translate{WS}					{ return YY_TRANSLATE; }
+<s_matrix>scale{WS}						{ return YY_SCALE; }
 
-<*>{STRING}{WS}                     { yylval.str = _strdup(yytext); return YY_STRING; }
-<*>{INT}{WS}                        { yylval.integer = atoi(yytext); return YY_PARSE_INT; }
-<*>{REAL}{WS}                       { yylval.real = (float)atof(yytext); return YY_REAL; }
+<*>{STRING} 							{ yylval.str = _strdup(yytext); return YY_STRING; }
+<*>{INT}{WS}							{ yylval.integer = atoi(yytext); return YY_PARSE_INT; }
+<*>{REAL}{WS}							{ yylval.real = (float)atof(yytext); return YY_REAL; }
 
-<*>[ ,\t\r]+						// eat up whitespace
-<*>{COMMENT}						// eat up comments 
-.                                   { printf("\nParse error #%d line %d near: %s\n", ++yyerr, yyline, yytext); }
+<*>[ ,\t\r]+							// eat up whitespace
+<*>{COMMENT}							// eat up comments 
+.										{ printf("\nParse error #%d line %d near: %s\n", ++yyerr, yyline, yytext); }
 
 %%

@@ -6,9 +6,9 @@
 
 namespace rawray {
 
-float PointLight::Falloff(const Vector3& direction) {
+float PointLight::Falloff(float distance2) {
 	// Inverse square falloff
-	return 1.0f / direction.Length2();
+	return 1.0f / distance2;
 }
 
 

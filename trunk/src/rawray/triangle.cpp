@@ -13,7 +13,7 @@ PluckerCoord::PluckerCoord(const Vector3& direction, const Vector3& point) {
 	math::Cross(direction,point,v_);
 }
 
-float PluckerCoord::GetOrientation(const PluckerCoord& p) {
+float PluckerCoord::GetOrientation(const PluckerCoord& p) const {
 	return u_.Dot(p.v_) + v_.Dot(p.u_);
 }
 

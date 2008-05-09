@@ -23,6 +23,7 @@ public:
     //virtual void RenderGL();
     virtual void PreCalc();
     virtual bool Intersect(HitInfo& hit, float minDistance, float maxDistance);
+	virtual bool Hit(const Ray& ray, float minDistance, float maxDistance) const;
 
 #ifdef SSE
     virtual void IntersectPack(HitPack& hitpack, float minDistance, float maxDistance);

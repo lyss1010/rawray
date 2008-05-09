@@ -9,11 +9,10 @@
 namespace rawray {
 
 Camera::Camera() : eye_(options::camera::eye), viewDir_(options::camera::view),
-    up_(options::camera::up), lookAt_(options::camera::up), fov_(options::camera::fov),
+    up_(options::camera::up), fov_(options::camera::fov),
     aspect_(options::camera::aspect), minDraw_(options::camera::min_draw), 
     maxDraw_(options::camera::max_draw), redrawImage_(true)
 {
-    CalcLookAt();
 }
 
 void Camera::Resize(int width, int height) {
@@ -22,8 +21,6 @@ void Camera::Resize(int width, int height) {
 }
 
 void Camera::RenderGL() {
-    CalcLookAt();
-    
     glDrawBuffer( GL_BACK );
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
@@ -42,8 +39,6 @@ void Camera::RenderGL() {
 }
 
 void Camera::RenderImage() {
-    CalcLookAt(); // NOTE: Shouldn't need to recalc this when rendering an image, camera is fixed
-
     glDrawBuffer( GL_FRONT );
     glMatrixMode( GL_PROJECTION );
     glLoadIdentity();
@@ -51,15 +46,6 @@ void Camera::RenderImage() {
     glLoadIdentity();
 }
 
-void Camera::CalcLookAt() {
-    // Check if there was a value loaded from a config file
-    if( lookAt_.x != FLT_MAX ) {
-        viewDir_ = lookAt_;
-        viewDir_ -= eye_;
-
-        lookAt_ = Vector3(FLT_MAX, FLT_MAX, FLT_MAX);
-    }
-}
 
 Ray Camera::EyeRay(int x, int y, float xOffset, float yOffset, int width, int height) const {
 #ifdef _DEBUG

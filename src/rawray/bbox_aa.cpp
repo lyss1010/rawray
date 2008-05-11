@@ -5,6 +5,7 @@
 #include "bbox_aa.h"
 #include "material.h"
 #include "ray.h"
+#include "stats.h"
 #include <new>
 
 namespace rawray {
@@ -56,6 +57,7 @@ void BBoxAA::IntersectPack(HitPack& hitpack, float minDistance, float maxDistanc
  *      "An Efficient and Robust Ray-Box Intersection Algorithm"
  */
 bool BoxAA::Hit(const Ray& ray, float minDistance, float maxDistance) const {
+	stats::boxIntersections++;
 	float tmin, tmax, tymin, tymax, tzmin, tzmax;
 
 	tmin  = (bounds_[ ray.sign[0]   ].x - ray.origin.x) * ray.inv_direction.x;
@@ -84,14 +86,36 @@ bool BoxAA::Hit(const Ray& ray, float minDistance, float maxDistance) const {
 }
 
 bool BBoxAA::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
-	if( box_.Hit(hit.eyeRay, minDistance, maxDistance) )
-		return child_->Intersect(hit, minDistance, maxDistance);
+	if( box_.Hit(hit.eyeRay, minDistance, maxDistance) ) {
+		uint32 numHits = 0;
+		HitInfo tempHit = hit;
+		tempHit.distance = MAX_DISTANCE;
+		
+		// TODO: Fix me
+		for( std::list<Object*>::iterator iter = children_.begin(); iter != children_.end(); ++iter ) {
+			if( (*iter)->Intersect(tempHit, minDistance, maxDistance) ) {
+				++numHits;
+				if( tempHit.distance < hit.distance )
+					hit = tempHit;
+			}
+		}
+
+		return numHits > 0;
+	}
 
 	return false;
 }
 
 bool BBoxAA::Hit(const Ray& ray, float minDistance, float maxDistance) const {
-	return box_.Hit( ray, minDistance, maxDistance );
+	if( !box_.Hit( ray, minDistance, maxDistance ) )
+		return false;
+
+	for( std::list<Object*>::const_iterator iter = children_.begin(); iter != children_.end(); ++iter ) {
+		if( (*iter)->Hit(ray, minDistance, maxDistance) )
+			return true;
+	}
+
+	return false;
 }
 
 float BoxAA::SurfaceArea(const Vector3& size) {

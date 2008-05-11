@@ -5,16 +5,19 @@
 #include "lambert.h"
 #include "math/vector3.h"
 #include "light.h"
+#include "stats.h"
 
 namespace rawray {
 
 Vector3 Lambert::Shade(const HitInfo& hit, const Scene& scene) const {
-    const Ray& ray = hit.eyeRay;
+	const Ray& ray = hit.eyeRay;
     const Vector3 viewDir = -ray.direction;
     const std::vector<Light*>& lights = scene.GetLights();
     Vector3 shadedColor(0.0f, 0.0f, 0.0f);
 
-    // Loop over all lights
+	stats::shadowRays += lights.size();
+
+	// Loop over all lights
     std::vector<Light*>::const_iterator light_it = lights.begin();
     for (light_it=lights.begin(); light_it != lights.end(); ++light_it) {
 		Light* light = *light_it;
@@ -32,7 +35,7 @@ Vector3 Lambert::Shade(const HitInfo& hit, const Scene& scene) const {
 		HitInfo tmp;
 		tmp.eyeRay = Ray( hit.point, direction );
 		Scene& s = const_cast<Scene&>(scene);
-		if( s.Intersect( tmp, MIN_DISTANCE, sqrt(distance2) ) ) {
+		if( scene.Hit( Ray( hit.point, direction ), MIN_DISTANCE, sqrt(distance2) ) ) {
 			continue;
 		}
 		

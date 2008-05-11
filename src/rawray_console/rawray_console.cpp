@@ -45,10 +45,10 @@ int _tmain( int argc, _TCHAR* argv[] )
 	//_CrtSetBreakAlloc( 143 );
 
     if( !SSETest() ) {
-        std::cout << "This compute does not support the required SSE Version" << std::endl;
+        std::cout << "This computer does not support the required SSE Version" << std::endl;
         return -1;
     }
-        
+
     tools::sse::SetFastFPU();
 
     // Initialize options defaults
@@ -61,5 +61,6 @@ int _tmain( int argc, _TCHAR* argv[] )
     // This will only return if we are in headless mode
 	rawray::g_window->MainLoop();
 
+	system("pause");
 	return 0;
 }

@@ -39,9 +39,7 @@ void TrianglePlucker::PreCalc() {
 // SSE Enhanced intersection of 4x rays simultaneously
 #ifdef SSE
 void TrianglePlucker::IntersectPack(HitPack& hitpack, float minDistance, float maxDistance) {
-#ifdef _DEBUG
 	stats::triangleIntersections += 4;
-#endif
 
 	const Tuple3I vertexIndices = mesh_->GetVertexIndices()[ index_ ];
     const __m128& v0 = mesh_->GetVertices()[ vertexIndices.x ].v;
@@ -429,9 +427,7 @@ void TrianglePlucker::IntersectPack(HitPack& hitpack, float minDistance, float m
 // See: http://tog.acm.org/resources/RTNews/html/rtnv11n1.html#art3
 // See: http://www.flipcode.com/archives/Plcker_Coordinates_for_the_Rest_of_Us-Part_4_Applications.shtml
 bool TrianglePlucker::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
-#ifdef _DEBUG
 	stats::triangleIntersections++;
-#endif
 	
 	const Ray& ray = hit.eyeRay;
     PluckerCoord pluckRay( ray.direction, ray.origin );
@@ -482,9 +478,7 @@ bool TrianglePlucker::Intersect(HitInfo& hit, float minDistance, float maxDistan
 }
 
 bool TrianglePlucker::Hit(const Ray& ray, float minDistance, float maxDistance) const {
-#ifdef _DEBUG
 	stats::triangleIntersections++;
-#endif
 
     PluckerCoord pluckRay( ray.direction, ray.origin );
     

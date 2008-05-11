@@ -231,14 +231,18 @@ DWORD RenderJob::ThreadRoutine() {
 }
 
 void RenderJob::DisplayStats() {
-#ifdef _DEBUG
-		std::cout << "Number of intersections: " << rawray::stats::triangleIntersections << std::endl;
-        std::cout << "Number of rays: " << (rawray::stats::primaryRays + rawray::stats::shadowRays) << std::endl;
-        std::cout << "Average intersection/ray: " << float(rawray::stats::triangleIntersections)/(rawray::stats::primaryRays + rawray::stats::shadowRays) << std::endl;
-#endif
+		std::cout << "Number of BVH Leaves: " << rawray::stats::bvhLeaves << "(" << (int)(100.0*rawray::stats::bvhLeaves/(rawray::stats::bvhLeaves+rawray::stats::bvhSplits)) << "%)" << std::endl;
+		std::cout << "Number of BVH Splits: " << rawray::stats::bvhSplits << "(" << (int)(100.0*rawray::stats::bvhSplits/(rawray::stats::bvhLeaves+rawray::stats::bvhSplits)) << "%)" << std::endl;
+		std::cout << "Average Objects per Leaf: " << float(scene_.GetNumObjects())/(rawray::stats::bvhLeaves) << std::endl;
+		
+		std::cout << "Number of Box Intersections: " << rawray::stats::boxIntersections << "(" << (int)(100.0*rawray::stats::boxIntersections/(rawray::stats::boxIntersections+rawray::stats::triangleIntersections)) << "%)" << std::endl;
+		std::cout << "Number of Triangle Intersections: " << rawray::stats::triangleIntersections << "(" << (int)(100.0*rawray::stats::triangleIntersections/(rawray::stats::boxIntersections+rawray::stats::triangleIntersections)) << "%)" << std::endl;
+
+		std::cout << "Number of Primary Rays: " << rawray::stats::primaryRays << "(" << (int)(100.0*rawray::stats::primaryRays/(rawray::stats::primaryRays+rawray::stats::shadowRays)) << "%)" << std::endl;
+		std::cout << "Number of Shadow Rays: " << rawray::stats::shadowRays << "(" << (int)(100.0*rawray::stats::shadowRays/(rawray::stats::primaryRays+rawray::stats::shadowRays)) << "%)" << std::endl;
+
+        std::cout << "Average intersections/ray: " << float(rawray::stats::triangleIntersections)/(rawray::stats::primaryRays + rawray::stats::shadowRays) << std::endl;
 }
-
-
 
 } // namespace rawray
 

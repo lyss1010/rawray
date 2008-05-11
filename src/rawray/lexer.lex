@@ -124,6 +124,8 @@ STRING      '([^']*)'|\"([^\"]*)\"
 <s_global>barycentric{WS}				{ return YY_BARYCENTRIC; }
 <s_global>plucker{WS}					{ return YY_PLUCKER; }
 <s_global>moller{WS}					{ return YY_MOLLER; }
+<s_global>box{WS}cost{WS}				{ return YY_BOX_COST; }
+<s_global>object{WS}cost{WS}			{ return YY_OBJECT_COST; }
 
 
 <INITIAL>camera{WS}						{ yy_push_state(s_camera); return YY_S_CAMERA; }

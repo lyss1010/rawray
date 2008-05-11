@@ -36,9 +36,7 @@ void TriangleMoller::PreCalc() {
 // SSE Enhanced intersection of 4x rays simultaneously
 #ifdef SSE
 void TriangleMoller::IntersectPack(HitPack& hitpack, float minDistance, float maxDistance) {
-#ifdef _DEBUG
 	stats::triangleIntersections += 4;
-#endif
 
     const Tuple3I vertexIndices = mesh_->GetVertexIndices()[ index_ ];
     const __m128& v0 = mesh_->GetVertices()[ vertexIndices.x ].v;
@@ -339,9 +337,7 @@ void TriangleMoller::IntersectPack(HitPack& hitpack, float minDistance, float ma
 // See: http://ompf.org/forum/viewtopic.php?t=165
 // See: Fundamentals of Computer Graphics, Peter Shirley p206
 bool TriangleMoller::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
-#ifdef _DEBUG
 	stats::triangleIntersections++;
-#endif
 
     const Ray& ray = hit.eyeRay;
 	const Tuple3I vertexIndices = mesh_->GetVertexIndices()[ index_ ];
@@ -377,9 +373,7 @@ bool TriangleMoller::Intersect(HitInfo& hit, float minDistance, float maxDistanc
 }
 
 bool TriangleMoller::Hit(const Ray& ray, float minDistance, float maxDistance) const {
-#ifdef _DEBUG
 	stats::triangleIntersections++;
-#endif
 
 	const Tuple3I vertexIndices = mesh_->GetVertexIndices()[ index_ ];
     const Vector3& v0 = mesh_->GetVertices()[ vertexIndices.x ];

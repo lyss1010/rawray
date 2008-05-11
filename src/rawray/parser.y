@@ -134,6 +134,8 @@ std::stack<math::Matrix4x4>             g_matrixStack;
 %token YY_PROJECTION
 %token YY_PLUCKER
 %token YY_MOLLER
+%token YY_BOX_COST
+%token YY_OBJECT_COST
 
 %token YY_S_CAMERA
 %token YY_POS
@@ -271,8 +273,10 @@ global_option:
 		| YY_TRIANGLE_TEST YY_BARYCENTRIC YY_PROJECTION		{ rawray::options::global::triangle_intersection_algorithm = rawray::options::BARYCENTRIC_PROJECTION; }
 		| YY_TRIANGLE_TEST YY_PLUCKER						{ rawray::options::global::triangle_intersection_algorithm = rawray::options::PLUCKER; }
 		| YY_TRIANGLE_TEST YY_MOLLER						{ rawray::options::global::triangle_intersection_algorithm = rawray::options::MOLLER; }
-		| YY_GAUSSIAN_BLUR_MAX iExp							{ rawray::options::global::gaussian_blur_max = $2 }
-		| YY_GAUSSIAN_BLUR_SIGMA iExp						{ rawray::options::global::gaussian_blur_sigma = $2 }
+		| YY_GAUSSIAN_BLUR_MAX iExp							{ rawray::options::global::gaussian_blur_max = $2; }
+		| YY_GAUSSIAN_BLUR_SIGMA iExp						{ rawray::options::global::gaussian_blur_sigma = $2; }
+		| YY_BOX_COST rExp									{ printf( "Setting box cost to: %f", $2 ); rawray::options::global::bvh_box_cost = $2; }
+		| YY_OBJECT_COST rExp								{ printf( "Setting obj cost to: %f", $2 ); rawray::options::global::bvh_obj_cost = $2; }
 ;
 
 camera_option:

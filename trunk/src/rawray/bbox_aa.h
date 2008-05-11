@@ -6,6 +6,7 @@
 #define RAWRAY_RAWRAY_BBOX_AA_H
 #include "stdafx.h"
 #include "object.h"
+#include <list>
 
 /////////////////////////////////////////////////////////////////////////////
 namespace rawray {
@@ -41,7 +42,7 @@ private:
 class SSE_ALIGN DllExport BBoxAA : public Object
 {
 public:
-    BBoxAA() : Object(NULL), child_(NULL) { }
+    BBoxAA() : Object(NULL) { }
 
     static BBoxAA* newBBoxAA();
     static BBoxAA* newBBoxAA(Object* child);
@@ -50,11 +51,12 @@ public:
     void SetMin(const Vector3& min) { box_[0] = min; box_.CalcMidpoint(); }
     void SetMax(const Vector3& max) { box_[1] = max; box_.CalcMidpoint(); }
     void SetBounds(const Vector3& min, const Vector3& max) { box_[0] = min; box_[1] = max; box_.CalcMidpoint(); }
-    void SetObject(Object* child) { child_ = child; }
+    void AddObject(Object* child) { children_.push_back(child); }
 
     virtual Vector3 GetMin() { return box_[0]; }
     virtual Vector3 GetMax() { return box_[1]; }
     Vector3 GetMid() { return box_[2]; }
+	std::list<Object*>& GetObjects() { return children_; }
 
     float GetSurfaceArea();
     float GetVolume();
@@ -70,16 +72,17 @@ public:
     virtual void IntersectPack(HitPack& hitpack, float minDistance, float maxDistance);
 
 private:
-    BBoxAA(Object* child) : Object(NULL), child_(child) {
+    BBoxAA(Object* child) : Object(NULL) {
+		children_.push_back( child );
         SetBounds( child->GetMin(), child->GetMax() );
     }
 
-    BBoxAA(const Vector3& min, const Vector3& max) : Object(NULL), child_(NULL) {
+    BBoxAA(const Vector3& min, const Vector3& max) : Object(NULL) {
         SetBounds( min, max );
     }
 
     BoxAA   box_;
-    Object* child_;
+	std::list<Object*> children_;
 
     DISALLOW_COPY_CONSTRUCTORS(BBoxAA);
 

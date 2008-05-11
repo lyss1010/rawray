@@ -7,6 +7,9 @@
 #include "float.h"
 #include "time.h"
 
+#include "stats.h"
+#include <list>
+
 namespace rawray {
 
 BVH::~BVH() {
@@ -41,26 +44,23 @@ void BVH::Rebuild(std::vector<Object*>* objects) {
 		root_.children = NULL;
 	} else {
 		// Create the bvh using the entire forest of objects
-		root_.BuildBVH( forest_ );
+		root_.BuildBVH( forest_, boxCost_, objCost_ );
 	}
     clock_t endTime = clock();
 
     std::cout << "Done creating BVH of " << objects->size() << "objects in " << (endTime-startTime)/CLOCKS_PER_SEC << " seconds" << std::endl;
 }
 
-void BVHNode::BuildBVH( std::vector<BBoxAA*>& forest ) {
+void BVHNode::BuildBVH( std::vector<BBoxAA*>& forest, float boxCost, float objCost  ) {
     // If there is only 1 box, we can not split it further
     if( forest.size() == 1 ) {
+		stats::bvhLeaves++;
         isLeaf = true;
         leaf = forest[0];
 		box.SetBounds( leaf->GetMin(), leaf->GetMax() );
 
         return;
     }
-
-    // We must split into left and right bounding volumes
-    isLeaf = false;
-    children = new BVHNode[2];
 
     // Create sorted forests
     std::vector<BBoxAA*> sorted[6] = { 
@@ -88,7 +88,8 @@ void BVHNode::BuildBVH( std::vector<BBoxAA*>& forest ) {
 	box.SetBounds( min, max );
 
     size_t splitIndex;
-    int8 axis = Split( splitIndex, sorted );
+	float splitCost;
+    int8 axis = Split( splitIndex, splitCost, sorted, boxCost, objCost );
     assert( axis >= 0 );
 
 	// The left forest will contain the split index and all before it
@@ -98,12 +99,33 @@ void BVHNode::BuildBVH( std::vector<BBoxAA*>& forest ) {
     std::vector<BBoxAA*> left(  sorted[axis].begin(), split );
     std::vector<BBoxAA*> right( split, sorted[axis].end() );
 
-    // Recursively build left and right sub nodes
-    children[0].BuildBVH( left );
-    children[1].BuildBVH( right );
+	// Compute cost of not splitting this forest and decide on if we should split or not
+	float leafCost = forest.size() * objCost;
+	if( leafCost < splitCost ) {
+		stats::bvhLeaves++;
+		isLeaf = true;
+		BBoxAA* container = BBoxAA::newBBoxAA( box[0], box[1] );
+		leaf = container;
+
+		for( size_t i=0; i<forest.size(); ++i ) {
+			std::list<Object*>& objectsToAdd = forest[i]->GetObjects();
+			for( std::list<Object*>::iterator iter = objectsToAdd.begin(); iter != objectsToAdd.end(); ++iter )
+				container->AddObject( (*iter) );
+		}
+
+	} else {
+		stats::bvhSplits++;
+		// We must split into left and right bounding volumes
+		isLeaf = false;
+		children = new BVHNode[2];
+
+		// Recursively build left and right sub nodes
+		children[0].BuildBVH( left, boxCost, objCost );
+		children[1].BuildBVH( right, boxCost, objCost );
+	}
 }
 
-int8 BVHNode::Split( size_t& splitIndex, std::vector<BBoxAA*>* sorted ) {
+int8 BVHNode::Split( size_t& splitIndex, float& splitCost, std::vector<BBoxAA*>* sorted, float boxCost, float objCost ) {
     // assume all vectors are same size
     if( sorted[0].size() < 2 ) return -1;
 
@@ -114,7 +136,7 @@ int8 BVHNode::Split( size_t& splitIndex, std::vector<BBoxAA*>* sorted ) {
 		std::vector<BBoxAA*>& forest = sorted[i];
 
         // Find the best way to split the objects along this axis
-        last_left[i] = FindSplittingPlane( forest );
+        last_left[i] = FindSplittingPlane( forest, boxCost, objCost );
 		std::vector<BBoxAA*>::iterator split = sorted[i].begin() + last_left[i] + 1;
 
 		// Make sure there is at least 1 element in the left section and right section
@@ -160,26 +182,41 @@ int8 BVHNode::Split( size_t& splitIndex, std::vector<BBoxAA*>* sorted ) {
 		rightVolume[1].z = rightForest[lastIndexRight]->GetMax().z;
 
         // Find surface areas of the potential bounding volumes
-        float size_left  = BoxAA::SurfaceArea( leftVolume[1] - leftVolume[0] );
-        float size_right = BoxAA::SurfaceArea( rightVolume[1] - rightVolume[0] );
-
+        float size_total = 1.0f / BoxAA::SurfaceArea( rightVolume[1] - leftVolume[0] );
+		float size_left  = size_total * BoxAA::SurfaceArea( leftVolume[1] - leftVolume[0] );
+        float size_right = size_total * BoxAA::SurfaceArea( rightVolume[1] - rightVolume[0] );
+		
         // Compute the cost of the bounding volumes of this split
-        cost[i] = Cost( size_left, size_right, last_left[i]+1, forest.size()-last_left[i]-1 );
+        cost[i] = Cost( boxCost, objCost, size_left, size_right, last_left[i]+1, forest.size()-last_left[i]-1 );
     }
 
     // Find the best axis to split on
-    uint8 axis;
-    if( cost[0] < cost[1] ) {
-        axis = (cost[0] < cost[2]) ? 0 : 2;
+    uint8 axisEven;
+    if( cost[0] < cost[2] ) {
+        axisEven = (cost[0] < cost[4]) ? 0 : 4;
     } else {
-        axis = (cost[1] < cost[2]) ? 1 : 2;
+        axisEven = (cost[2] < cost[4]) ? 2 : 4;
     }
 
-    splitIndex = last_left[axis];
-    return axis;
+	uint8 axisOdd;
+    if( cost[1] < cost[3] ) {
+        axisOdd = (cost[1] < cost[5]) ? 1 : 5;
+    } else {
+        axisOdd = (cost[3] < cost[5]) ? 3 : 5;
+    }
+
+	if( cost[axisEven] < cost[axisOdd] ) {
+		splitIndex = last_left[axisEven];
+		splitCost = cost[axisEven];
+		return axisEven;
+	} else {
+		splitIndex = last_left[axisOdd];
+		splitCost = cost[axisOdd];
+		return axisOdd;
+	}
 }
 
-size_t BVHNode::FindSplittingPlane( std::vector<BBoxAA*>& sorted ) {
+size_t BVHNode::FindSplittingPlane( std::vector<BBoxAA*>& sorted, float boxCost, float objCost ) {
     assert( sorted.size() >= 2 );
 
     BBoxAA left, right;
@@ -195,7 +232,7 @@ size_t BVHNode::FindSplittingPlane( std::vector<BBoxAA*>& sorted ) {
         left.SetMax(  sorted[i]->GetMax() );
         right.SetMin( sorted[i+1]->GetMin() );
 
-        float cost = Cost( left.GetSurfaceArea(), right.GetSurfaceArea(), numLeft++, numRight-- );
+        float cost = Cost( boxCost, objCost, left.GetSurfaceArea(), right.GetSurfaceArea(), numLeft++, numRight-- );
         if( cost < min_cost ) {
             min_cost = cost;
             splitIndex = i;
@@ -205,16 +242,20 @@ size_t BVHNode::FindSplittingPlane( std::vector<BBoxAA*>& sorted ) {
     return splitIndex;
 }
 
-float BVHNode::Cost(float areaLeft, float areaRight, int numLeft, int numRight) {
-    return (numLeft * areaLeft) + (numRight * areaRight);
+float BVHNode::Cost(float boxCost, float objCost, float areaLeft, float areaRight, int numLeft, int numRight) {
+    return 2*boxCost + objCost * ( (numLeft * areaLeft) + (numRight * areaRight) );
 }
 
 void BVH::PreCalc() {
+	// TODO: Only create BVH on the fly from config file instead of having it as a part of the scene
+	boxCost_ = options::global::bvh_box_cost;
+	objCost_ = options::global::bvh_obj_cost;
+
     Rebuild(objects_);
 }
 
 void BVH::RenderGL() {
-	if( !options::global::gl_render_bbox )
+	if( !options::global::gl_render_bbox || objects_->size() < 1 )
 		return;
  
 	root_.RenderGL( Vector3( 0.0f, 1.0f, 0.0f ) );
@@ -287,8 +328,27 @@ bool BVHNode::Hit(const Ray& ray, float minDistance, float maxDistance) const {
     } else {
 		if( !box.Hit(ray, minDistance, maxDistance) )
 			return false;
+		
+		HitInfo hit;
+		hit.eyeRay = ray;
+		
+		// TODO: Fix problem where using Hit() will cause all false
+		//bool intersect0 = children[0].Intersect(hit, minDistance, maxDistance);
+		//bool intersect1 = children[1].Intersect(hit, minDistance, maxDistance);
+		//bool hit0 = children[0].Hit(ray, minDistance, maxDistance);
+		//bool hit1 = children[1].Hit(ray, minDistance, maxDistance);
 
-        return ( children[0].Hit(ray, minDistance, maxDistance) || children[0].Hit(ray, minDistance, maxDistance) );
+		//if( intersect0 != hit0 ) {
+		//	children[0].Intersect(hit, minDistance, maxDistance);
+		//	children[0].Hit(ray, minDistance, maxDistance);
+		//}
+
+		//if( intersect1 != hit1 ) {
+		//	children[1].Intersect(hit, minDistance, maxDistance);
+		//	children[1].Hit(ray, minDistance, maxDistance);
+		//}
+
+		return ( children[0].Intersect(hit, minDistance, maxDistance) || children[1].Intersect(hit, minDistance, maxDistance) );
     }
 }
 
@@ -311,7 +371,9 @@ bool BVHNode::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
             return true;
         } else {
             // We did not hit the left node, only possible hit is on right
-            return children[1].Intersect(hit, minDistance, maxDistance);
+            if( children[1].Intersect(hit, minDistance, maxDistance) )
+				return true;
+			return false;
         }
     }
 }

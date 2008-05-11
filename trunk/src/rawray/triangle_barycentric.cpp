@@ -30,9 +30,7 @@ void TriangleBarycentric::PreCalc() { }
 // See: Fundamentals of Computer Graphics, Peter Shirley p206
 // Moller test with the determinants computed out by hand
 bool TriangleBarycentric::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
-#ifdef _DEBUG
 	stats::triangleIntersections++;
-#endif
 
     const Ray& ray = hit.eyeRay;
 
@@ -83,9 +81,7 @@ bool TriangleBarycentric::Intersect(HitInfo& hit, float minDistance, float maxDi
 }
 
 bool TriangleBarycentric::Hit(const Ray& ray, float minDistance, float maxDistance) const {
-#ifdef _DEBUG
 	stats::triangleIntersections++;
-#endif
 
 	const Tuple3I vertexIndices = mesh_->GetVertexIndices()[ index_ ];
     const Vector3& v0 = mesh_->GetVertices()[ vertexIndices.x ];

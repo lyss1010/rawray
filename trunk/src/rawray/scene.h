@@ -46,6 +46,7 @@ public:
     void Raytrace(const Camera& cam, Image& image);
 
     void PostProcess(Image& img);
+	size_t GetNumObjects() { return objects_.size(); }
 
 private:
 	std::vector<Material*> materials_;

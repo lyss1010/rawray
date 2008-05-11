@@ -28,26 +28,29 @@ struct BVHNode {
     bool Intersect(HitInfo& hit, float minDistance, float maxDistance);
     void IntersectPack(HitPack& hitpack, float minDistance, float maxDistance);
 
-    void BuildBVH( std::vector<BBoxAA*>& forrset );
+    void BuildBVH( std::vector<BBoxAA*>& forrset, float boxCost, float objCost );
 
 private:
-    int8 Split( size_t& splitIndex, std::vector<BBoxAA*>* sorted );
-    size_t FindSplittingPlane( std::vector<BBoxAA*>& sorted );
-    float Cost(float areaLeft, float areaRight, int numLeft, int numRight);
+    int8 Split( size_t& splitIndex, float& splitCost, std::vector<BBoxAA*>* sorted, float boxCost, float objCost );
+    size_t FindSplittingPlane( std::vector<BBoxAA*>& sorted, float boxCost, float objCost );
+    float Cost(float boxCost, float objCost, float areaLeft, float areaRight, int numLeft, int numRight);
 };
 
 class DllExport BVH : public Object
 {
 public:
-    BVH(std::vector<Object*>* objects) : Object(NULL), objects_(objects) { }
+    BVH(std::vector<Object*>* objects) : Object(NULL), objects_(objects), 
+		objCost_(options::global::bvh_obj_cost), boxCost_(options::global::bvh_box_cost) { }
+
     virtual ~BVH();
 
     void Rebuild(std::vector<Object*>* objects);
+	void SetObjCost(float cost) { objCost_ = cost; }
+	void SetBoxCost(float cost) { boxCost_ = cost; }
 
     virtual void PreCalc();
     virtual void RenderGL();
 
-    // TODO: Write me
     virtual Vector3 GetMin() { return root_.box[0]; }
     virtual Vector3 GetMax() { return root_.box[1]; }
 
@@ -57,7 +60,7 @@ public:
 
 private:
     BVHNode root_;
-    float ojb_cost, box_cost;
+    float objCost_, boxCost_;
     std::vector<Object*>* objects_;
 	std::vector<BBoxAA*> forest_;
     

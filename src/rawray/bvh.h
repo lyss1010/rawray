@@ -13,8 +13,10 @@
 /////////////////////////////////////////////////////////////////////////////
 namespace rawray {
 
+enum BVHNodeType { SPLIT_NODE=0, SINGLE_LEAF=1, MULTI_LEAF=2 };
+
 struct BVHNode {
-    bool isLeaf;
+    BVHNodeType type;
 	BoxAA box;
 	
     union {
@@ -29,6 +31,7 @@ struct BVHNode {
     void IntersectPack(HitPack& hitpack, float minDistance, float maxDistance);
 
     void BuildBVH( std::vector<BBoxAA*>& forrset, float boxCost, float objCost );
+	void DestroyBVH();
 
 private:
     int8 Split( size_t& splitIndex, float& splitCost, std::vector<BBoxAA*>* sorted, float boxCost, float objCost );
@@ -64,6 +67,7 @@ private:
     std::vector<Object*>* objects_;
 	std::vector<BBoxAA*> forest_;
     
+	void ClearBVH();
 	void ClearForest();
     DISALLOW_COPY_CONSTRUCTORS(BVH);
 

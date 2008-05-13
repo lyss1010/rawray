@@ -190,6 +190,8 @@ void Image::WritePPM(const char* filename) {
 	}
 
     WritePPM(filename, static_cast<uint8*>( &((*data).x) ), width_, height_);
+
+	delete[] data;
 }
 
 void Image::WritePPM(const char* filename, uint8* data, int width, int height) {

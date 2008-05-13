@@ -14,6 +14,7 @@ namespace rawray {
 
 BVH::~BVH() {
 	ClearForest();
+	root_.DestroyBVH();
 }
 
 void BVH::ClearForest() {
@@ -22,6 +23,27 @@ void BVH::ClearForest() {
 		box->deleteObject();
 	}
 	forest_.clear();
+}
+
+void BVHNode::DestroyBVH() {
+	switch( type ) {
+	case SPLIT_NODE:
+		children[0].DestroyBVH();
+		children[1].DestroyBVH();
+		delete [] children;
+		break;
+
+	case SINGLE_LEAF:
+		// we take care of these deletes in ClearForest()
+		break;
+
+	case MULTI_LEAF:
+		leaf->deleteObject();
+		break;
+
+	default:
+		break;
+	}
 }
 
 void BVH::Rebuild(std::vector<Object*>* objects) {
@@ -37,7 +59,7 @@ void BVH::Rebuild(std::vector<Object*>* objects) {
 		std::cout << "" << std::endl;
 
 		// No objects for our bvh, make sure bounds are set so nothing can intersect
-		root_.isLeaf = false;
+		root_.type = SPLIT_NODE;
 		root_.box[0] = Vector3(0);
 		root_.box[1] = Vector3(0);
 		root_.box[2] = Vector3(0);
@@ -55,7 +77,7 @@ void BVHNode::BuildBVH( std::vector<BBoxAA*>& forest, float boxCost, float objCo
     // If there is only 1 box, we can not split it further
     if( forest.size() == 1 ) {
 		stats::bvhLeaves++;
-        isLeaf = true;
+		type = SINGLE_LEAF;
         leaf = forest[0];
 		box.SetBounds( leaf->GetMin(), leaf->GetMax() );
 
@@ -103,7 +125,7 @@ void BVHNode::BuildBVH( std::vector<BBoxAA*>& forest, float boxCost, float objCo
 	float leafCost = forest.size() * objCost;
 	if( leafCost < splitCost ) {
 		stats::bvhLeaves++;
-		isLeaf = true;
+		type = MULTI_LEAF;
 		BBoxAA* container = BBoxAA::newBBoxAA( box[0], box[1] );
 		leaf = container;
 
@@ -116,7 +138,7 @@ void BVHNode::BuildBVH( std::vector<BBoxAA*>& forest, float boxCost, float objCo
 	} else {
 		stats::bvhSplits++;
 		// We must split into left and right bounding volumes
-		isLeaf = false;
+		type = SPLIT_NODE;
 		children = new BVHNode[2];
 
 		// Recursively build left and right sub nodes
@@ -315,7 +337,7 @@ void BVHNode::RenderGL(const Vector3& color) {
 	glEnd();
 
 	// Render children
-	if( !isLeaf ) {
+	if( type != SPLIT_NODE ) {
 		const Vector3 newColor( 0.9 * color );
 		children[0].RenderGL( newColor );
 		children[1].RenderGL( newColor );
@@ -323,7 +345,7 @@ void BVHNode::RenderGL(const Vector3& color) {
 }
 
 bool BVHNode::Hit(const Ray& ray, float minDistance, float maxDistance) const {
-    if( isLeaf ) {
+    if( type != SPLIT_NODE ) {
         return leaf->Hit(ray, minDistance, maxDistance);
     } else {
 		if( !box.Hit(ray, minDistance, maxDistance) )
@@ -353,7 +375,7 @@ bool BVHNode::Hit(const Ray& ray, float minDistance, float maxDistance) const {
 }
 
 bool BVHNode::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
-    if( isLeaf ) {
+    if( type != SPLIT_NODE ) {
         return leaf->Intersect(hit, minDistance, maxDistance);
     } else {
 		if( !box.Hit(hit.eyeRay, minDistance, maxDistance) ) {

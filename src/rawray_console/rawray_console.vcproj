@@ -212,6 +212,9 @@ copy &quot;$(SolutionDir)lib\tools.dll&quot; &quot;$(OutDir)&quot;
 				RelativePath="..\..\res\scenes\bunny20.cfg">
 			</File>
 			<File
+				RelativePath="..\..\res\scenes\cornell.cfg">
+			</File>
+			<File
 				RelativePath="..\..\res\scenes\empty.cfg">
 			</File>
 			<File

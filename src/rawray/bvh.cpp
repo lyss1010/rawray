@@ -59,7 +59,7 @@ void BVH::Rebuild(std::vector<Object*>* objects) {
 		std::cout << "" << std::endl;
 
 		// No objects for our bvh, make sure bounds are set so nothing can intersect
-		root_.type = SPLIT_NODE;
+		root_.type = INVALID_NODE;
 		root_.box[0] = Vector3(0);
 		root_.box[1] = Vector3(0);
 		root_.box[2] = Vector3(0);
@@ -129,11 +129,6 @@ void BVHNode::BuildBVH( std::vector<BBoxAA*>::iterator begin, std::vector<BBoxAA
 			((BBoxAA*)leaf)->AddObject( (*iter++) );
             ++leafSize;
         }
-
-        if( leafSize > 100 ) {
-            std::cout << "!!";
-        }
-    
     } else {
 	    stats::bvhSplits++;
 	    type = SPLIT_NODE;
@@ -272,7 +267,7 @@ float BVHNode::Cost(float boxCost, float objCost, float areaParent, float areaLe
     const float normalize = 1.0f / areaParent;
 
     // Probability of hitting each section times how costly it is to hit that section
-    return normalize * ( objCost * (areaLeft*numLeft + areaRight*numRight) );
+    return boxCost + normalize * ( objCost * (areaLeft*numLeft + areaRight*numRight) );
 }
 
 void BVH::PreCalc() {

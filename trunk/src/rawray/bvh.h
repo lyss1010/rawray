@@ -13,7 +13,7 @@
 /////////////////////////////////////////////////////////////////////////////
 namespace rawray {
 
-enum BVHNodeType { SPLIT_NODE=0, SINGLE_LEAF=1, MULTI_LEAF=2 };
+enum BVHNodeType { INVALID_NODE=-1, SPLIT_NODE=0, SINGLE_LEAF=1, MULTI_LEAF=2 };
 
 struct BVHNode {
     BVHNodeType type;
@@ -23,6 +23,8 @@ struct BVHNode {
         BBoxAA*  leaf;
         BVHNode* children; // [left, right]
     };
+
+    BVHNode() : type(INVALID_NODE) { }
 	
 	void RenderGL(const Vector3& color);
 
@@ -35,7 +37,7 @@ struct BVHNode {
 
 private:
     int8 Split( size_t& splitIndex, float& splitCost, std::vector<BBoxAA*>* sorted, float boxCost, float objCost, float areaParent );
-    size_t FindSplittingPlane( std::vector<BBoxAA*>& sorted, float boxCost, float objCost );
+    size_t FindSplittingPlane( std::vector<BBoxAA*>& sorted );
     float Cost(float boxCost, float objCost, float areaParent, float areaLeft, float areaRight, int numLeft, int numRight);
 };
 

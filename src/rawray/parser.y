@@ -275,8 +275,8 @@ global_option:
 		| YY_TRIANGLE_TEST YY_MOLLER						{ rawray::options::global::triangle_intersection_algorithm = rawray::options::MOLLER; }
 		| YY_GAUSSIAN_BLUR_MAX iExp							{ rawray::options::global::gaussian_blur_max = $2; }
 		| YY_GAUSSIAN_BLUR_SIGMA iExp						{ rawray::options::global::gaussian_blur_sigma = $2; }
-		| YY_BOX_COST rExp									{ printf( "Setting box cost to: %f", $2 ); rawray::options::global::bvh_box_cost = $2; }
-		| YY_OBJECT_COST rExp								{ printf( "Setting obj cost to: %f", $2 ); rawray::options::global::bvh_obj_cost = $2; }
+		| YY_BOX_COST rExp									{ rawray::options::global::bvh_box_cost = $2; }
+		| YY_OBJECT_COST rExp								{ rawray::options::global::bvh_obj_cost = $2; }
 ;
 
 camera_option:

@@ -30,13 +30,13 @@ struct BVHNode {
     bool Intersect(HitInfo& hit, float minDistance, float maxDistance);
     void IntersectPack(HitPack& hitpack, float minDistance, float maxDistance);
 
-    void BuildBVH( std::vector<BBoxAA*>& forrset, float boxCost, float objCost );
+    void BuildBVH( std::vector<BBoxAA*>::iterator begin, std::vector<BBoxAA*>::iterator end, float boxCost, float objCost );
 	void DestroyBVH();
 
 private:
-    int8 Split( size_t& splitIndex, float& splitCost, std::vector<BBoxAA*>* sorted, float boxCost, float objCost );
+    int8 Split( size_t& splitIndex, float& splitCost, std::vector<BBoxAA*>* sorted, float boxCost, float objCost, float areaParent );
     size_t FindSplittingPlane( std::vector<BBoxAA*>& sorted, float boxCost, float objCost );
-    float Cost(float boxCost, float objCost, float areaLeft, float areaRight, int numLeft, int numRight);
+    float Cost(float boxCost, float objCost, float areaParent, float areaLeft, float areaRight, int numLeft, int numRight);
 };
 
 class DllExport BVH : public Object

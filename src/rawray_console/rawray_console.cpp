@@ -18,7 +18,6 @@ void exit_cleanup(void) {
     _CrtDumpMemoryLeaks();
 }
 
-
 bool SSETest() {
 #ifdef SSE
     std::cout << "Testing SSE Version... ";

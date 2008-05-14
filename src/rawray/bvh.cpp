@@ -66,19 +66,19 @@ void BVH::Rebuild(std::vector<Object*>* objects) {
 		root_.children = NULL;
 	} else {
 		// Create the bvh using the entire forest of objects
-		root_.BuildBVH( forest_, boxCost_, objCost_ );
+		root_.BuildBVH( forest_.begin(), forest_.end(), boxCost_, objCost_ );
 	}
     clock_t endTime = clock();
 
     std::cout << "Done creating BVH of " << objects->size() << "objects in " << (endTime-startTime)/CLOCKS_PER_SEC << " seconds" << std::endl;
 }
 
-void BVHNode::BuildBVH( std::vector<BBoxAA*>& forest, float boxCost, float objCost  ) {
+void BVHNode::BuildBVH( std::vector<BBoxAA*>::iterator begin, std::vector<BBoxAA*>::iterator end, float boxCost, float objCost ) {
     // If there is only 1 box, we can not split it further
-    if( forest.size() == 1 ) {
+    if( begin+1 == end ) {
 		stats::bvhLeaves++;
 		type = SINGLE_LEAF;
-        leaf = forest[0];
+        leaf = *begin;
 		box.SetBounds( leaf->GetMin(), leaf->GetMax() );
 
         return;
@@ -86,12 +86,12 @@ void BVHNode::BuildBVH( std::vector<BBoxAA*>& forest, float boxCost, float objCo
 
     // Create sorted forests
     std::vector<BBoxAA*> sorted[6] = { 
-        std::vector<BBoxAA*>( forest.begin(), forest.end() ), 
-        std::vector<BBoxAA*>( forest.begin(), forest.end() ), 
-        std::vector<BBoxAA*>( forest.begin(), forest.end() ),
-        std::vector<BBoxAA*>( forest.begin(), forest.end() ), 
-        std::vector<BBoxAA*>( forest.begin(), forest.end() ), 
-        std::vector<BBoxAA*>( forest.begin(), forest.end() )
+        std::vector<BBoxAA*>( begin, end ), 
+        std::vector<BBoxAA*>( begin, end ), 
+        std::vector<BBoxAA*>( begin, end ),
+        std::vector<BBoxAA*>( begin, end ), 
+        std::vector<BBoxAA*>( begin, end ), 
+        std::vector<BBoxAA*>( begin, end )
     };
 
     // Sort on every axis based on the min coordinate in that axis
@@ -111,43 +111,37 @@ void BVHNode::BuildBVH( std::vector<BBoxAA*>& forest, float boxCost, float objCo
 
     size_t splitIndex;
 	float splitCost;
-    int8 axis = Split( splitIndex, splitCost, sorted, boxCost, objCost );
+    int8 axis = Split( splitIndex, splitCost, sorted, boxCost, objCost, BoxAA::SurfaceArea( box[1] - box[0] ) );
     assert( axis >= 0 );
 
-	// The left forest will contain the split index and all before it
-	std::vector<BBoxAA*>::iterator split = sorted[axis].begin() + splitIndex + 1;
-
-	// Split forest into left and right sections
-    std::vector<BBoxAA*> left(  sorted[axis].begin(), split );
-    std::vector<BBoxAA*> right( split, sorted[axis].end() );
 
 	// Compute cost of not splitting this forest and decide on if we should split or not
-	float leafCost = forest.size() * objCost;
+    // This cost is some made up number, if you just do size*objects it puts too many in the same box
+	float leafCost = boxCost + sorted[0].size() * objCost;
 	if( leafCost < splitCost ) {
 		stats::bvhLeaves++;
 		type = MULTI_LEAF;
-		BBoxAA* container = BBoxAA::newBBoxAA( box[0], box[1] );
-		leaf = container;
+		leaf = BBoxAA::newBBoxAA( box[0], box[1] );
 
-		for( size_t i=0; i<forest.size(); ++i ) {
-			std::list<Object*>& objectsToAdd = forest[i]->GetObjects();
-			for( std::list<Object*>::iterator iter = objectsToAdd.begin(); iter != objectsToAdd.end(); ++iter )
-				container->AddObject( (*iter) );
-		}
+        // Add all boxes in forest to this box directly
+        std::vector<BBoxAA*>::iterator iter = begin;
+		while( iter != end )
+			((BBoxAA*)leaf)->AddObject( (*iter++) );
+    } else {
+	    stats::bvhSplits++;
+	    type = SPLIT_NODE;
+	    children = new BVHNode[2];
 
-	} else {
-		stats::bvhSplits++;
-		// We must split into left and right bounding volumes
-		type = SPLIT_NODE;
-		children = new BVHNode[2];
-
-		// Recursively build left and right sub nodes
-		children[0].BuildBVH( left, boxCost, objCost );
-		children[1].BuildBVH( right, boxCost, objCost );
-	}
+        // The left forest will contain the split index and all before it
+	    // Recursively build left and right sub nodes
+        std::vector<BBoxAA*>::iterator split = sorted[axis].begin() + splitIndex + 1;
+	    children[0].BuildBVH( sorted[axis].begin(), split, boxCost, objCost );
+	    children[1].BuildBVH( split, sorted[axis].end(), boxCost, objCost );
+    }
 }
 
-int8 BVHNode::Split( size_t& splitIndex, float& splitCost, std::vector<BBoxAA*>* sorted, float boxCost, float objCost ) {
+
+int8 BVHNode::Split( size_t& splitIndex, float& splitCost, std::vector<BBoxAA*>* sorted, float boxCost, float objCost, float areaParent ) {
     // assume all vectors are same size
     if( sorted[0].size() < 2 ) return -1;
 
@@ -209,7 +203,7 @@ int8 BVHNode::Split( size_t& splitIndex, float& splitCost, std::vector<BBoxAA*>*
         float size_right = size_total * BoxAA::SurfaceArea( rightVolume[1] - rightVolume[0] );
 		
         // Compute the cost of the bounding volumes of this split
-        cost[i] = Cost( boxCost, objCost, size_left, size_right, last_left[i]+1, forest.size()-last_left[i]-1 );
+        cost[i] = Cost( boxCost, objCost, areaParent, size_left, size_right, last_left[i]+1, forest.size()-last_left[i]-1 );
     }
 
     // Find the best axis to split on
@@ -246,15 +240,18 @@ size_t BVHNode::FindSplittingPlane( std::vector<BBoxAA*>& sorted, float boxCost,
     right.SetMax( sorted.back()->GetMax() );
     float min_cost = FLT_MAX;
 	size_t splitIndex = 0;
-    
-    // For all possible split points, compute the cost; finding the minimum
+
+    // If the input is large, we want to skip some computations
 	int numLeft = 1;
 	int numRight = sorted.size()-1;
-	for( size_t i=0; i<sorted.size()-1; ++i ) {
+
+    // For all possible split points, compute the cost; finding the minimum
+	for( size_t i=0; i<sorted.size()-1; i++ ) {
         left.SetMax(  sorted[i]->GetMax() );
         right.SetMin( sorted[i+1]->GetMin() );
 
-        float cost = Cost( boxCost, objCost, left.GetSurfaceArea(), right.GetSurfaceArea(), numLeft++, numRight-- );
+        // We do not need to minimize the actual cost, just the left/right local costs
+        const float cost = left.GetSurfaceArea() * (numLeft++) + right.GetSurfaceArea() * (numRight--);
         if( cost < min_cost ) {
             min_cost = cost;
             splitIndex = i;
@@ -264,8 +261,17 @@ size_t BVHNode::FindSplittingPlane( std::vector<BBoxAA*>& sorted, float boxCost,
     return splitIndex;
 }
 
-float BVHNode::Cost(float boxCost, float objCost, float areaLeft, float areaRight, int numLeft, int numRight) {
-    return 2*boxCost + objCost * ( (numLeft * areaLeft) + (numRight * areaRight) );
+float BVHNode::Cost(float boxCost, float objCost, float areaParent, float areaLeft, float areaRight, int numLeft, int numRight) {
+    const float normalize = 1.0f / areaParent;
+
+    // We always must intersect with bounding boxes around the two areas
+    const float bboxCost = boxCost * (areaLeft + areaRight);
+
+    // Compute cost of hitting each box
+    const float hitCost = objCost * (areaLeft*numLeft + areaRight*numRight);
+
+    // Normalize to get probabilities out of the area calculations
+    return normalize * ( bboxCost + hitCost );
 }
 
 void BVH::PreCalc() {

@@ -114,19 +114,26 @@ void BVHNode::BuildBVH( std::vector<BBoxAA*>::iterator begin, std::vector<BBoxAA
     int8 axis = Split( splitIndex, splitCost, sorted, boxCost, objCost, BoxAA::SurfaceArea( box[1] - box[0] ) );
     assert( axis >= 0 );
 
-
 	// Compute cost of not splitting this forest and decide on if we should split or not
     // This cost is some made up number, if you just do size*objects it puts too many in the same box
-	float leafCost = boxCost + sorted[0].size() * objCost;
+	float leafCost = boxCost + sorted[0].size() * sorted[0].size() * objCost;
 	if( leafCost < splitCost ) {
 		stats::bvhLeaves++;
 		type = MULTI_LEAF;
 		leaf = BBoxAA::newBBoxAA( box[0], box[1] );
 
         // Add all boxes in forest to this box directly
+        int leafSize = 0;
         std::vector<BBoxAA*>::iterator iter = begin;
-		while( iter != end )
+        while( iter != end ) {
 			((BBoxAA*)leaf)->AddObject( (*iter++) );
+            ++leafSize;
+        }
+
+        if( leafSize > 100 ) {
+            std::cout << "!!";
+        }
+    
     } else {
 	    stats::bvhSplits++;
 	    type = SPLIT_NODE;
@@ -152,7 +159,7 @@ int8 BVHNode::Split( size_t& splitIndex, float& splitCost, std::vector<BBoxAA*>*
 		std::vector<BBoxAA*>& forest = sorted[i];
 
         // Find the best way to split the objects along this axis
-        last_left[i] = FindSplittingPlane( forest, boxCost, objCost );
+        last_left[i] = FindSplittingPlane( forest );
 		std::vector<BBoxAA*>::iterator split = sorted[i].begin() + last_left[i] + 1;
 
 		// Make sure there is at least 1 element in the left section and right section
@@ -232,7 +239,7 @@ int8 BVHNode::Split( size_t& splitIndex, float& splitCost, std::vector<BBoxAA*>*
 	}
 }
 
-size_t BVHNode::FindSplittingPlane( std::vector<BBoxAA*>& sorted, float boxCost, float objCost ) {
+size_t BVHNode::FindSplittingPlane( std::vector<BBoxAA*>& sorted ) {
     assert( sorted.size() >= 2 );
 
     BBoxAA left, right;
@@ -264,14 +271,8 @@ size_t BVHNode::FindSplittingPlane( std::vector<BBoxAA*>& sorted, float boxCost,
 float BVHNode::Cost(float boxCost, float objCost, float areaParent, float areaLeft, float areaRight, int numLeft, int numRight) {
     const float normalize = 1.0f / areaParent;
 
-    // We always must intersect with bounding boxes around the two areas
-    const float bboxCost = boxCost * (areaLeft + areaRight);
-
-    // Compute cost of hitting each box
-    const float hitCost = objCost * (areaLeft*numLeft + areaRight*numRight);
-
-    // Normalize to get probabilities out of the area calculations
-    return normalize * ( bboxCost + hitCost );
+    // Probability of hitting each section times how costly it is to hit that section
+    return normalize * ( objCost * (areaLeft*numLeft + areaRight*numRight) );
 }
 
 void BVH::PreCalc() {

@@ -444,14 +444,21 @@ void BVHNode::IntersectPack(HitPack& hitpack, float minDistance, float maxDistan
 }
 
 void BVH::IntersectPack(HitPack& hitpack, float minDistance, float maxDistance) {
-	return root_.IntersectPack(hitpack, minDistance, maxDistance);
+	if( root_.type != INVALID_NODE )
+		root_.IntersectPack(hitpack, minDistance, maxDistance);
 }
 
 bool BVH::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
+	if( root_.type == INVALID_NODE )
+		return false;
+
     return root_.Intersect(hit, minDistance, maxDistance);
 }
 
 bool BVH::Hit(const Ray& ray, float minDistance, float maxDistance) const {
+	if( root_.type == INVALID_NODE )
+		return false;
+
 	return root_.Hit(ray, minDistance, maxDistance);
 }
 

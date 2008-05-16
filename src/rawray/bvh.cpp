@@ -281,8 +281,9 @@ void BVH::PreCalc() {
 void BVH::RenderGL() {
 	if( !options::global::gl_render_bbox || objects_->size() < 1 )
 		return;
- 
-	root_.RenderGL( Vector3( 0.0f, 1.0f, 0.0f ) );
+
+	if( root_.type != INVALID_NODE )
+		root_.RenderGL( Vector3( 0.0f, 1.0f, 0.0f ) );
 }
 
 void BVHNode::RenderGL(const Vector3& color) {
@@ -339,7 +340,7 @@ void BVHNode::RenderGL(const Vector3& color) {
 	glEnd();
 
 	// Render children
-	if( type != SPLIT_NODE ) {
+	if( type == SINGLE_LEAF || type == MULTI_LEAF ) {
 		const Vector3 newColor( 0.9 * color );
 		children[0].RenderGL( newColor );
 		children[1].RenderGL( newColor );

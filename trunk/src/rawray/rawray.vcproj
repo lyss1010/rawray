@@ -216,6 +216,9 @@
 					RelativePath=".\image.cpp">
 				</File>
 				<File
+					RelativePath=".\ray_caster.cpp">
+				</File>
+				<File
 					RelativePath=".\scene.cpp">
 				</File>
 			</Filter>
@@ -341,6 +344,9 @@
 				</File>
 				<File
 					RelativePath=".\image.h">
+				</File>
+				<File
+					RelativePath=".\ray_caster.h">
 				</File>
 				<File
 					RelativePath=".\scene.h">

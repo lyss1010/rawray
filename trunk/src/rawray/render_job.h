@@ -8,6 +8,7 @@
 #include "camera.h"
 #include "scene.h"
 #include "image.h"
+#include "ray_caster.h"
 
 /////////////////////////////////////////////////////////////////////////////
 namespace rawray {
@@ -15,16 +16,14 @@ namespace rawray {
 class DllExport RenderTask
 {
 public:
-    RenderTask(int x, int y, int width, int height) :
-        x_(x), y_(y), width_(width), height_(height) { }
-
+    RenderTask(HitPack* packs, int numpacks) : packs_(packs), numpacks_(numpacks) { }
     ~RenderTask() { }
 
     bool Run( Scene& scene, const Camera& cam, Image& img, float* progress );
 
 private:
-    int x_, y_;
-    int width_, height_;
+    HitPack* packs_;
+    int numpacks_;
 
     DISALLOW_IMPLICIT_CONSTRUCTORS(RenderTask);
 };
@@ -64,14 +63,14 @@ private:
 class DllExport RenderJob
 {
 public:
-    RenderJob(int numThreads, Scene& scene, const Camera& cam, Image& img) :
-            numThreads_(numThreads), scene_(scene), cam_(cam), img_(img),
+    RenderJob(int numThreads, Scene& scene, const Camera& cam, Image& img, int aax, int aay) :
+            numThreads_(numThreads), scene_(scene), cam_(cam), img_(img), caster_(cam_, aax, aay),
             threadID_(NULL), threadHandle_(NULL), abort_(false), isDone_(false) { }
 
     ~RenderJob();
 
     float Progress();
-    bool Run();
+    bool Run(int aax, int aay);
     bool IsDone() { return isDone_; }
     void Abort();
     void DisplayStats();
@@ -84,6 +83,7 @@ private:
     uint32 numThreads_;
     Scene& scene_;
     const Camera& cam_;
+    RayCaster caster_;
     Image& img_;
     HANDLE threadHandle_;
     DWORD threadID_;

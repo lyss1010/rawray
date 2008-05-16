@@ -18,9 +18,8 @@ struct SSE_ALIGN DllExport Ray
     Vector3 inv_direction;
     int sign[4];
 
-    Ray() 
-		: origin(), 
-		direction( Vector3(1, 0, 0) ) { PreCalc(); }
+    Ray() // NOTE: Not valid data
+		: origin(), direction() { }
 
     Ray(const Vector3& origin, const Vector3& direction) : origin(origin), direction(direction) {
         this->direction.Normalize();
@@ -31,6 +30,13 @@ struct SSE_ALIGN DllExport Ray
 		: origin(r.origin), 
 		direction(r.direction) { PreCalc(); }
 
+    void Set(const Vector3& origin, const Vector3& direction) {
+        this->origin = origin;
+        this->direction = direction;
+        this->direction.Normalize();
+        PreCalc();
+    }
+    
 private:
     void PreCalc() {
         inv_direction = 1.0f / direction;

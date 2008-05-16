@@ -317,8 +317,7 @@ void GlutWindow::ToggleRenderGL() {
         img_.GaussianBlur(options::global::gaussian_blur_sigma);
 
         render_ = new RenderJob( options::global::num_threads, 
-                                scene_, cam_, img_);
-        render_->Run();
+                                scene_, cam_, img_, 1, 1);
     }
 	
     if( !options::global::headless )

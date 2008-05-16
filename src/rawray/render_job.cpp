@@ -5,19 +5,22 @@
 #include "render_job.h"
 #include "time.h"
 #include "stats.h"
-
+#include "ray_caster.h"
 
 namespace rawray {
 
 /////////////////////////////////////////////////////////////////////////////
 bool RenderTask::Run(Scene& scene, const Camera& cam, Image& img, float* progress) {
-    if( height_ == 0 || width_ == 0 )
+    if( !packs_ || !numpacks_ )
         return false;
 
-    const float delta = 100.0f / height_;
-    for( int row=y_; row<y_+height_; ++row ) {
-        *progress = float(row) * delta;
-        scene.Raytrace(cam, img, x_, row, width_, 1);
+    const float progressDelta = 1.0f / numpacks_;
+    *progress = 0.0f;
+
+    for( int i=0; i<numpacks_; ++i ) {
+        std::cout << "Intersecting pack #" << i << std::endl;
+        scene.IntersectPack( packs_[i], MIN_DISTANCE, MAX_DISTANCE );
+        *progress += progressDelta;
     }
     
     *progress = 100.0f;
@@ -123,31 +126,33 @@ float RenderJob::Progress() {
     return progress;
 }
 
-bool RenderJob::Run() {
+bool RenderJob::Run(int aax, int aay) {
     if( numThreads_ < 1 )
         return false;
 
     // Clean enviornment if a previous job was running
     Cleanup();
 
-    // Create a list of tasks we need done
     const int imgHeight = img_.GetHeight();
     const int imgWidth = img_.GetWidth();
 
-    const int xChunk = options::global::render_x_block;
-    const int yChunk = options::global::render_y_block;
-    
-	// Create the rendering tasks in a temporary vector
-	//std::vector<RenderTask*> unshuffled_tasks;
-    for( int y=0; y<imgHeight; y+=yChunk )
-        for( int x=0; x<imgWidth; x+=xChunk )
-            tasks_.push( new RenderTask(x, y, xChunk, yChunk) );
-            //unshuffled_tasks.push_back( new RenderTask(x, y, xChunk, yChunk) );
+    // Create the tasks which we will distribute
+    caster_.GenerateRays(imgHeight, imgWidth);
 
-	// Randomize the rendering tasks :)
-	//std::random_shuffle( unshuffled_tasks.begin(), unshuffled_tasks.end() );
-	//for( size_t i=0; i<unshuffled_tasks.size(); ++i )
-	//	tasks_.push( unshuffled_tasks[i] );
+    const int numscanlines = options::global::render_y_block;
+    const int numpacks = caster_.GetNumPacks();
+    HitPack* hitpacks = caster_.GetHitPacks();
+
+    // Create tasks based on chunks of scanlines
+    int y;
+    for( y=numscanlines; y<=numpacks; y+=numscanlines )
+        tasks_.push( new RenderTask( hitpacks + y - numscanlines, numscanlines ) );
+
+    // Compute any remaining non-full scanlines chunks to assign
+    y -= numscanlines;
+    int partial = numpacks - y;
+    if( partial > 0 )
+        tasks_.push( new RenderTask( hitpacks + y, partial ) );
 
     // Create the user specified number of threads
     for( uint32 thread=0; thread<numThreads_; ++thread )

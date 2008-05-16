@@ -157,6 +157,9 @@
 				RelativePath=".\perlin.cpp">
 			</File>
 			<File
+				RelativePath=".\pfm_loader.cpp">
+			</File>
+			<File
 				RelativePath=".\sse.cpp">
 			</File>
 			<File
@@ -174,6 +177,9 @@
 						UsePrecompiledHeader="1"/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath=".\worley.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -183,10 +189,16 @@
 				RelativePath=".\perlin.h">
 			</File>
 			<File
+				RelativePath=".\pfm_loader.h">
+			</File>
+			<File
 				RelativePath=".\sse.h">
 			</File>
 			<File
 				RelativePath=".\stdafx.h">
+			</File>
+			<File
+				RelativePath=".\worley.h">
 			</File>
 		</Filter>
 		<Filter

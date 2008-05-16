@@ -28,16 +28,8 @@ Vector3 Lambert::Shade(const HitInfo& hit, const Scene& scene) const {
 		direction.Normalize();
 
 		// See if we are in shadow
-		//Ray shadowRay = Ray( hit.point, direction );
-		//if( scene.Hit( shadowRay, MIN_DISTANCE, sqrt(distance2) ) )
-		//	continue;
-
-		HitInfo tmp;
-		tmp.eyeRay = Ray( hit.point, direction );
-		Scene& s = const_cast<Scene&>(scene);
-		if( scene.Hit( Ray( hit.point, direction ), MIN_DISTANCE, sqrt(distance2) ) ) {
+		if( scene.Hit( Ray( hit.point, direction ), MIN_DISTANCE, sqrt(distance2) ) )
 			continue;
-		}
 		
 		const float intensity = hit.normal.Dot(direction) * falloff * light->GetWattage() * math::INV_PI;
 		if( intensity > 0.0f ) {

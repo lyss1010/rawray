@@ -204,6 +204,9 @@
 				Name="scene"
 				Filter="">
 				<File
+					RelativePath=".\background.cpp">
+				</File>
+				<File
 					RelativePath=".\bvh.cpp">
 				</File>
 				<File
@@ -327,6 +330,9 @@
 			<Filter
 				Name="scene"
 				Filter="">
+				<File
+					RelativePath=".\background.h">
+				</File>
 				<File
 					RelativePath=".\bvh.h">
 				</File>

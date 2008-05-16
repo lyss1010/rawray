@@ -63,6 +63,7 @@ STRING      '([^']*)'|\"([^\"]*)\"
 %x s_blpatch
 %x s_p0
 %x s_matrix
+%x s_hdr
 %%
 
 <*>enable{WS}       { return YY_ENABLE; }
@@ -126,7 +127,7 @@ STRING      '([^']*)'|\"([^\"]*)\"
 <s_global>moller{WS}					{ return YY_MOLLER; }
 <s_global>box{WS}cost{WS}				{ return YY_BOX_COST; }
 <s_global>object{WS}cost{WS}			{ return YY_OBJECT_COST; }
-
+<s_global>hdr{WS}pfm{WS}				{ return YY_PFM; }
 
 <INITIAL>camera{WS}						{ yy_push_state(s_camera); return YY_S_CAMERA; }
 <s_camera>pos{WS}						{ return YY_POS; }

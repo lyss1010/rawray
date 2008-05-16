@@ -136,6 +136,7 @@ std::stack<math::Matrix4x4>             g_matrixStack;
 %token YY_MOLLER
 %token YY_BOX_COST
 %token YY_OBJECT_COST
+%token YY_PFM
 
 %token YY_S_CAMERA
 %token YY_POS
@@ -207,6 +208,7 @@ std::stack<math::Matrix4x4>             g_matrixStack;
 %token YY_V_CONSTRAINT
 
 
+
 %right YY_EQUALS
 %left  YY_MINUS YY_PLUS
 %left  YY_MUL YY_DIV
@@ -255,7 +257,7 @@ global_option:
 		| YY_WIDTH iExp										{ g_image->Resize( rawray::options::global::win_width = $2, g_image->GetHeight() ); }
 		| YY_IMG_BGCOLOR vector3							{ rawray::options::global::img_bg_color = math::Vector3( $2[0], $2[1], $2[2] ); }
 		| YY_IMG_FGCOLOR vector3							{ rawray::options::global::img_fg_color = math::Vector3( $2[0], $2[1], $2[2] ); }
-		| YY_GL_BGCOLOR	vector3								{ rawray::options::global::gl_bg_color = math::Vector3( $2[0], $2[1], $2[2] ); }
+		| YY_GL_BGCOLOR	vector3								{ rawray::options::global::gl_bg_color = math::Vector3( $2[0], $2[1], $2[2] ); g_scene->GetBackground().SetBGColor(rawray::options::global::gl_bg_color); }
 		| YY_GL_SPHERE_SECTIONS iExp						{ rawray::options::global::gl_sphere_sections = $2; }
 		| YY_ENABLE YY_GL_RENDER_LIGHTS						{ rawray::options::global::gl_render_lights = true; }
 		| YY_DISABLE YY_GL_RENDER_LIGHTS					{ rawray::options::global::gl_render_lights = false; }
@@ -277,6 +279,7 @@ global_option:
 		| YY_GAUSSIAN_BLUR_SIGMA iExp						{ rawray::options::global::gaussian_blur_sigma = $2; }
 		| YY_BOX_COST rExp									{ rawray::options::global::bvh_box_cost = $2; }
 		| YY_OBJECT_COST rExp								{ rawray::options::global::bvh_obj_cost = $2; }
+		| YY_PFM YY_STRING									{ $2[strlen($2)-1] = 0; g_scene->GetBackground().LoadPFM( $2+1 ); }
 ;
 
 camera_option:

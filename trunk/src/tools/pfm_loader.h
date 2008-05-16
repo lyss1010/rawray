@@ -10,9 +10,9 @@
 /////////////////////////////////////////////////////////////////////////////
 namespace tools {
 
-class PFMLoader {
+class DllExport PFMLoader {
 public:
-	Vector3* ReadPFMImage(const char* filename, int* width, int* height);
+	static Vector3* ReadPFMImage(const char* filename, int* width, int* height);
 	
 }; // class PFMLoader
 

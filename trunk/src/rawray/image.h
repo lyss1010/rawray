@@ -36,7 +36,10 @@ public:
 	void WritePPM();
     void WritePPM(clock_t rendertime);
     void WritePPM(const char* filename);
-
+	void LoadPFM(const char* filename);
+	
+	Vector3& GetUVPixel(float u, float v);
+	Vector3& GetBoundPixel(int x, int y);
 	Vector3& GetPixel(int x, int y) { return pixels_[y*width_ + x]; }
     Vector3* GetPixels() { return pixels_; }
     int GetWidth() const { return width_; }

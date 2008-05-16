@@ -6,6 +6,7 @@
 #include "base/conversions.h"
 #include <sstream>
 #include "time.h"
+#include "tools/pfm_loader.h"
 
 namespace rawray {
 
@@ -30,6 +31,21 @@ Image::~Image() {
 
 void Image::DeleteBuffer( ) {
     SAFE_DELETE_ARRAY( pixels_ );
+}
+
+Vector3& Image::GetBoundPixel(int x, int y) {
+	if( x < 0 ) x = 0;
+	if( y < 0 ) y = 0;
+	if( x >= width_ ) x = width_ - 1;
+	if( y >= height_ ) y = height_ - 1;
+
+	return GetPixel(x, y);
+}
+
+Vector3& Image::GetUVPixel(float u, float v) {
+	return GetBoundPixel( 
+		0.5f*(1.0f+u)*(width_-1),
+		0.5f*(1.0f+v)*(height_-1) );
 }
 
 int Image::Resize(int width, int height) {
@@ -211,6 +227,12 @@ void Image::WritePPM(const char* filename, uint8* data, int width, int height) {
         std::cout << "\nWrote image to file: " << filename << std::endl;
     } else
         std::cout << "\nFailed to write image to file: " << filename << std::endl;
+}
+
+void Image::LoadPFM(const char* filename) {
+	DeleteBuffer();
+
+	pixels_ = tools::PFMLoader::ReadPFMImage( filename, &width_, &height_ );
 }
 
 } // namespace rawray

@@ -116,7 +116,7 @@ void Scene::ShadePack( const HitPack& hitpack, Image& image ) {
         } else {
             image.SetPixel( hitpack.hits[pack].imgCoord.x,
                             hitpack.hits[pack].imgCoord.y,
-                            options::global::img_bg_color );
+							background_.GetColor(hitpack.hits[pack].eyeRay.direction) );
         }
     }
 }

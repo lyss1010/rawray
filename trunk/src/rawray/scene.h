@@ -9,6 +9,7 @@
 #include "object.h"
 #include "camera.h"
 #include "image.h"
+#include "background.h"
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -47,6 +48,7 @@ public:
 
     void PostProcess(Image& img);
 	size_t GetNumObjects() { return objects_.size(); }
+	Background& GetBackground() { return background_; }
 
 private:
 	std::vector<Material*> materials_;
@@ -54,6 +56,7 @@ private:
     std::vector<Light*> lights_;
 	std::vector<TriangleMesh*> meshes_;
     BVH bvh_;
+	Background background_;
 
     void ShadePack( const HitPack& hitpack, Image& image );
 

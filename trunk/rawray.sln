@@ -6,6 +6,7 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tools", "src\tools\tools.vcproj", "{FEE8AC25-54B5-4559-BC90-2D116DB3546B}"
 	ProjectSection(ProjectDependencies) = postProject
 		{01EBC18F-8138-49FF-8274-08DE041E580E} = {01EBC18F-8138-49FF-8274-08DE041E580E}
+		{4A8FBD98-06B3-47A9-B8AE-FAA4E958DFF8} = {4A8FBD98-06B3-47A9-B8AE-FAA4E958DFF8}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "math", "src\math\math.vcproj", "{4A8FBD98-06B3-47A9-B8AE-FAA4E958DFF8}"
@@ -30,6 +31,8 @@ Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
 		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectDependencies) = postSolution
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
 		{01EBC18F-8138-49FF-8274-08DE041E580E}.Debug.ActiveCfg = Debug|Win32

@@ -15,6 +15,12 @@ namespace base {
     uint8 DllExport FloatToByte( float f );
     float DllExport ByteToFloat( uint8 b );
 
+	// big endian system, need to swap bytes to convert into
+	// external little-endian representation
+	void DllExport ByteSwapFloat(float& f);
+	void DllExport LittleEndianFloat(float& f);
+	void DllExport BigEndianFloat(float& f);
+
 } // namespace base
 /////////////////////////////////////////////////////////////////////////////
 

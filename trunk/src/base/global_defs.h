@@ -6,6 +6,9 @@
 // those go in the StdAfx.h files of the individual project
 /////////////////////////////////////////////////////////////////////////////
 
+// define this to 1 if you are running on a big-endian machine (e.g. PPC Macs)
+#define WORDS_BIGENDIAN 0
+
 // If we are compiling to a DLL, this is how we export names
 #ifdef _USRDLL
 #define DllExport __declspec( dllexport )

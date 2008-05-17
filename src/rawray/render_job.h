@@ -19,7 +19,7 @@ public:
     RenderTask(HitPack* packs, int numpacks) : packs_(packs), numpacks_(numpacks) { }
     ~RenderTask() { }
 
-    bool Run( Scene& scene, const Camera& cam, Image& img, float* progress );
+    bool Run( Scene& scene, float* progress );
 
 private:
     HitPack* packs_;
@@ -70,7 +70,7 @@ public:
     ~RenderJob();
 
     float Progress();
-    bool Run(int aax, int aay);
+    bool Run();
     bool IsDone() { return isDone_; }
     void Abort();
     void DisplayStats();

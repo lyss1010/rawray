@@ -10,7 +10,7 @@
 namespace rawray {
 
 /////////////////////////////////////////////////////////////////////////////
-bool RenderTask::Run(Scene& scene, const Camera& cam, Image& img, float* progress) {
+bool RenderTask::Run(Scene& scene, float* progress) {
     if( !packs_ || !numpacks_ )
         return false;
 
@@ -18,7 +18,6 @@ bool RenderTask::Run(Scene& scene, const Camera& cam, Image& img, float* progres
     *progress = 0.0f;
 
     for( int i=0; i<numpacks_; ++i ) {
-        std::cout << "Intersecting pack #" << i << std::endl;
         scene.IntersectPack( packs_[i], MIN_DISTANCE, MAX_DISTANCE );
         *progress += progressDelta;
     }
@@ -71,7 +70,7 @@ DWORD RenderThread::ThreadRoutine() {
 
         if( currentTask_ != NULL ) {
             progress_ = 0.0f;
-            currentTask_->Run( scene_, cam_, img_, &progress_ );
+            currentTask_->Run( scene_, &progress_ );
             currentTask_ = NULL;
         }
     }
@@ -126,7 +125,7 @@ float RenderJob::Progress() {
     return progress;
 }
 
-bool RenderJob::Run(int aax, int aay) {
+bool RenderJob::Run() {
     if( numThreads_ < 1 )
         return false;
 

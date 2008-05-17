@@ -10,20 +10,14 @@
 namespace rawray {
 
 /////////////////////////////////////////////////////////////////////////////
-bool RenderTask::Run(Scene& scene, RayCaster& caster, float* progress) {
-	caster.GenerateRays( x_, x_+width_, y_, y_+height_, width_, height_ );
+bool RenderTask::Run(Scene& scene, const Camera& cam, Image& img, const RayCaster& caster, float& progress) {
+	
+	// Make a local copy of the caster to use so it's all thread safe
+	RayCaster myCaster = RayCaster(caster);
+	myCaster.GenerateRays( cam, x_, x_+width_, y_, y_+height_, img.GetWidth(), img.GetHeight() );
 
-	int numpacks = caster.GetNumPacks();
-	HitPack* packs = caster.GetHitPacks();
-	const float deltaProgress = 1.0f / numpacks;
-	*progress = 0.0f;
-
-    for( int i=0; i<numpacks; ++i ) {
-        scene.IntersectPack( packs[i], MIN_DISTANCE, MAX_DISTANCE );
-        *progress += deltaProgress;
-    }
-    
-    *progress = 100.0f;
+	scene.Raytrace(img, myCaster, progress);
+	progress = 100.0f;
     return true;
 }
 
@@ -71,7 +65,7 @@ DWORD RenderThread::ThreadRoutine() {
 
         if( currentTask_ != NULL ) {
             progress_ = 0.0f;
-			currentTask_->Run( scene_, caster_, &progress_ );
+			currentTask_->Run( scene_, cam_, img_, caster_, progress_ );
             currentTask_ = NULL;
         }
     }

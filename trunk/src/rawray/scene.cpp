@@ -64,68 +64,33 @@ bool Scene::Hit(const Ray& ray, float minDistance, float maxDistance) const {
 	return bvh_.Hit(ray, minDistance, maxDistance);
 }
 
-void Scene::Raytrace(const Camera& cam, Image& image, int xStart, int yStart, int width, int height)
-{
-    Vector3 shadedColor;
-    
-    const int imgWidth = image.GetWidth();
-    const int imgHeight = image.GetHeight();
+void Scene::Raytrace(Image& image, RayCaster& caster, float& progress ) {
+	HitPack* hitpacks = caster.GetHitPacks();
+	const int numpacks = caster.GetNumPacks();
+	const float increment = caster.GetIncrement();
+	const float deltaProgress = 1.0f / numpacks;
 
-    // clip to the image so we don't go out of bounds
-    width = std::min( xStart+width, imgWidth );
-    height = std::min( yStart+height, imgHeight );
+	for( int i=0; i<numpacks; ++i ) {
+		HitPack& pack = *hitpacks++;
 
-    // NOTE: we will ignore unfull packs =(
-    HitPack hitpack;
-    int packsize = 0;
-    for( int y=yStart; y<height; ++y ) {
-        for( int x=xStart; x<width; ++x ) {
-            // Add new item to pack
-            hitpack.hits[packsize].eyeRay = cam.EyeRay( x, y, 0.5f, 0.5f, imgWidth, imgHeight );
-            hitpack.hits[packsize].distance = MAX_DISTANCE;
-            hitpack.hits[packsize].imgCoord.x = x;
-            hitpack.hits[packsize].imgCoord.y = y;
-            ++packsize;
-            
-            if( packsize == 4 ) {
-                // Compute pre-compacted data for SIMD instructions
-                hitpack.PackData();
-                memset( hitpack.hit_result, 0, sizeof(hitpack.hit_result) );
-                packsize = 0;
-                
-                // Shoot off pack if it is full
-                IntersectPack( hitpack );
-                ShadePack( hitpack, image );
-            }
-        }
-    }
+		IntersectPack( pack );
+        ShadePack( pack, image, increment );
+
+		progress += deltaProgress;
+	}
 }
 
-void Scene::ShadePack( const HitPack& hitpack, Image& image ) {
+void Scene::ShadePack( const HitPack& hitpack, Image& image, float increment ) {
     for( int pack=0; pack<4; ++pack ) {
-        if( hitpack.hit_result[pack] != 0.0f ) {
-            // NOTE: It's the users's fault if the material is null
-            if( hitpack.hits[pack].material ) {
-                image.SetPixel( hitpack.hits[pack].imgCoord.x, 
-                                hitpack.hits[pack].imgCoord.y, 
-                                hitpack.hits[pack].material->Shade(hitpack.hits[pack], *this) );
-            } else
-                image.SetPixel( hitpack.hits[pack].imgCoord.x,
-                                hitpack.hits[pack].imgCoord.y,
-                                options::global::img_fg_color );
-        } else {
-            image.SetPixel( hitpack.hits[pack].imgCoord.x,
-                            hitpack.hits[pack].imgCoord.y,
-							background_.GetColor(hitpack.hits[pack].eyeRay.direction) );
-        }
+		Vector3& pixel = image.GetPixel(hitpack.hits[pack].imgCoord.x, hitpack.hits[pack].imgCoord.y );
+
+        if( hitpack.hit_result[pack] != 0.0f )
+			pixel += increment * hitpack.hits[pack].material->Shade(hitpack.hits[pack], *this);
+        else
+            pixel += increment * background_.GetColor(hitpack.hits[pack].eyeRay.direction);
     }
 }
 
-void Scene::Raytrace(const Camera& cam, Image& image) {
-    Raytrace(cam, image, 0, 0, image.GetWidth(), image.GetHeight());
-
-    PostProcess(image);
-}
 
 void Scene::PostProcess(Image& img) {
 	UNREFERENCED_PARAMETER(img);

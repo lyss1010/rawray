@@ -21,7 +21,7 @@ public:
 
     ~RenderTask() { }
 
-    bool Run(Scene& scene, RayCaster& caster, float* progress);
+    bool Run(Scene& scene, const Camera& cam, Image& img, const RayCaster& caster, float& progress);
 
 private:
     int x_, y_;
@@ -67,7 +67,7 @@ class DllExport RenderJob
 {
 public:
     RenderJob(int numThreads, Scene& scene, const Camera& cam, Image& img, int aax, int aay) :
-            numThreads_(numThreads), scene_(scene), cam_(cam), img_(img), caster_(cam_, aax, aay),
+            numThreads_(numThreads), scene_(scene), cam_(cam), img_(img), caster_(aax, aay),
             threadID_(NULL), threadHandle_(NULL), abort_(false), isDone_(false) { }
 
     ~RenderJob();

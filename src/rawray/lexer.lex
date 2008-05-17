@@ -98,12 +98,13 @@ STRING      '([^']*)'|\"([^\"]*)\"
 <*>"/"{WS}          { return YY_DIV; }
 <*>"^"{WS}			{ return YY_CARAT; }
 <*>"\\"{WS}         { return YY_BSLASH; }
+<*>"x"				{ return YY_X; }
 <*>"\n"             { yyline++; }
 
 
+
 <INITIAL>global{WS}						{ yy_push_state(s_global); return YY_S_GLOBAL; }
-<s_global>width{WS}						{ return YY_WIDTH; }
-<s_global>height{WS}	                { return YY_HEIGHT; }
+<s_global>size{WS}						{ return YY_SIZE; }
 <s_global>pos{WS}						{ return YY_POS; }
 <s_global>image{WS}background{WS}		{ return YY_IMG_BGCOLOR; }
 <s_global>image{WS}foreground{WS}		{ return YY_IMG_FGCOLOR; }
@@ -112,8 +113,7 @@ STRING      '([^']*)'|\"([^\"]*)\"
 <s_global>gl{WS}render{WS}lights		{ return YY_GL_RENDER_LIGHTS; }
 <s_global>gl{WS}render{WS}bbox  		{ return YY_GL_RENDER_BBOX; }
 <s_global>num{WS}threads				{ return YY_NUM_THREADS; }
-<s_global>render{WS}x{WS}block			{ return YY_RENDER_X_BLOCK; }
-<s_global>render{WS}y{WS}block			{ return YY_RENDER_Y_BLOCK; }
+<s_global>thread{WS}job{WS}size			{ return YY_THREAD_JOB_SIZE; }
 <s_global>render{WS}handler{WS}sleep	{ return YY_RENDER_HANDLER_SLEEP; }
 <s_global>render{WS}thread{WS}sleep		{ return YY_RENDER_THREAD_SLEEP; }
 <s_global>render{WS}spinlock{WS}sleep	{ return YY_RENDER_SPINLOCK_SLEEP; }
@@ -128,6 +128,7 @@ STRING      '([^']*)'|\"([^\"]*)\"
 <s_global>box{WS}cost{WS}				{ return YY_BOX_COST; }
 <s_global>object{WS}cost{WS}			{ return YY_OBJECT_COST; }
 <s_global>hdr{WS}pfm{WS}				{ return YY_PFM; }
+<s_global>anti{WS}alias					{ return YY_ANTI_ALIAS; }
 
 <INITIAL>camera{WS}						{ yy_push_state(s_camera); return YY_S_CAMERA; }
 <s_camera>pos{WS}						{ return YY_POS; }

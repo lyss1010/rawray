@@ -107,12 +107,12 @@ std::stack<math::Matrix4x4>             g_matrixStack;
 %token YY_MUL
 %token YY_CARAT
 %token YY_BSLASH
+%token YY_X
 
 
 /* ----------------------- keywords ------------------------*/
 %token YY_S_GLOBAL
-%token YY_WIDTH
-%token YY_HEIGHT
+%token YY_SIZE
 %token YY_POS
 %token YY_IMG_BGCOLOR
 %token YY_IMG_FGCOLOR
@@ -122,8 +122,7 @@ std::stack<math::Matrix4x4>             g_matrixStack;
 %token YY_GL_RENDER_BBOX
 %token YY_HEADLESS
 %token YY_NUM_THREADS
-%token YY_RENDER_X_BLOCK
-%token YY_RENDER_Y_BLOCK
+%token YY_THREAD_JOB_SIZE
 %token YY_RENDER_HANDLER_SLEEP
 %token YY_RENDER_THREAD_SLEEP
 %token YY_RENDER_SPINLOCK_SLEEP
@@ -137,6 +136,7 @@ std::stack<math::Matrix4x4>             g_matrixStack;
 %token YY_BOX_COST
 %token YY_OBJECT_COST
 %token YY_PFM
+%token YY_ANTI_ALIAS
 
 %token YY_S_CAMERA
 %token YY_POS
@@ -253,8 +253,7 @@ object_type:
 ;
 
 global_option: 
-		  YY_HEIGHT iExp									{ g_image->Resize( g_image->GetWidth(), rawray::options::global::win_height = $2 ); }
-		| YY_WIDTH iExp										{ g_image->Resize( rawray::options::global::win_width = $2, g_image->GetHeight() ); }
+		| YY_SIZE iExp YY_X iExp							{ g_image->Resize( rawray::options::global::win_width = $2, rawray::options::global::win_height = $4 ); }
 		| YY_IMG_BGCOLOR vector3							{ rawray::options::global::img_bg_color = math::Vector3( $2[0], $2[1], $2[2] ); }
 		| YY_IMG_FGCOLOR vector3							{ rawray::options::global::img_fg_color = math::Vector3( $2[0], $2[1], $2[2] ); }
 		| YY_GL_BGCOLOR	vector3								{ rawray::options::global::gl_bg_color = math::Vector3( $2[0], $2[1], $2[2] ); g_scene->GetBackground().SetBGColor(rawray::options::global::gl_bg_color); }
@@ -269,8 +268,7 @@ global_option:
 		| YY_RENDER_HANDLER_SLEEP iExp						{ rawray::options::global::render_handler_sleep = $2; }
 		| YY_RENDER_THREAD_SLEEP iExp 						{ rawray::options::global::render_thread_sleep = $2; }
 		| YY_RENDER_SPINLOCK_SLEEP iExp						{ rawray::options::global::render_spinlock_sleep = $2; }
-		| YY_RENDER_X_BLOCK	iExp							{ rawray::options::global::render_x_block = $2; }
-		| YY_RENDER_Y_BLOCK	iExp							{ rawray::options::global::render_y_block = $2; }
+		| YY_THREAD_JOB_SIZE iExp YY_X iExp					{ rawray::options::global::thread_job_size_x = $2; rawray::options::global::thread_job_size_y = $4; }
 		| YY_TRIANGLE_TEST YY_BARYCENTRIC					{ rawray::options::global::triangle_intersection_algorithm = rawray::options::BARYCENTRIC; }
 		| YY_TRIANGLE_TEST YY_BARYCENTRIC YY_PROJECTION		{ rawray::options::global::triangle_intersection_algorithm = rawray::options::BARYCENTRIC_PROJECTION; }
 		| YY_TRIANGLE_TEST YY_PLUCKER						{ rawray::options::global::triangle_intersection_algorithm = rawray::options::PLUCKER; }
@@ -280,6 +278,7 @@ global_option:
 		| YY_BOX_COST rExp									{ rawray::options::global::bvh_box_cost = $2; }
 		| YY_OBJECT_COST rExp								{ rawray::options::global::bvh_obj_cost = $2; }
 		| YY_PFM YY_STRING									{ $2[strlen($2)-1] = 0; g_scene->GetBackground().LoadPFM( $2+1 ); }
+		| YY_ANTI_ALIAS iExp YY_X iExp						{ rawray::options::global::aax = $2; rawray::options::global::aay = $4; }
 ;
 
 camera_option:

@@ -215,9 +215,6 @@ copy &quot;$(SolutionDir)lib\tools.dll&quot; &quot;$(OutDir)&quot;
 				RelativePath="..\..\res\scenes\cornell.cfg">
 			</File>
 			<File
-				RelativePath="..\..\res\scenes\empty.cfg">
-			</File>
-			<File
 				RelativePath="..\..\res\scenes\lorenz.cfg">
 			</File>
 			<File

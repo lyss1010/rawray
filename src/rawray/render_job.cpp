@@ -10,16 +10,17 @@
 namespace rawray {
 
 /////////////////////////////////////////////////////////////////////////////
-bool RenderTask::Run(Scene& scene, float* progress) {
-    if( !packs_ || !numpacks_ )
-        return false;
+bool RenderTask::Run(Scene& scene, RayCaster& caster, float* progress) {
+	caster.GenerateRays( x_, x_+width_, y_, y_+height_, width_, height_ );
 
-    const float progressDelta = 1.0f / numpacks_;
-    *progress = 0.0f;
+	int numpacks = caster.GetNumPacks();
+	HitPack* packs = caster.GetHitPacks();
+	const float deltaProgress = 1.0f / numpacks;
+	*progress = 0.0f;
 
-    for( int i=0; i<numpacks_; ++i ) {
-        scene.IntersectPack( packs_[i], MIN_DISTANCE, MAX_DISTANCE );
-        *progress += progressDelta;
+    for( int i=0; i<numpacks; ++i ) {
+        scene.IntersectPack( packs[i], MIN_DISTANCE, MAX_DISTANCE );
+        *progress += deltaProgress;
     }
     
     *progress = 100.0f;
@@ -28,8 +29,8 @@ bool RenderTask::Run(Scene& scene, float* progress) {
 
 
 /////////////////////////////////////////////////////////////////////////////
-RenderThread::RenderThread(Scene& scene, const Camera& cam, Image& img) :
-        scene_(scene), cam_(cam), img_(img), currentTask_(NULL),
+RenderThread::RenderThread(Scene& scene, const Camera& cam, Image& img, RayCaster& caster) :
+        scene_(scene), cam_(cam), img_(img), currentTask_(NULL), caster_(caster),
         threadID_(NULL), threadHandle_(NULL), abort_(false), isDone_(false), progress_(0.0f) {
 
     threadHandle_ = CreateThread(
@@ -70,11 +71,11 @@ DWORD RenderThread::ThreadRoutine() {
 
         if( currentTask_ != NULL ) {
             progress_ = 0.0f;
-            currentTask_->Run( scene_, &progress_ );
+			currentTask_->Run( scene_, caster_, &progress_ );
             currentTask_ = NULL;
         }
     }
-
+	
     isDone_ = true;
     return 0;
 }
@@ -136,26 +137,28 @@ bool RenderJob::Run() {
     const int imgWidth = img_.GetWidth();
 
     // Create the tasks which we will distribute
-    caster_.GenerateRays(imgHeight, imgWidth);
-
-    const int numscanlines = options::global::render_y_block;
-    const int numpacks = caster_.GetNumPacks();
-    HitPack* hitpacks = caster_.GetHitPacks();
+    const int sizex = options::global::thread_job_size_x;
+	const int sizey = options::global::thread_job_size_y;
 
     // Create tasks based on chunks of scanlines
-    int y;
-    for( y=numscanlines; y<=numpacks; y+=numscanlines )
-        tasks_.push( new RenderTask( hitpacks + y - numscanlines, numscanlines ) );
+	int x, y, width, height;
+	for( x=0; x<imgWidth; x+=sizex ) {
+		width = sizex;
+		if( x+width > imgWidth )
+			width = imgWidth - x;
+		
+		for( y=0; y<imgHeight; y+=sizey ) {
+			height = sizey;
+			if( y+height > imgHeight )
+				height = imgHeight - y;
 
-    // Compute any remaining non-full scanlines chunks to assign
-    y -= numscanlines;
-    int partial = numpacks - y;
-    if( partial > 0 )
-        tasks_.push( new RenderTask( hitpacks + y, partial ) );
-
+			tasks_.push( new RenderTask( x, y, width, height ) );
+		}
+	}
+	
     // Create the user specified number of threads
     for( uint32 thread=0; thread<numThreads_; ++thread )
-        threads_.push_back( new RenderThread(scene_, cam_, img_) );
+        threads_.push_back( new RenderThread(scene_, cam_, img_, caster_) );
 
     // Create the master controller thread
     threadHandle_ = CreateThread(

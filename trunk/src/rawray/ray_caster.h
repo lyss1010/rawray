@@ -17,7 +17,7 @@ public:
     RayCaster(const Camera& cam, int aax, int aay) : cam_(cam), aax_(aax), aay_(aay), hitpacks_(NULL), numpacks_(0) { }
     ~RayCaster() { SAFE_DELETE_ARRAY(hitpacks_); }
 
-    void GenerateRays(int width, int height);
+    void GenerateRays(int xmin, int xmax, int ymin, int ymax, int width, int height);
 
     int GetNumPacks() { return numpacks_; }
     HitPack* GetHitPacks() { return hitpacks_; }

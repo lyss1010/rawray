@@ -13,17 +13,19 @@
 /////////////////////////////////////////////////////////////////////////////
 namespace rawray {
 
-class DllExport RenderTask
-{
+class DllExport RenderTask {
 public:
-    RenderTask(HitPack* packs, int numpacks) : packs_(packs), numpacks_(numpacks) { }
+    RenderTask(int x, int y, int width, int height) : 
+		x_(x), y_(y),
+		width_(width), height_(height) { }
+
     ~RenderTask() { }
 
-    bool Run( Scene& scene, float* progress );
+    bool Run(Scene& scene, RayCaster& caster, float* progress);
 
 private:
-    HitPack* packs_;
-    int numpacks_;
+    int x_, y_;
+	int width_, height_;
 
     DISALLOW_IMPLICIT_CONSTRUCTORS(RenderTask);
 };
@@ -33,7 +35,7 @@ private:
 class DllExport RenderThread
 {
 public:
-    RenderThread(Scene& scene, const Camera& cam, Image& img);
+	RenderThread(Scene& scene, const Camera& cam, Image& img, RayCaster& caster);
     ~RenderThread();
 
     bool IsIdle() { return currentTask_==NULL; }
@@ -49,6 +51,7 @@ private:
     const Camera& cam_;
     Image& img_;
     RenderTask* currentTask_;
+	RayCaster& caster_;
     HANDLE threadHandle_;
     DWORD threadID_;
     bool abort_;

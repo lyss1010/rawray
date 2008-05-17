@@ -13,6 +13,8 @@ namespace global {
     int win_height;
     int win_posX;
     int win_posY;
+	int aax;
+	int aay;
 
     math::Vector3 img_fg_color;
     math::Vector3 img_bg_color;
@@ -26,8 +28,8 @@ namespace global {
     TriangleIntersection triangle_intersection_algorithm;
 
     int num_threads;
-    int render_x_block;
-    int render_y_block;
+    int thread_job_size_x;
+	int thread_job_size_y;
     int render_handler_sleep;
     int render_thread_sleep;
     int render_spinlock_sleep;
@@ -84,23 +86,25 @@ void init() {
     global::win_height = 800;
     global::win_posX   = 100;
     global::win_posY   = 100;
+	global::aax	       = 1;
+	global::aay        = 1;
 
     global::num_threads = 4;
-    global::render_x_block = 32;
-    global::render_y_block = 32;
+    global::thread_job_size_x = 256;
+	global::thread_job_size_y = 256;
     global::render_handler_sleep = 256;
     global::render_thread_sleep = 256;
     global::render_spinlock_sleep = 256;
 
     global::bvh_box_cost = 1.0f;
-    global::bvh_obj_cost = 75.0f;
+    global::bvh_obj_cost = 640.0f;
 
     global::gaussian_blur_max = 2.0f;
 	global::gaussian_blur_sigma = 1.0f;
 	global::gl_sphere_sections = 8;
-	global::gl_render_lights = false;
+	global::gl_render_lights = true;
     global::gl_render_bbox = false;
-    global::headless = false;
+    global::headless = true;
 
     camera::eye = Vector3(0);
     camera::view = Vector3(0.0f, 0.0f, -1.0f);

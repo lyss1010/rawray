@@ -22,6 +22,8 @@ namespace global {
     extern int win_height;
     extern int win_posX;
     extern int win_posY;
+	extern int aax;
+	extern int aay;
 
     extern math::Vector3 img_fg_color;
     extern math::Vector3 img_bg_color;
@@ -35,8 +37,8 @@ namespace global {
     extern TriangleIntersection triangle_intersection_algorithm;
 
     extern int num_threads;
-    extern int render_x_block;
-    extern int render_y_block;
+    extern int thread_job_size_x;
+	extern int thread_job_size_y;
     extern int render_handler_sleep;
     extern int render_thread_sleep;
     extern int render_spinlock_sleep;

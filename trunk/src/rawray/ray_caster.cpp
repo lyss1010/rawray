@@ -7,8 +7,8 @@
 
 namespace rawray {
 
-void RayCaster::GenerateRays(int width, int height) {
-    int numPixels = width * height;
+void RayCaster::GenerateRays(int xmin, int xmax, int ymin, int ymax, int width, int height) {
+    int numPixels = (xmax-xmin) * (ymax-ymin);
     numpacks_ = numPixels * aax_ * aay_ / 4;
     if( numpacks_ < 1 ) return;
 
@@ -19,8 +19,11 @@ void RayCaster::GenerateRays(int width, int height) {
     float deltaY = 1.0f / (1+aay_);
 
     // Loop over all pixels and shoot multiple rays for each one
-    int x, y, packsize, packnum;
-    x = y = packnum = packsize = 0;
+	int x = xmin;
+	int y = ymin;
+    int packsize, packnum;
+    packnum = packsize = 0;
+
     while( packnum < numpacks_ ) {
         HitPack* pack = hitpacks_ + packnum;
 
@@ -53,9 +56,9 @@ void RayCaster::GenerateRays(int width, int height) {
         }
 
         // Move forward to next pixel
-        if( ++x >= width ) {
-            x = 0;
-            ++y;
+        if( ++x >= xmax ) {
+            x = xmin;
+			++y;
         }
     }
 }

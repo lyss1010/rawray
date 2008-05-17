@@ -10,6 +10,7 @@
 #include "camera.h"
 #include "image.h"
 #include "background.h"
+#include "ray_caster.h"
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -43,8 +44,7 @@ public:
     virtual bool Intersect(HitInfo& hit, float minDistance = MIN_DISTANCE, float maxDistance = MAX_DISTANCE );
     virtual void IntersectPack(HitPack& hitpack, float minDistance = MIN_DISTANCE, float maxDistance = MAX_DISTANCE );
 
-    void Raytrace(const Camera& cam, Image& image, int xStart, int yStart, int width, int height);
-    void Raytrace(const Camera& cam, Image& image);
+    void Raytrace(Image& image, RayCaster& caster, float& progress);
 
     void PostProcess(Image& img);
 	size_t GetNumObjects() { return objects_.size(); }
@@ -58,7 +58,7 @@ private:
     BVH bvh_;
 	Background background_;
 
-    void ShadePack( const HitPack& hitpack, Image& image );
+    void ShadePack( const HitPack& hitpack, Image& image, float increment );
 
     DISALLOW_COPY_CONSTRUCTORS(Scene);
 

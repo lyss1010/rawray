@@ -14,22 +14,22 @@ class HitPack;
 
 class DllExport RayCaster {
 public:
-    RayCaster(const Camera& cam, int aax, int aay) : cam_(cam), aax_(aax), aay_(aay), hitpacks_(NULL), numpacks_(0) { }
+	explicit RayCaster() : hitpacks_(NULL), numpacks_(0), aax_(0), aay_(0) { }
+    RayCaster(int aax, int aay) : aax_(aax), aay_(aay), hitpacks_(NULL), numpacks_(0) { }
+	RayCaster(const RayCaster& c) : aax_(c.aax_), aay_(c.aay_), hitpacks_(NULL), numpacks_(0) { }
     ~RayCaster() { SAFE_DELETE_ARRAY(hitpacks_); }
 
-    void GenerateRays(int xmin, int xmax, int ymin, int ymax, int width, int height);
+    void GenerateRays(const Camera& cam, int xmin, int xmax, int ymin, int ymax, int imgWidth, int imgHeight);
 
     int GetNumPacks() { return numpacks_; }
     HitPack* GetHitPacks() { return hitpacks_; }
+	float GetIncrement() { return 1.0f / (aax_*aay_); }
 
 protected:
-    const Camera& cam_;
     HitPack* hitpacks_;
     int numpacks_;
     int aax_;
     int aay_;
-
-    DISALLOW_IMPLICIT_CONSTRUCTORS(RayCaster);
 
 }; // class RayCaster
 

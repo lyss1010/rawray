@@ -90,8 +90,8 @@ void init() {
 	global::aay        = 1;
 
     global::num_threads = 4;
-    global::thread_job_size_x = 256;
-	global::thread_job_size_y = 256;
+    global::thread_job_size_x = 64;
+	global::thread_job_size_y = 64;
     global::render_handler_sleep = 256;
     global::render_thread_sleep = 256;
     global::render_spinlock_sleep = 256;

@@ -27,6 +27,8 @@ public:
 
     void Clear(const Vector3& color);
     void Clear(const math::Tuple3<uint8>& color);
+	void Clear(const Vector3& color, int x, int y, int width, int height);
+	void Clear(const math::Tuple3<uint8>& color, int x, int y, int width, int height);
     void ScreenShot();
     bool GaussianBlur(float sigma);
     

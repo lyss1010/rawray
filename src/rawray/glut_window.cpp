@@ -312,9 +312,11 @@ void GlutWindow::ToggleRenderGL() {
     SAFE_DELETE( render_ );
 
     if( !renderGL_ ) {
-        // We set the un-raytraced pixels to be the a blurred opengl render
-        img_.ScreenShot();
-        img_.GaussianBlur(options::global::gaussian_blur_sigma);
+        //img_.ScreenShot();
+        //img_.GaussianBlur(options::global::gaussian_blur_sigma);
+
+		// We have to black out the image before raytracing so we can use addition for anti aliasing
+		img_.Clear( Vector3(0) );
 
         render_ = new RenderJob( options::global::num_threads, 
                                 scene_, cam_, img_, 

@@ -7,7 +7,7 @@
 
 namespace rawray {
 
-void RayCaster::GenerateRays(int xmin, int xmax, int ymin, int ymax, int width, int height) {
+void RayCaster::GenerateRays(const Camera& cam, int xmin, int xmax, int ymin, int ymax, int imgWidth, int imgHeight) {
     int numPixels = (xmax-xmin) * (ymax-ymin);
     numpacks_ = numPixels * aax_ * aay_ / 4;
     if( numpacks_ < 1 ) return;
@@ -35,7 +35,7 @@ void RayCaster::GenerateRays(int xmin, int xmax, int ymin, int ymax, int width, 
             for( int dx=0; dx<aax_; ++dx ) {
                 assert( packnum < numpacks_ );
 
-                pack->hits[packsize].eyeRay = cam_.EyeRay( x, y, xpos, ypos, width, height );
+                pack->hits[packsize].eyeRay = cam.EyeRay( x, y, xpos, ypos, imgWidth, imgHeight );
                 pack->hits[packsize].distance = MAX_DISTANCE;
                 pack->hits[packsize].imgCoord.x = x;
                 pack->hits[packsize].imgCoord.y = y;

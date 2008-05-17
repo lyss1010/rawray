@@ -86,9 +86,22 @@ void Image::Clear(const Vector3 &color) {
 }
 
 void Image::Clear(const math::Tuple3<uint8> &color) {
-    for(int y=0; y<height_; y++)
-        for(int x=0; x<width_; x++)
-            SetPixel( x, y, color );
+    Clear( Vector3(	base::ByteToFloat(color.x),
+					base::ByteToFloat(color.y),
+					base::ByteToFloat(color.z) ) );
+}
+
+void Image::Clear(const Vector3& color, int x, int y, int width, int height) {
+	for( int row=y; row<height; ++row )
+		for( int col=x; col<width; ++col )
+			SetPixel( col, row, color );
+}
+
+void Image::Clear(const math::Tuple3<uint8>& color, int x, int y, int width, int height) {
+	Clear( Vector3( 
+				base::ByteToFloat(color.x), 
+				base::ByteToFloat(color.y), 
+				base::ByteToFloat(color.z) ), x, y, width, height );
 }
 
 void Image::ScreenShot() {

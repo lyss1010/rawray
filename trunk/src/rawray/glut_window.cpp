@@ -318,6 +318,7 @@ void GlutWindow::ToggleRenderGL() {
 
         render_ = new RenderJob( options::global::num_threads, 
                                 scene_, cam_, img_, 1, 1);
+		render_->Run();
     }
 	
     if( !options::global::headless )

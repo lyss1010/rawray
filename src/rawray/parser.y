@@ -21,12 +21,19 @@
 #include "math/vector4.h"
 #include "math/matrix4x4.h"
 #include "object.h"
+#include "multi_material.h"
 #include "material.h"
-#include "lambert.h"
-#include "colorful.h"
+#include "diffuse.h"
+#include "indirect_diffuse.h"
+#include "phong.h"
+#include "stone.h"
+#include "stone_bump.h"
+#include "reflective.h"
+#include "refractive.h"
 #include "light.h"
 #include "point_light.h"
-#include "constant_light.h"
+#include "square_light.h"
+#include "sphere_light.h"
 #include "options.h"
 #include "scene.h"
 #include "camera.h"
@@ -52,6 +59,7 @@ rawray::Image*                          g_image = NULL;
 
 rawray::Object*                         g_obj = NULL;
 rawray::Material*                       g_material = NULL;
+rawray::MultiMaterial*					g_multimaterial = NULL;
 rawray::Light*                          g_light = NULL;
 rawray::TriangleMesh*                   g_mesh = NULL;
 
@@ -185,15 +193,31 @@ std::stack<math::Matrix4x4>             g_matrixStack;
 
 %token YY_S_LIGHT
 %token YY_S_POINTLIGHT
-%token YY_S_CONSTANTLIGHT
+%token YY_S_SQUARELIGHT
+%token YY_S_SPHERELIGHT
 %token YY_WATTAGE
 %token YY_COLOR
+%token YY_NUM_SAMPLES
+%token YY_P1
+%token YY_P2
 
+%token YY_S_MULTIMATERIAL
 %token YY_S_MATERIAL
-%token YY_S_LAMBERT
-%token YY_S_COLORFUL
-%token YY_DIFFUSE
+%token YY_S_DIFFUSE
+%token YY_S_INDIRECT_DIFFUSE
+%token YY_S_PHONG
+%token YY_S_STONE
+%token YY_S_STONEBUMP
+%token YY_S_REFLECTIVE
+%token YY_S_REFRACTIVE
+%token YY_COLOR
+%token YY_N
 %token YY_AMBIENT
+%token YY_COLOR_A
+%token YY_COLOR_B
+%token YY_AMPLITUDE
+%token YY_IOR
+%token YY_WEIGHT
 
 %token YY_S_SPHERE
 %token YY_CENTER
@@ -225,15 +249,24 @@ input:			/* empty */ | option_blocks;
 option_blocks:	block | option_blocks block;
 
 /* ----------------------- recursion ------------------------*/
-global_stuff:		global_option		| global_stuff			global_option;
-camera_stuff:		camera_option		| camera_stuff			camera_option;
-light_stuff:		light_option		| light_stuff			light_option;
-lambert_stuff:		lambert_option		| lambert_stuff			lambert_option;
-p0_stuff:			p0_option			| p0_stuff				p0_option;
-mesh_stuff:			mesh_option			| mesh_stuff			mesh_option;
-sphere_stuff:		sphere_option		| sphere_stuff			sphere_option;
-blpatch_stuff:		blpatch_option		| blpatch_stuff			blpatch_option;
-matrix_stuff:		matrix_option		| matrix_stuff			matrix_option;
+global_stuff:			global_option			| global_stuff			global_option;
+camera_stuff:			camera_option			| camera_stuff			camera_option;
+pointlight_stuff:		pointlight_option		| pointlight_stuff		pointlight_option;
+squarelight_stuff:		squarelight_option		| squarelight_stuff		squarelight_option;
+spherelight_stuff:		spherelight_option		| spherelight_stuff		spherelight_option;
+multimaterial_stuff:	multimaterial_option	| multimaterial_stuff   multimaterial_option;
+diffuse_stuff:			diffuse_option			| diffuse_stuff			diffuse_option;
+indirectdiffuse_stuff:	indirectdiffuse_option	| indirectdiffuse_stuff indirectdiffuse_option;
+phong_stuff:			phong_option			| phong_stuff			phong_option;
+stone_stuff:			stone_option			| stone_stuff			stone_option;
+stonebump_stuff:		stonebump_option		| stonebump_stuff		stonebump_option;
+refractive_stuff:		refractive_option		| refractive_stuff		refractive_option;
+reflective_stuff:		reflective_option		| reflective_stuff		reflective_option;
+p0_stuff:				p0_option				| p0_stuff				p0_option;
+mesh_stuff:				mesh_option				| mesh_stuff			mesh_option;
+sphere_stuff:			sphere_option			| sphere_stuff			sphere_option;
+blpatch_stuff:			blpatch_option			| blpatch_stuff			blpatch_option;
+matrix_stuff:			matrix_option			| matrix_stuff			matrix_option;
 
 /* ----------------------- definitions ------------------------*/
 block:
@@ -243,6 +276,7 @@ block:
 		| YY_S_LIGHT light_type YY_RCURLY					{ }
 		| YY_S_MATERIAL material_type YY_RCURLY				{ }
 		| YY_S_MATRIX YY_LCURLY matrix_stuff YY_RCURLY		{ }
+		| multimaterial_type								{ }
 		| object_type										{ }
 ;
 
@@ -298,38 +332,135 @@ light_type:
 				g_light = new rawray::PointLight();
 				g_scene->AddLight( g_light );
 			}
-			light_stuff
-		| YY_S_CONSTANTLIGHT YY_LCURLY
+			pointlight_stuff
+		| YY_S_SQUARELIGHT YY_LCURLY
 			{
-				g_light = new rawray::ConstantLight();
+				g_light = new rawray::SquareLight();
 				g_scene->AddLight( g_light );
 			}
-			light_stuff
+			squarelight_stuff
+		| YY_S_SPHERELIGHT YY_LCURLY
+			{
+				g_light = new rawray::SphereLight();
+				g_scene->AddLight( g_light );
+			}
+			spherelight_stuff
 ;
 
-light_option:
-		  YY_POS vector3								{ g_light->SetPosition( math::Vector3( $2[0], $2[1], $2[2] ) ); }
-		| YY_WATTAGE rExp								{ g_light->SetWattage( $2 ); }
-		| YY_COLOR vector3								{ g_light->SetColor( math::Vector3( $2[0], $2[1], $2[2] ) ); }
+pointlight_option:
+		  YY_POS vector3		{ g_light->SetPosition( math::Vector3( $2[0], $2[1], $2[2] ) ); }
+		| YY_WATTAGE rExp		{ g_light->SetWattage( $2 ); }
+		| YY_COLOR vector3		{ g_light->SetColor( math::Vector3( $2[0], $2[1], $2[2] ) ); }
+		| YY_NUM_SAMPLES iExp	{ g_light->SetNumSamples( $2 ); }
+;
+
+squarelight_option:
+		  YY_POS vector3		{ g_light->SetPosition( math::Vector3( $2[0], $2[1], $2[2] ) ); }
+		| YY_WATTAGE rExp		{ g_light->SetWattage( $2 ); }
+		| YY_COLOR vector3		{ g_light->SetColor( math::Vector3( $2[0], $2[1], $2[2] ) ); }
+		| YY_NUM_SAMPLES iExp	{ g_light->SetNumSamples( $2 ); }
+		| YY_P1 vector3			{ ((rawray::SquareLight*)g_light)->SetP1( math::Vector3( $2[0], $2[1], $2[2] ) ); }
+		| YY_P2 vector3			{ ((rawray::SquareLight*)g_light)->SetP2( math::Vector3( $2[0], $2[1], $2[2] ) ); }
+;
+
+spherelight_option:
+		  YY_POS vector3		{ g_light->SetPosition( math::Vector3( $2[0], $2[1], $2[2] ) ); }
+		| YY_WATTAGE rExp		{ g_light->SetWattage( $2 ); }
+		| YY_COLOR vector3		{ g_light->SetColor( math::Vector3( $2[0], $2[1], $2[2] ) ); }
+		| YY_NUM_SAMPLES iExp	{ g_light->SetNumSamples( $2 ); }
+		| YY_RADIUS rExp		{ ((rawray::SphereLight*)g_light)->SetRadius( $2 ); }
 ;
 
 material_type:
-		  YY_S_LAMBERT YY_LCURLY
+		  YY_S_DIFFUSE YY_LCURLY 
 			{
-				g_material = new rawray::Lambert();
-				g_scene->AddMaterial( g_material );
+				g_material = new rawray::Diffuse();
+				AddMaterial( g_material );
 			}
-			lambert_stuff
-        | YY_S_COLORFUL YY_LCURLY
-            {
-                g_material = new rawray::Colorful();
-                g_scene->AddMaterial( g_material );
-            }
+			diffuse_stuff
+		| YY_S_PHONG YY_LCURLY
+			{
+				g_material = new rawray::Phong();
+				AddMaterial( g_material );
+			}
+			phong_stuff
+		| YY_S_STONE YY_LCURLY
+			{
+				g_material = new rawray::Stone();
+				AddMaterial( g_material );
+			}
+			stone_stuff
+		| YY_S_STONEBUMP YY_LCURLY
+			{
+				g_material = new rawray::StoneBump();
+				AddMaterial( g_material );
+			}
+			stonebump_stuff
+		| YY_S_REFLECTIVE YY_LCURLY
+			{
+				g_material = new rawray::Reflective();
+				AddMaterial( g_material );
+			}
+			reflective_stuff
+		| YY_S_REFRACTIVE YY_LCURLY
+			{
+				g_material = new rawray::Refractive();
+				AddMaterial( g_material );
+			}
+			refractive_stuff
+		| YY_S_INDIRECT_DIFFUSE YY_LCURLY
+			{
+				g_material = new rawray::IndirectDiffuse();
+				AddMaterial( g_material );
+			}
+			indirectdiffuse_stuff
 ;
 
-lambert_option:
-		  YY_DIFFUSE vector3							{ ((rawray::Lambert*)g_material)->SetDiffuse( math::Vector3( $2[0], $2[1], $2[2] ) ); }
-		| YY_AMBIENT vector3							{ ((rawray::Lambert*)g_material)->SetAmbient( math::Vector3( $2[0], $2[1], $2[2] ) ); }
+multimaterial_type:
+		  YY_S_MULTIMATERIAL YY_LCURLY
+			{
+				g_multimaterial = new rawray::MultiMaterial();
+				g_scene->AddMaterial( g_multimaterial );
+			}
+		  multimaterial_stuff YY_RCURLY
+			{
+				g_material = g_multimaterial;
+				g_multimaterial = NULL;
+			}
+;
+
+multimaterial_option:
+		  YY_AMBIENT vector3							{ g_multimaterial->SetAmbient( math::Vector3( $2[0], $2[1], $2[2] ) ); }
+		| material_type YY_RCURLY						{ }
+;
+
+diffuse_option:
+		  YY_COLOR vector3								{ ((rawray::Diffuse*)g_material)->SetColor( math::Vector3( $2[0], $2[1], $2[2] ) ); }
+;
+
+indirectdiffuse_option:
+		  YY_WEIGHT rExp								{ ((rawray::IndirectDiffuse*)g_material)->SetWeight( $2 ); }
+;
+
+phong_option:
+		  YY_COLOR vector3								{ ((rawray::Phong*)g_material)->SetColor( math::Vector3( $2[0], $2[1], $2[2] ) ); }
+		| YY_N rExp										{ ((rawray::Phong*)g_material)->SetN( $2 ); }
+;
+
+stone_option:
+		  YY_COLOR_A vector3							{ ((rawray::Stone*)g_material)->SetColorA( math::Vector3( $2[0], $2[1], $2[2] ) ); }
+		| YY_COLOR_B vector3							{ ((rawray::Stone*)g_material)->SetColorB( math::Vector3( $2[0], $2[1], $2[2] ) ); }
+;
+
+stonebump_option:
+		  YY_AMPLITUDE rExp								{ ((rawray::StoneBump*)g_material)->SetAmplitude( $2 ); }
+;
+
+reflective_option:
+;
+
+refractive_option:
+		  YY_IOR rExp									{ ((rawray::Refractive*)g_material)->SetIOR( $2 ); }
 ;
 
 matrix_option:
@@ -610,6 +741,14 @@ bool ConfigParser(const char* filename) {
 void DoneParsing() {
 	printf( "Cleaning up parser...\n" );
 	yy_done_parsing();
+}
+
+void AddMaterial( Material* material ) {
+	if( g_multimaterial ) {
+		g_multimaterial->AddMaterial( material );
+	} else {
+		g_scene->AddMaterial( material );
+	}
 }
 
 } // namespace rawray

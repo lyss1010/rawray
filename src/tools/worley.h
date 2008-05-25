@@ -52,7 +52,7 @@ namespace tools {
 //	This can be fixed by increasing the internal points-per-cube
 //	density in the source code, at the expense of slower
 //	computation. The book lists the details of this tuning.
-class Worley {
+class DllExport Worley {
 public:
 	static void Noise1D(float at,    long maxOrder, float *F, float (*delta),    unsigned long *ID);
 	static void Noise2D(float at[2], long maxOrder, float *F, float (*delta)[2], unsigned long *ID);
@@ -61,8 +61,8 @@ public:
 private:
 	// the function to merge-sort a "cube" of samples into the current best-found
 	// list of values.
-	static void AddSamples(long xi, long maxOrder, float at, float *F, float(*delta), unsigned long *ID);
-    static void AddSamples(long xi, long yi, long maxOrder, float at[2], float *F, float(*delta)[2], unsigned long *ID);
+	static void AddSamples(long xi,                   long maxOrder, float at, float *F, float(*delta), unsigned long *ID);
+    static void AddSamples(long xi, long yi,          long maxOrder, float at[2], float *F, float(*delta)[2], unsigned long *ID);
     static void AddSamples(long xi, long yi, long zi, long maxOrder, float at[3], float *F, float(*delta)[3], unsigned long *ID);
 
 	static const int poissonCount[256];

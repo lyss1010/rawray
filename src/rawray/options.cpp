@@ -15,6 +15,7 @@ namespace global {
     int win_posY;
 	int aax;
 	int aay;
+	int max_bounce;
 
     math::Vector3 img_fg_color;
     math::Vector3 img_bg_color;
@@ -78,7 +79,7 @@ namespace p0 {
 void init() {
     epsilon = 0.00001f;
 
-    global::triangle_intersection_algorithm = BARYCENTRIC;
+	global::triangle_intersection_algorithm = BARYCENTRIC;
     global::img_fg_color = Vector3(1);
     global::img_bg_color = Vector3(0);
     global::gl_bg_color = Vector3(0);
@@ -88,6 +89,7 @@ void init() {
     global::win_posY   = 100;
 	global::aax	       = 1;
 	global::aay        = 1;
+	global::max_bounce = 4;
 
     global::num_threads = 4;
     global::thread_job_size_x = 64;

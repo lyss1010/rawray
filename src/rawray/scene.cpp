@@ -80,7 +80,7 @@ void Scene::Raytrace(Image& image, RayCaster& caster, float& progress ) {
 	}
 }
 
-void Scene::ShadePack( const HitPack& hitpack, Image& image, float increment ) {
+void Scene::ShadePack( HitPack& hitpack, Image& image, float increment ) {
     for( int pack=0; pack<4; ++pack ) {
 		Vector3& pixel = image.GetPixel(hitpack.hits[pack].imgCoord.x, hitpack.hits[pack].imgCoord.y );
 
@@ -91,9 +91,30 @@ void Scene::ShadePack( const HitPack& hitpack, Image& image, float increment ) {
     }
 }
 
-
 void Scene::PostProcess(Image& img) {
 	UNREFERENCED_PARAMETER(img);
+}
+
+float Scene::GetLightIntensity(const Light& light, const HitInfo& hit ) const {
+	int numLit = 0;
+	for( int i=0; i<light.GetNumSamples(); ++i ) {
+		Vector3 direction = light.GetRandPosition() - hit.point;
+		const float length = direction.NormalizeGetLength();
+
+		// See if we are in shadow or not
+		if( !Hit( Ray( hit.point, direction ), MIN_DISTANCE, length ) )
+			++numLit;
+	}
+
+	// Get the one direction we will use for falloff calculations
+	Vector3 direction = light.GetPosition() - hit.point;
+	const float distance2 = direction.Length2();
+	const float falloff = light.Falloff(distance2);
+
+	const float litPercent = float(numLit) / float(light.GetNumSamples());
+
+	// 1/4PI is because of the sphere falloff of light
+	return litPercent * falloff * light.GetWattage() * math::INV_QUARTER_PI;
 }
 
 } // namespace rawray

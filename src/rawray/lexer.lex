@@ -55,10 +55,17 @@ STRING      '([^']*)'|\"([^\"]*)\"
 %x s_instance
 %x s_light
 %x s_pointlight
-%x s_constantlight
+%x s_spherelight
+%x s_squarelight
 %x s_material
-%x s_lambert
-%x s_colorful
+%x s_multimaterial
+%x s_diffuse
+%x s_indirectdiffuse
+%x s_phong
+%x s_stone
+%x s_stonebump
+%x s_reflective
+%x s_refractive
 %x s_sphere
 %x s_blpatch
 %x s_p0
@@ -161,20 +168,60 @@ STRING      '([^']*)'|\"([^\"]*)\"
 
 <INITIAL>light{WS}						{ yy_push_state(s_light); return YY_S_LIGHT; }
 <s_light>point{WS}						{ yy_pop_state(); yy_push_state(s_pointlight); return YY_S_POINTLIGHT; }
-<s_pointlight>color{WS}					{ return YY_COLOR; }
-<s_pointlight>pos{WS}					{ return YY_POS; }
-<s_pointlight>wattage{WS}				{ return YY_WATTAGE; }
+<s_light>sphere{WS}						{ yy_pop_state(); yy_push_state(s_spherelight); return YY_S_SPHERELIGHT; }
+<s_light>square{WS}						{ yy_pop_state(); yy_push_state(s_squarelight); return YY_S_SQUARELIGHT; }
 
-<s_light>constant{WS}					{ yy_pop_state(); yy_push_state(s_constantlight); return YY_S_CONSTANTLIGHT; }
-<s_constantlight>color{WS}				{ return YY_COLOR; }
-<s_constantlight>pos{WS}				{ return YY_POS; }
-<s_constantlight>wattage{WS}			{ return YY_WATTAGE; }
+<s_pointlight>pos{WS}					{ return YY_POS; }
+<s_pointlight>color{WS}					{ return YY_COLOR; }
+<s_pointlight>wattage{WS}				{ return YY_WATTAGE; }
+<s_pointlight>num{WS}samples{WS}		{ return YY_NUM_SAMPLES; }
+
+<s_squarelight>pos{WS}					{ return YY_POS; }
+<s_squarelight>color{WS}				{ return YY_COLOR; }
+<s_squarelight>wattage{WS}				{ return YY_WATTAGE; }
+<s_squarelight>num{WS}samples{WS}		{ return YY_NUM_SAMPLES; }
+<s_squarelight>p1{WS}					{ return YY_P1; }
+<s_squarelight>p2{WS}					{ return YY_P2; }
+
+<s_spherelight>pos{WS}					{ return YY_POS; }
+<s_spherelight>color{WS}				{ return YY_COLOR; }
+<s_spherelight>wattage{WS}				{ return YY_WATTAGE; }
+<s_spherelight>num{WS}samples{WS}		{ return YY_NUM_SAMPLES; }
+<s_spherelight>radius{WS}				{ return YY_RADIUS; }
 
 <INITIAL>material{WS}					{ yy_push_state(s_material); return YY_S_MATERIAL; }
-<s_material>lambert{WS}					{ yy_pop_state(); yy_push_state(s_lambert); return YY_S_LAMBERT; }
-<s_material>colorful{WS}				{ yy_pop_state(); yy_push_state(s_colorful); return YY_S_COLORFUL; }
-<s_lambert>diffuse{WS}					{ return YY_DIFFUSE; }
-<s_lambert>ambient{WS}					{ return YY_AMBIENT; }
+<INITIAL>multimaterial{WS}				{ yy_push_state(s_multimaterial); return YY_S_MULTIMATERIAL; }
+
+<s_material>diffuse{WS}					{ yy_pop_state(); yy_push_state(s_diffuse); return YY_S_DIFFUSE; }
+<s_multimaterial>diffuse{WS}			{                 yy_push_state(s_diffuse); return YY_S_DIFFUSE; }
+
+<s_material>indirect{WS}diffuse{WS}		{ yy_pop_state(); yy_push_state(s_indirectdiffuse); return YY_S_INDIRECT_DIFFUSE; }
+<s_multimaterial>indirect{WS}diffuse{WS} {                yy_push_state(s_indirectdiffuse); return YY_S_INDIRECT_DIFFUSE; }
+
+<s_material>phong{WS}					{ yy_pop_state(); yy_push_state(s_phong); return YY_S_PHONG; }
+<s_multimaterial>phong{WS}				{                 yy_push_state(s_phong); return YY_S_PHONG; }
+
+<s_material>stone{WS}					{ yy_pop_state(); yy_push_state(s_stone); return YY_S_STONE; }
+<s_multimaterial>stone{WS}				{                 yy_push_state(s_stone); return YY_S_STONE; }
+
+<s_material>stonebump{WS}				{ yy_pop_state(); yy_push_state(s_stonebump); return YY_S_STONEBUMP; }
+<s_multimaterial>stonebump{WS}			{                 yy_push_state(s_stonebump); return YY_S_STONEBUMP; }
+
+<s_material>reflective{WS}				{ yy_pop_state(); yy_push_state(s_reflective); return YY_S_REFLECTIVE; }
+<s_multimaterial>reflective{WS}			{                 yy_push_state(s_reflective); return YY_S_REFLECTIVE; }
+
+<s_material>refractive{WS}				{ yy_pop_state(); yy_push_state(s_refractive); return YY_S_REFRACTIVE; }
+<s_multimaterial>refractive{WS}			{                 yy_push_state(s_refractive); return YY_S_REFRACTIVE; }
+
+<s_multimaterial>ambient{WS}			{ return YY_AMBIENT; }
+<s_diffuse>color{WS}					{ return YY_COLOR; }
+<s_phong>color{WS}						{ return YY_COLOR; }
+<s_phong>n{WS}							{ return YY_N; }
+<s_stone>color{WS}A{WS}					{ return YY_COLOR_A; }
+<s_stone>color{WS}B{WS}					{ return YY_COLOR_B; }
+<s_stonebump>amplitude{WS}				{ return YY_AMPLITUDE; }
+<s_refractive>ior{WS}					{ return YY_IOR; }
+<s_indirectdiffuse>weight{WS}			{ return YY_WEIGHT; }
 
 <INITIAL>sphere{WS}						{ yy_push_state(s_sphere); return YY_S_SPHERE; }
 <s_sphere>center{WS}					{ return YY_CENTER; }

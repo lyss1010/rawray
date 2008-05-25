@@ -318,11 +318,13 @@ void GlutWindow::ToggleRenderGL() {
 		// We have to black out the image before raytracing so we can use addition for anti aliasing
 		img_.Clear( Vector3(0) );
 
-        render_ = new RenderJob( options::global::num_threads, 
-                                scene_, cam_, img_, 
-								options::global::aax, options::global::aay);
+		if( scene_.GetObjects().size() > 0 ) {
+			render_ = new RenderJob( options::global::num_threads, 
+									scene_, cam_, img_, 
+									options::global::aax, options::global::aay);
 
-		render_->Run();
+			render_->Run();
+		}
     }
 	
     if( !options::global::headless )

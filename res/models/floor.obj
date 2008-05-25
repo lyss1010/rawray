@@ -1,6 +1,6 @@
 #	             Vertex list
 v -10  0 -10
-v  0   0 -10
+v  0   0  10
 v  10  0 -10
 
 #	             Normal list

@@ -48,6 +48,12 @@ Vector3& Image::GetUVPixel(float u, float v) {
 		0.5f*(1.0f+v)*(height_-1) );
 }
 
+Vector3& Image::Get0UVPixel(float u, float v) {
+	return GetBoundPixel( 
+		u*(width_-1),
+		v*(height_-1) );
+}
+
 int Image::Resize(int width, int height) {
     if( width == width_ && height == height_ )
         return width*height;

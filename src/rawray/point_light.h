@@ -19,12 +19,14 @@ public:
     PointLight() 
 		: Light() { }
 
-    PointLight(const Vector3& position, const Vector3& color, float wattage) 
-		: Light(position, color, wattage) { }
+    PointLight(const Vector3& position, const Vector3& color, float wattage, int samples) 
+		: Light(position, color, wattage, samples) { }
 
-    //virtual void RenderGL();
+    virtual void RenderGL();
 	virtual void PreCalc() { }
-	virtual float Falloff(float distance2);
+	virtual float Falloff(float distance2) const;
+	virtual Vector3 GetRandPosition() const { return position_; }
+	virtual int GetNumSamples() const { return 1; }
 
 private:
     DISALLOW_COPY_CONSTRUCTORS(PointLight);

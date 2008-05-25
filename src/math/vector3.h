@@ -86,6 +86,7 @@ public:
     
     // Creation of unit length vector
     inline const Vector3& Normalize() { return *this /= Length(); }
+	inline const float NormalizeGetLength() { const float length = Length(); *this /= length; return length; }
     inline Vector3 Normalized() { return *this / Length(); }
 
     // Rotation around a given vector by given angle in radians

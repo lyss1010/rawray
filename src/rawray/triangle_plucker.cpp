@@ -6,6 +6,7 @@
 #include "math/tuple3.h"
 #include "material.h"
 #include <new>
+#include <float.h>
 
 namespace rawray {
 
@@ -401,11 +402,11 @@ void TrianglePlucker::IntersectPack(HitPack& hitpack, float minDistance, float m
 		movaps distance, xmm3;
 	}
 
-
 	for( int i=0; i<4; ++i ) {
 		if( !rayHit[i] || 
 			distance.m128_f32[i] < minDistance || 
-			distance.m128_f32[i] > maxDistance )
+			distance.m128_f32[i] > maxDistance ||
+			_isnan( distance.m128_f32[i]) )
 		{
 			continue;
 		}
@@ -468,7 +469,7 @@ bool TrianglePlucker::Intersect(HitInfo& hit, float minDistance, float maxDistan
 
     // Assuming ray.direction is normalized, dot prodcut will give us length of (hit.point - ray.origin)
     hit.distance = math::Dot( (hit.point - ray.origin), ray.direction );
-    if( hit.distance < minDistance || hit.distance > maxDistance )
+    if( hit.distance < minDistance || hit.distance > maxDistance || _isnan(hit.distance) )
         return false;
 
     hit.material = material_;

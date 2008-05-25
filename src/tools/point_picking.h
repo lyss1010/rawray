@@ -1,0 +1,31 @@
+/////////////////////////////////////////////////////////////////////////////
+// Class : point_picking.h
+//
+/////////////////////////////////////////////////////////////////////////////
+#ifndef RAWRAY_TOOLS_POINT_PICKING_H
+#define RAWRAY_TOOLS_POINT_PICKING_H
+#include "stdafx.h"
+
+/////////////////////////////////////////////////////////////////////////////
+namespace tools {
+namespace  {
+
+enum VERSION {
+    NONE = 0,
+    SSE1, 
+    SSE2, 
+    SSE3, 
+    SSSE3, 
+    SSE4_1, 
+    SSE4_2
+};
+
+DllExport VERSION GetVersion();
+DllExport void SetFastFPU();
+DllExport void SetNormalFPU();
+
+} // namespace tools::sse
+} // namespace tools
+/////////////////////////////////////////////////////////////////////////////
+
+#endif // RAWRAY_TOOLS_SSE_TEST_H

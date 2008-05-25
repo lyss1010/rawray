@@ -226,13 +226,31 @@
 				Name="material"
 				Filter="">
 				<File
-					RelativePath=".\colorful.cpp">
+					RelativePath=".\diffuse.cpp">
 				</File>
 				<File
-					RelativePath=".\lambert.cpp">
+					RelativePath=".\indirect_diffuse.cpp">
 				</File>
 				<File
 					RelativePath=".\material.cpp">
+				</File>
+				<File
+					RelativePath=".\multi_material.cpp">
+				</File>
+				<File
+					RelativePath=".\phong.cpp">
+				</File>
+				<File
+					RelativePath=".\reflective.cpp">
+				</File>
+				<File
+					RelativePath=".\refractive.cpp">
+				</File>
+				<File
+					RelativePath=".\stone.cpp">
+				</File>
+				<File
+					RelativePath=".\stone_bump.cpp">
 				</File>
 			</Filter>
 			<Filter
@@ -264,13 +282,16 @@
 				Name="light"
 				Filter="">
 				<File
-					RelativePath=".\constant_light.cpp">
-				</File>
-				<File
 					RelativePath=".\light.cpp">
 				</File>
 				<File
 					RelativePath=".\point_light.cpp">
+				</File>
+				<File
+					RelativePath=".\sphere_light.cpp">
+				</File>
+				<File
+					RelativePath=".\square_light.cpp">
 				</File>
 			</Filter>
 		</Filter>
@@ -372,26 +393,47 @@
 				Name="material"
 				Filter="">
 				<File
-					RelativePath=".\colorful.h">
+					RelativePath=".\diffuse.h">
 				</File>
 				<File
-					RelativePath=".\lambert.h">
+					RelativePath=".\indirect_diffuse.h">
 				</File>
 				<File
 					RelativePath=".\material.h">
+				</File>
+				<File
+					RelativePath=".\multi_material.h">
+				</File>
+				<File
+					RelativePath=".\phong.h">
+				</File>
+				<File
+					RelativePath=".\reflective.h">
+				</File>
+				<File
+					RelativePath=".\refractive.h">
+				</File>
+				<File
+					RelativePath=".\stone.h">
+				</File>
+				<File
+					RelativePath=".\stone_bump.h">
 				</File>
 			</Filter>
 			<Filter
 				Name="light"
 				Filter="">
 				<File
-					RelativePath=".\constant_light.h">
-				</File>
-				<File
 					RelativePath=".\light.h">
 				</File>
 				<File
 					RelativePath=".\point_light.h">
+				</File>
+				<File
+					RelativePath=".\sphere_light.h">
+				</File>
+				<File
+					RelativePath=".\square_light.h">
 				</File>
 			</Filter>
 		</Filter>

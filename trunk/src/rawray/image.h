@@ -40,7 +40,8 @@ public:
     void WritePPM(const char* filename);
 	void LoadPFM(const char* filename);
 	
-	Vector3& GetUVPixel(float u, float v);
+	Vector3& Get0UVPixel(float u, float v); // u,v are [ 0,1]
+	Vector3& GetUVPixel(float u, float v);  // u,v are [-1,1]
 	Vector3& GetBoundPixel(int x, int y);
 	Vector3& GetPixel(int x, int y) { return pixels_[y*width_ + x]; }
     Vector3* GetPixels() { return pixels_; }

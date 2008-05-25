@@ -160,6 +160,9 @@
 				RelativePath=".\pfm_loader.cpp">
 			</File>
 			<File
+				RelativePath=".\random.cpp">
+			</File>
+			<File
 				RelativePath=".\sse.cpp">
 			</File>
 			<File
@@ -190,6 +193,9 @@
 			</File>
 			<File
 				RelativePath=".\pfm_loader.h">
+			</File>
+			<File
+				RelativePath=".\random.h">
 			</File>
 			<File
 				RelativePath=".\sse.h">

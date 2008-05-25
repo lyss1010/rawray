@@ -6,6 +6,7 @@
 #include "math/tuple3.h"
 #include "material.h"
 #include <new>
+#include <float.h>
 
 namespace rawray {
 
@@ -64,7 +65,7 @@ bool TriangleBarycentric::Intersect(HitInfo& hit, float minDistance, float maxDi
     // NOTE: We will allow division by zero which will give us infinity and fail the distance test
     const float inv_den = 1.0f / (a*ei_minus_hf + b*gf_minus_di + c*dh_minus_eg);
     const float t = (f*ak_minus_jb + e*jc_minux_al + d*bl_minux_kc) * inv_den ;
-    if( t < minDistance || t > maxDistance ) return false;
+    if( t < minDistance || t > maxDistance || _isnan(t) ) return false;
 
     const float gamma = (-ray.direction.z*ak_minus_jb - ray.direction.y*jc_minux_al - ray.direction.x*bl_minux_kc) * inv_den;
     if( gamma < 0.0f || gamma > 1.0f ) return false;

@@ -14,9 +14,19 @@ bool RenderTask::Run(Scene& scene, const Camera& cam, Image& img, const RayCaste
 	
 	// Make a local copy of the caster to use so it's all thread safe
 	RayCaster myCaster = RayCaster(caster);
-	myCaster.GenerateRays( cam, x_, x_+width_, y_, y_+height_, img.GetWidth(), img.GetHeight() );
 
-	scene.Raytrace(img, myCaster, progress);
+	// We need to be careful with how many rays we ask the caster to generate
+	// Right now just do single scanlines to keep the numbers down
+
+	const float progressDelta = 1.0f / height_;
+
+	for( int row=y_; row<y_+height_; ++row ) {
+		myCaster.GenerateRays( cam, x_, x_+width_, row, row+1, img.GetWidth(), img.GetHeight() );
+		scene.Raytrace(img, myCaster, progress);
+
+		progress += progressDelta;
+	}
+	
 	progress = 100.0f;
     return true;
 }

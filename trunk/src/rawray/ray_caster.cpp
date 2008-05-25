@@ -39,6 +39,8 @@ void RayCaster::GenerateRays(const Camera& cam, int xmin, int xmax, int ymin, in
                 pack->hits[packsize].distance = MAX_DISTANCE;
                 pack->hits[packsize].imgCoord.x = x;
                 pack->hits[packsize].imgCoord.y = y;
+				pack->hits[packsize].bounce = 0;
+				pack->hits[packsize].ior = IOR_AIR;
                 ++packsize;
                 xpos += deltaX;
 
@@ -61,6 +63,11 @@ void RayCaster::GenerateRays(const Camera& cam, int xmin, int xmax, int ymin, in
 			++y;
         }
     }
+}
+
+int RayCaster::GetNumDivisions(int xPixels, int yPixels) {
+	int numDivisions = xPixels * yPixels * aax_ * aay_ / maxRays_;
+	return (numDivisions<1) ? 1 : numDivisions;
 }
 
 } // namespace rawray

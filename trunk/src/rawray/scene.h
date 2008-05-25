@@ -45,10 +45,13 @@ public:
     virtual void IntersectPack(HitPack& hitpack, float minDistance = MIN_DISTANCE, float maxDistance = MAX_DISTANCE );
 
     void Raytrace(Image& image, RayCaster& caster, float& progress);
+	float GetLightIntensity(const Light& light, const HitInfo& hit ) const;
 
     void PostProcess(Image& img);
 	size_t GetNumObjects() { return objects_.size(); }
 	Background& GetBackground() { return background_; }
+
+	Vector3 Shade(HitInfo& hit);
 
 private:
 	std::vector<Material*> materials_;
@@ -58,7 +61,7 @@ private:
     BVH bvh_;
 	Background background_;
 
-    void ShadePack( const HitPack& hitpack, Image& image, float increment );
+    void ShadePack( HitPack& hitpack, Image& image, float increment );
 
     DISALLOW_COPY_CONSTRUCTORS(Scene);
 

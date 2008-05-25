@@ -14,7 +14,7 @@ namespace tools {
 // Based on Java reference implementation of:
 // Improved Noise - Copyright 2002 Ken Perlin.
 // See: http://mrl.nyu.edu/~perlin/noise/
-class Perlin {
+class DllExport Perlin {
 public:
    static float Noise(float x, float y, float z);
 

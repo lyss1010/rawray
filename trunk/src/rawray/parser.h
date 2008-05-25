@@ -14,11 +14,13 @@ namespace rawray {
 class Scene;
 class Camera;
 class Image;
+class Material;
 
 void AddTrianglesOfMesh();
 void SetConfigSources(Scene* scene, Camera* cam, Image* img);
 bool ConfigParser(const char* filename);
 void DoneParsing();
+void AddMaterial(Material* material);
 
 } // namespace rawray
 

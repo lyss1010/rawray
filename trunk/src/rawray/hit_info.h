@@ -10,6 +10,8 @@
 #include "math/tuple2.h"
 #include "ray.h"
 
+#define IOR_AIR 1.00029
+
 /////////////////////////////////////////////////////////////////////////////
 namespace rawray {
 
@@ -25,14 +27,15 @@ public:
     Tuple2I imgCoord;
     float distance;
     Material* material;
+	float ior;
+	int bounce;
 
-    HitInfo() : material(NULL) { }
+    HitInfo() : material(NULL), ior(IOR_AIR), bounce(0) { }
 
     HitInfo(const HitInfo& hit)
         : eyeRay(hit.eyeRay), point(hit.point), normal(hit.normal),
         texCoord(hit.texCoord), imgCoord(hit.imgCoord), distance(hit.distance),
-        material(hit.material) { }
-
+		material(hit.material), ior(hit.ior), bounce(hit.bounce) { }
 
 }; // class HitInfo
 

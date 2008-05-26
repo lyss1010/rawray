@@ -9,7 +9,7 @@
 
 namespace rawray {
 
-void Diffuse::ShadeLight(HitInfo& hit, Scene& scene, const Light& light, float intensity, Vector3& shadedColor) const {
+void Diffuse::ShadeLight(HitInfo& hit, Scene& scene, const Light& light, float intensity, Vector4& shadedColor) const {
 	UNREFERENCED_PARAMETER(scene);
 
 	Vector3 direction = light.GetPosition() - hit.point;
@@ -17,7 +17,7 @@ void Diffuse::ShadeLight(HitInfo& hit, Scene& scene, const Light& light, float i
 	intensity *= hit.normal.Dot(direction);
 
 	if( intensity > 0.0f ) {
-		Vector3 lightColor = light.GetColor();
+		Vector4 lightColor = light.GetColor();
 		lightColor *= color_;
 		lightColor *= intensity;
 

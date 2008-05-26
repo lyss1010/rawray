@@ -17,22 +17,22 @@ namespace rawray {
 class DllExport Diffuse : public Material
 {
 public:
-    Diffuse(const Vector3& color = Vector3(1.0f)) : Material(), color_(color) { }
+    Diffuse(const Vector4& color = Vector4(1)) : Material(), color_(color) { }
 
     virtual ~Diffuse() { }
 
-    void SetColor(const Vector3& color) { color_=color; }
-    const Vector3& GetColor() const { return color_; }
+    void SetColor(const Vector4& color) { color_=color; }
+    const Vector4& GetColor() const { return color_; }
 
     virtual void PreCalc() { }
     
-    //virtual Vector3 Shade(HitInfo& hit, Scene& scene) const;
-	virtual void ShadeLight(HitInfo& hit, Scene& scene, const Light& light, float intensity, Vector3& shadedColor) const;
-	virtual Vector3 BaseColor() const { return color_; }
+    //virtual Vector4 Shade(HitInfo& hit, Scene& scene) const;
+	virtual void ShadeLight(HitInfo& hit, Scene& scene, const Light& light, float intensity, Vector4& shadedColor) const;
+	virtual Vector4 BaseColor() const { return color_; }
 	virtual float GetTranslucency() const { return 0.0f; }
 
 protected:
-    Vector3 color_;
+    Vector4 color_;
 
 private:
     DISALLOW_COPY_CONSTRUCTORS(Diffuse);

@@ -19,7 +19,7 @@ public:
     SquareLight() 
 		: Light() { }
 
-    SquareLight(const Vector3& position, const Vector3& color, float wattage, int samples, const Vector3& p1, const Vector3& p2) 
+    SquareLight(const Vector3& position, const Vector4& color, float wattage, int samples, const Vector3& p1, const Vector3& p2) 
 		: Light(position, color, wattage, samples), d1_(p1-position_), d2_(p2-position_) { }
 
     virtual void RenderGL();

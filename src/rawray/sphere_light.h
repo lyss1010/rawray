@@ -19,7 +19,7 @@ public:
     SphereLight() 
 		: Light(), radius_(1.0f) { }
 
-    SphereLight(const Vector3& position, const Vector3& color, float wattage, int samples, float radius) 
+    SphereLight(const Vector3& position, const Vector4& color, float wattage, int samples, float radius) 
 		: Light(position, color, wattage, samples), radius_(radius) { }
 
     virtual void RenderGL();

@@ -30,6 +30,7 @@ public:
     const std::vector<Light*>& GetLights() const { return lights_; }
 	const std::vector<Material*>& GetMaterials() const { return materials_; }
 
+	// TODO: Add lights as objects in the world so we can intersect directly w/ them and get their color + bloom
     Object* AddObject(Object* object) { objects_.push_back(object); return object; }
     Light* AddLight(Light* light) { lights_.push_back(light); return light; }
 	Material* AddMaterial(Material* mat) { materials_.push_back(mat); return mat; }
@@ -51,7 +52,7 @@ public:
 	size_t GetNumObjects() { return objects_.size(); }
 	Background& GetBackground() { return background_; }
 
-	Vector3 Shade(HitInfo& hit);
+	Vector4 Shade(HitInfo& hit);
 
 private:
 	std::vector<Material*> materials_;

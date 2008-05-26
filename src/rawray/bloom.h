@@ -1,22 +1,27 @@
 /////////////////////////////////////////////////////////////////////////////
-// Class : pfm_loader.h
+// Class : bloom.h
 //
 /////////////////////////////////////////////////////////////////////////////
-#ifndef RAWRAY_TOOLS_PFM_LOADER_H
-#define RAWRAY_TOOLS_PFM_LOADER_H
+#ifndef RAWRAY_RAWRAY_BLOOM_H
+#define RAWRAY_RAWRAY_BLOOM_H
 #include "stdafx.h"
-#include "math/vector4.h"
+#include "image.h"
 
 /////////////////////////////////////////////////////////////////////////////
-namespace tools {
+namespace rawray {
 
-class DllExport PFMLoader {
+class DllExport Bloom
+{
 public:
-	static Vector4* ReadPFMImage(const char* filename, int* width, int* height);
-	
-}; // class PFMLoader
+	static void Process(Image& image);
 
-} // namespace tools
+private:
+    DISALLOW_IMPLICIT_CONSTRUCTORS(Bloom);
+
+}; // class Light
+
+} // namespace rawray
 /////////////////////////////////////////////////////////////////////////////
 
-#endif // RAWRAY_TOOLS_PFM_LOADER_H
+
+#endif // RAWRAY_RAWRAY_LIGHT_H

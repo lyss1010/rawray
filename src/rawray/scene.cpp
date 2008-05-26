@@ -6,6 +6,7 @@
 #include "light.h"
 #include "material.h"
 #include "triangle_mesh.h"
+#include "bloom.h"
 
 namespace rawray {
 
@@ -82,7 +83,7 @@ void Scene::Raytrace(Image& image, RayCaster& caster, float& progress ) {
 
 void Scene::ShadePack( HitPack& hitpack, Image& image, float increment ) {
     for( int pack=0; pack<4; ++pack ) {
-		Vector3& pixel = image.GetPixel(hitpack.hits[pack].imgCoord.x, hitpack.hits[pack].imgCoord.y );
+		Vector4& pixel = image.GetPixel(hitpack.hits[pack].imgCoord.x, hitpack.hits[pack].imgCoord.y );
 
         if( hitpack.hit_result[pack] != 0.0f )
 			pixel += increment * hitpack.hits[pack].material->Shade(hitpack.hits[pack], *this);
@@ -92,7 +93,7 @@ void Scene::ShadePack( HitPack& hitpack, Image& image, float increment ) {
 }
 
 void Scene::PostProcess(Image& img) {
-	UNREFERENCED_PARAMETER(img);
+	Bloom::Process(img);
 }
 
 float Scene::GetLightIntensity(const Light& light, const HitInfo& hit ) {

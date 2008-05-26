@@ -8,7 +8,9 @@
 namespace rawray {
 
 void Sphere::RenderGL() {
-	Vector3 color = material_ ? material_->BaseColor() : Vector3(1);
+	const Vector4& color4 = material_ ? material_->BaseColor() : Vector4(1);
+	const Vector3 color( color4.x, color4.y, color4.z );
+
 	glColor3f( color.x, color.y, color.z );
 
     glPushMatrix();
@@ -80,10 +82,7 @@ bool Sphere::Intersect(HitInfo& hit, float minDistance, float maxDistance) {
     hit.point = ray.direction;
     hit.point *= hit.distance;
     hit.point += ray.origin;
-
-    // hit.normal = hit.point - center_
-    hit.normal = hit.point;
-    hit.normal -= center_;
+    hit.normal = hit.point - center_;
     hit.normal.Normalize();
     
     hit.material = material_;

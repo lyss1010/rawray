@@ -9,11 +9,11 @@
 
 namespace rawray {
 
-Vector3 Material::Shade(HitInfo& hit, Scene& scene) const {
+Vector4 Material::Shade(HitInfo& hit, Scene& scene) const {
 	const Ray& ray = hit.eyeRay;
     const Vector3 viewDir = -ray.direction;
     const std::vector<Light*>& lights = scene.GetLights();
-    Vector3 shadedColor(0);
+    Vector4 shadedColor(0);
 
 	// Loop over all lights
     std::vector<Light*>::const_iterator light_it = lights.begin();

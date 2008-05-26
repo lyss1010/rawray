@@ -10,7 +10,7 @@
 namespace rawray {
 
 // Blinn-Phong model
-void Phong::ShadeLight(HitInfo& hit, Scene& scene, const Light& light, float intensity, Vector3& shadedColor) const {
+void Phong::ShadeLight(HitInfo& hit, Scene& scene, const Light& light, float intensity, Vector4& shadedColor) const {
 	UNREFERENCED_PARAMETER(scene);
 
 	Vector3 l = light.GetPosition() - hit.point;
@@ -23,7 +23,7 @@ void Phong::ShadeLight(HitInfo& hit, Scene& scene, const Light& light, float int
 
 	intensity *= pow( hit.normal.Dot(h), n_ );
 
-	Vector3 lightColor = light.GetColor();
+	Vector4 lightColor = light.GetColor();
 	lightColor *= color_;
 	lightColor *= intensity;
 

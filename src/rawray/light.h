@@ -6,6 +6,7 @@
 #define RAWRAY_RAWRAY_LIGHT_H
 #include "stdafx.h"
 #include "math/vector3.h"
+#include "math/vector4.h"
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -15,16 +16,16 @@ class DllExport Light
 {
 public:
     ~Light() { }
-    Light() : position_(Vector3()), color_(Vector3()), wattage_(0), samples_(1) { }
-    Light(const Vector3& position, const Vector3& color, float wattage, int samples) : position_(position), color_(color), wattage_(wattage), samples_(samples) { }
+    Light() : position_(Vector3()), color_(Vector4()), wattage_(0), samples_(1) { }
+    Light(const Vector3& position, const Vector4& color, float wattage, int samples) : position_(position), color_(color), wattage_(wattage), samples_(samples) { }
 
     void SetPosition(const Vector3& position) { position_=position; }
-    void SetColor(const Vector3& color) { color_=color; }
+    void SetColor(const Vector4& color) { color_=color; }
     void SetWattage(float wattage) { wattage_=wattage; }
 	void SetNumSamples(int samples) { samples_=samples; }
 
     float GetWattage() const { return wattage_; }
-    const Vector3& GetColor() const { return color_; }
+    const Vector4& GetColor() const { return color_; }
     const Vector3& GetPosition() const { return position_; }
 
     virtual void RenderGL()=0;
@@ -35,7 +36,7 @@ public:
 
 protected:
     Vector3 position_;
-    Vector3 color_;
+    Vector4 color_;
     float wattage_;
 	int samples_;
 

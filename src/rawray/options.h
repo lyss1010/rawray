@@ -5,6 +5,7 @@
 #ifndef RAWRAY_RAWRAY_OPTIONS_H
 #define RAWRAY_RAWRAY_OPTIONS_H
 #include "math/vector3.h"
+#include "math/vector4.h"
 
 namespace rawray {
 namespace options {
@@ -27,9 +28,9 @@ namespace global {
 	extern int max_ior_bounce;
 	extern int max_diffuse_bounce;
 
-    extern math::Vector3 img_fg_color;
-    extern math::Vector3 img_bg_color;
-    extern math::Vector3 gl_bg_color;
+    extern math::Vector4 img_fg_color;
+    extern math::Vector4 img_bg_color;
+    extern math::Vector4 gl_bg_color;
     extern int  gl_sphere_sections;
 	extern bool gl_render_lights;
     extern bool gl_render_bbox;
@@ -50,6 +51,7 @@ namespace global {
 
     extern float bvh_box_cost;
     extern float bvh_obj_cost;
+	extern float hdr_bloom_power;
 
 } // namespace global
 

@@ -31,7 +31,8 @@ void Triangle::RenderGL() {
 	const Vector3& n1 = mesh_->GetNormals()[ indicies.y ];
 	const Vector3& n2 = mesh_->GetNormals()[ indicies.z ];
 
-    const Vector3& color = material_ ? material_->BaseColor() : Vector3(1);
+    const Vector4& color4 = material_ ? material_->BaseColor() : Vector4(1);
+	const Vector3 color( color4.x, color4.y, color4.z );
 
     glBegin(GL_TRIANGLES);
         glColor3f( color.x, color.y, color.z );

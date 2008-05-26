@@ -24,6 +24,7 @@ public:
     //virtual Vector3 Shade(HitInfo& hit, Scene& scene) const;
 	virtual void ShadeLight(HitInfo& hit, Scene& scene, const Light& light, float intensity, Vector3& shadedColor) const;
 	virtual Vector3 BaseColor() const { return Vector3(1); }
+	virtual float GetTranslucency() const { return 0.0f; }
 
 private:
     DISALLOW_COPY_CONSTRUCTORS(Reflective);

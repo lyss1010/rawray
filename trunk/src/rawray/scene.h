@@ -45,7 +45,7 @@ public:
     virtual void IntersectPack(HitPack& hitpack, float minDistance = MIN_DISTANCE, float maxDistance = MAX_DISTANCE );
 
     void Raytrace(Image& image, RayCaster& caster, float& progress);
-	float GetLightIntensity(const Light& light, const HitInfo& hit ) const;
+	float GetLightIntensity(const Light& light, const HitInfo& hit );
 
     void PostProcess(Image& img);
 	size_t GetNumObjects() { return objects_.size(); }

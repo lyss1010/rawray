@@ -28,14 +28,16 @@ public:
     float distance;
     Material* material;
 	float ior;
-	int bounce;
+	int ior_bounce;
+	int diffuse_bounce;
 
-    HitInfo() : material(NULL), ior(IOR_AIR), bounce(0) { }
+    HitInfo() : material(NULL), ior(IOR_AIR), ior_bounce(0), diffuse_bounce(0) { }
 
     HitInfo(const HitInfo& hit)
         : eyeRay(hit.eyeRay), point(hit.point), normal(hit.normal),
         texCoord(hit.texCoord), imgCoord(hit.imgCoord), distance(hit.distance),
-		material(hit.material), ior(hit.ior), bounce(hit.bounce) { }
+		material(hit.material), ior(hit.ior), ior_bounce(hit.ior_bounce),
+		diffuse_bounce(hit.diffuse_bounce) { }
 
 }; // class HitInfo
 

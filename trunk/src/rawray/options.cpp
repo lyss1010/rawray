@@ -15,7 +15,8 @@ namespace global {
     int win_posY;
 	int aax;
 	int aay;
-	int max_bounce;
+	int max_ior_bounce;
+	int max_diffuse_bounce;
 
     math::Vector3 img_fg_color;
     math::Vector3 img_bg_color;
@@ -89,7 +90,8 @@ void init() {
     global::win_posY   = 100;
 	global::aax	       = 1;
 	global::aay        = 1;
-	global::max_bounce = 4;
+	global::max_ior_bounce = 4;
+	global::max_diffuse_bounce = 1;
 
     global::num_threads = 4;
     global::thread_job_size_x = 64;

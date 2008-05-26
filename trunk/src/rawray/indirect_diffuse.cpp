@@ -14,7 +14,7 @@ void IndirectDiffuse::ShadeLight(HitInfo& hit, Scene& scene, const Light& light,
 	UNREFERENCED_PARAMETER(light);
 	UNREFERENCED_PARAMETER(intensity);
 
-	if( hit.bounce < options::global::max_bounce ) {
+	if( hit.diffuse_bounce < options::global::max_diffuse_bounce ) {
 
 		// Get a random direction on a sphere
 		Vector3 indirectRay = tools::random::RandomUnitCircleLoc();
@@ -25,7 +25,8 @@ void IndirectDiffuse::ShadeLight(HitInfo& hit, Scene& scene, const Light& light,
 
 		// Now calculate indirect lighting from this direction
 		HitInfo indirectHit;
-		indirectHit.bounce = hit.bounce + 1;
+		indirectHit.ior_bounce = hit.ior_bounce;
+		indirectHit.diffuse_bounce = hit.diffuse_bounce + 1;
 		indirectHit.eyeRay = Ray( hit.point + math::EPSILON * indirectRay, indirectRay );
 		indirectHit.ior = hit.ior;
 		indirectHit.distance = MAX_DISTANCE;

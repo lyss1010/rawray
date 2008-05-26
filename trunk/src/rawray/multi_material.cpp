@@ -57,4 +57,15 @@ Vector3 MultiMaterial::BaseColor() const {
 	return materials_[0]->BaseColor();
 }
 
+float MultiMaterial::GetTranslucency() const {
+	if( materials_.size() < 1 )
+		return 1.0f;
+
+	float translucency = 0.0f;
+	for( std::vector<Material*>::const_iterator material_it = materials_.begin(); material_it != materials_.end(); ++material_it )
+		translucency += (*material_it)->GetTranslucency();
+
+	return translucency / materials_.size();
+}
+
 } // namespace rawray

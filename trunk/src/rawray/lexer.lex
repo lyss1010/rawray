@@ -14,6 +14,7 @@
 #pragma warning(disable:4267) // smaller type conversion warnings
 #pragma warning(disable:4244) // smaller type conversion warnings
 #pragma warning(disable:4702) // unreachable code in stl library on relesae
+#pragma warning(disable:4211) // defining something as extern and then later on as static
 #endif
 
 #include <cstdlib>
@@ -73,8 +74,16 @@ STRING      '([^']*)'|\"([^\"]*)\"
 %x s_hdr
 %%
 
-<*>enable{WS}       { return YY_ENABLE; }
-<*>disable{WS}      { return YY_DISABLE; }
+<*>true{WS}			{ return YY_TRUE; }
+<*>yes{WS}			{ return YY_TRUE; }
+<*>enable{WS}       { return YY_TRUE; }
+<*>on{WS}			{ return YY_TRUE; }
+
+<*>false{WS}		{ return YY_FALSE; }
+<*>no{WS}			{ return YY_FALSE; }
+<*>disable{WS}      { return YY_FALSE; }
+<*>off{WS}			{ return YY_FALSE; }
+
 <*>cos{WS}          { return YY_MATH_COS; }
 <*>sin{WS}          { return YY_MATH_SIN; }
 <*>tan{WS}          { return YY_MATH_TAN; }
@@ -136,6 +145,8 @@ STRING      '([^']*)'|\"([^\"]*)\"
 <s_global>object{WS}cost{WS}			{ return YY_OBJECT_COST; }
 <s_global>hdr{WS}pfm{WS}				{ return YY_PFM; }
 <s_global>anti{WS}alias					{ return YY_ANTI_ALIAS; }
+<s_global>max{WS}diffuse{WS}bounce{WS}	{ return YY_MAX_DIFFUSE_BOUNCE; }
+<s_global>max{WS}ior{WS}bounce{WS}		{ return YY_MAX_IOR_BOUNCE; }
 
 <INITIAL>camera{WS}						{ yy_push_state(s_camera); return YY_S_CAMERA; }
 <s_camera>pos{WS}						{ return YY_POS; }
@@ -213,15 +224,22 @@ STRING      '([^']*)'|\"([^\"]*)\"
 <s_material>refractive{WS}				{ yy_pop_state(); yy_push_state(s_refractive); return YY_S_REFRACTIVE; }
 <s_multimaterial>refractive{WS}			{                 yy_push_state(s_refractive); return YY_S_REFRACTIVE; }
 
-<s_multimaterial>ambient{WS}			{ return YY_AMBIENT; }
 <s_diffuse>color{WS}					{ return YY_COLOR; }
+<s_diffuse>weight{WS}					{ return YY_WEIGHT; }
+<s_indirectdiffuse>weight{WS}			{ return YY_WEIGHT; }
+<s_multimaterial>ambient{WS}			{ return YY_AMBIENT; }
 <s_phong>color{WS}						{ return YY_COLOR; }
 <s_phong>n{WS}							{ return YY_N; }
+<s_phong>weight{WS}						{ return YY_WEIGHT; }
+<s_reflective>weight{WS}				{ return YY_WEIGHT; }
+<s_refractive>ior{WS}					{ return YY_IOR; }
+<s_refractive>weight{WS}				{ return YY_WEIGHT; }
 <s_stone>color{WS}A{WS}					{ return YY_COLOR_A; }
 <s_stone>color{WS}B{WS}					{ return YY_COLOR_B; }
+<s_stone>weight{WS}						{ return YY_WEIGHT; }
 <s_stonebump>amplitude{WS}				{ return YY_AMPLITUDE; }
-<s_refractive>ior{WS}					{ return YY_IOR; }
-<s_indirectdiffuse>weight{WS}			{ return YY_WEIGHT; }
+<s_stonebump>weight{WS}					{ return YY_WEIGHT; }
+
 
 <INITIAL>sphere{WS}						{ yy_push_state(s_sphere); return YY_S_SPHERE; }
 <s_sphere>center{WS}					{ return YY_CENTER; }

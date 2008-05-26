@@ -14,7 +14,7 @@ void Reflective::ShadeLight(HitInfo& hit, Scene& scene, const Light& light, floa
 	UNREFERENCED_PARAMETER(intensity);
 	UNREFERENCED_PARAMETER(light);
 
-	if( hit.bounce < options::global::max_bounce ) {
+	if( hit.ior_bounce < options::global::max_ior_bounce ) {
 		Vector3 e = hit.point - hit.eyeRay.origin;
 		e.Normalize();
 
@@ -22,7 +22,8 @@ void Reflective::ShadeLight(HitInfo& hit, Scene& scene, const Light& light, floa
 		reflect += -2 * e.Dot( hit.normal ) * hit.normal;
 	
 		HitInfo reflectiveHit;
-		reflectiveHit.bounce = hit.bounce + 1;
+		reflectiveHit.ior_bounce = hit.ior_bounce + 1;
+		reflectiveHit.diffuse_bounce = hit.diffuse_bounce;
 		reflectiveHit.eyeRay = Ray( hit.point + math::EPSILON * reflect,
 									reflect );
 

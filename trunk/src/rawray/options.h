@@ -24,7 +24,8 @@ namespace global {
     extern int win_posY;
 	extern int aax;
 	extern int aay;
-	extern int max_bounce;
+	extern int max_ior_bounce;
+	extern int max_diffuse_bounce;
 
     extern math::Vector3 img_fg_color;
     extern math::Vector3 img_bg_color;

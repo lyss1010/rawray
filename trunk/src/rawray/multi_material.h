@@ -23,10 +23,12 @@ public:
     virtual Vector3 Shade(HitInfo& hit, Scene& scene) const;
 	virtual void ShadeLight(HitInfo& hit, Scene& scene, const Light& light, float intensity, Vector3& shadedColor) const;
 	virtual Vector3 BaseColor() const;
+	virtual float GetTranslucency() const;
 
 	void AddMaterial(Material* material) { materials_.push_back( material ); }
 	void SetAmbient(const Vector3& ambient) { ambient_ = ambient; }
 	const Vector3& GetAmbient() const { return ambient_; }
+	
 
 private:
 	std::vector<Material*> materials_;

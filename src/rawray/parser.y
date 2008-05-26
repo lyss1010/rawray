@@ -74,6 +74,8 @@ std::stack<math::Matrix4x4>             g_matrixStack;
     int				integer;
     char*			str;
     float			vec[4];
+    bool			boolean;
+    int				tritest;
 }
 
 /* ----------------------- tokens ------------------------*/
@@ -83,8 +85,8 @@ std::stack<math::Matrix4x4>             g_matrixStack;
 
 %token YY_PARSE_TRUE
 %token YY_PARSE_FALSE
-%token YY_ENABLE
-%token YY_DISABLE
+%token YY_TRUE
+%token YY_FALSE
 %token YY_MATH_COS
 %token YY_MATH_SIN
 %token YY_MATH_TAN
@@ -145,6 +147,9 @@ std::stack<math::Matrix4x4>             g_matrixStack;
 %token YY_OBJECT_COST
 %token YY_PFM
 %token YY_ANTI_ALIAS
+%token YY_MAX_DIFFUSE_BOUNCE
+%token YY_MAX_IOR_BOUNCE
+
 
 %token YY_S_CAMERA
 %token YY_POS
@@ -232,7 +237,6 @@ std::stack<math::Matrix4x4>             g_matrixStack;
 %token YY_V_CONSTRAINT
 
 
-
 %right YY_EQUALS
 %left  YY_MINUS YY_PLUS
 %left  YY_MUL YY_DIV
@@ -242,11 +246,14 @@ std::stack<math::Matrix4x4>             g_matrixStack;
 %type <real> rExp fExp constantExp
 %type <integer> iExp
 %type <vec> vector2 vector3 vector4
+%type <boolean> boolExp
+%type <tritest> triTestExp
 
 %%
 
 input:			/* empty */ | option_blocks;
 option_blocks:	block | option_blocks block;
+
 
 /* ----------------------- recursion ------------------------*/
 global_stuff:			global_option			| global_stuff			global_option;
@@ -268,6 +275,7 @@ sphere_stuff:			sphere_option			| sphere_stuff			sphere_option;
 blpatch_stuff:			blpatch_option			| blpatch_stuff			blpatch_option;
 matrix_stuff:			matrix_option			| matrix_stuff			matrix_option;
 
+
 /* ----------------------- definitions ------------------------*/
 block:
 		  YY_S_GLOBAL YY_LCURLY global_stuff YY_RCURLY		{ }
@@ -287,26 +295,20 @@ object_type:
 ;
 
 global_option: 
+		  YY_HEADLESS boolExp								{ rawray::options::global::headless = $2; }
+		| YY_GL_RENDER_LIGHTS boolExp						{ rawray::options::global::gl_render_lights = $2; }
+		| YY_GL_RENDER_BBOX boolExp							{ rawray::options::global::gl_render_bbox = $2; }
 		| YY_SIZE iExp YY_X iExp							{ g_image->Resize( rawray::options::global::win_width = $2, rawray::options::global::win_height = $4 ); }
 		| YY_IMG_BGCOLOR vector3							{ rawray::options::global::img_bg_color = math::Vector3( $2[0], $2[1], $2[2] ); }
 		| YY_IMG_FGCOLOR vector3							{ rawray::options::global::img_fg_color = math::Vector3( $2[0], $2[1], $2[2] ); }
 		| YY_GL_BGCOLOR	vector3								{ rawray::options::global::gl_bg_color = math::Vector3( $2[0], $2[1], $2[2] ); g_scene->GetBackground().SetBGColor(rawray::options::global::gl_bg_color); }
 		| YY_GL_SPHERE_SECTIONS iExp						{ rawray::options::global::gl_sphere_sections = $2; }
-		| YY_ENABLE YY_GL_RENDER_LIGHTS						{ rawray::options::global::gl_render_lights = true; }
-		| YY_DISABLE YY_GL_RENDER_LIGHTS					{ rawray::options::global::gl_render_lights = false; }
-		| YY_ENABLE YY_GL_RENDER_BBOX						{ rawray::options::global::gl_render_bbox = true; }
-		| YY_DISABLE YY_GL_RENDER_BBOX  					{ rawray::options::global::gl_render_bbox = false; }
-		| YY_ENABLE YY_HEADLESS								{ rawray::options::global::headless = true; }
-		| YY_DISABLE YY_HEADLESS							{ rawray::options::global::headless = false; }
 		| YY_NUM_THREADS iExp								{ rawray::options::global::num_threads = $2; }
 		| YY_RENDER_HANDLER_SLEEP iExp						{ rawray::options::global::render_handler_sleep = $2; }
 		| YY_RENDER_THREAD_SLEEP iExp 						{ rawray::options::global::render_thread_sleep = $2; }
 		| YY_RENDER_SPINLOCK_SLEEP iExp						{ rawray::options::global::render_spinlock_sleep = $2; }
 		| YY_THREAD_JOB_SIZE iExp YY_X iExp					{ rawray::options::global::thread_job_size_x = $2; rawray::options::global::thread_job_size_y = $4; }
-		| YY_TRIANGLE_TEST YY_BARYCENTRIC					{ rawray::options::global::triangle_intersection_algorithm = rawray::options::BARYCENTRIC; }
-		| YY_TRIANGLE_TEST YY_BARYCENTRIC YY_PROJECTION		{ rawray::options::global::triangle_intersection_algorithm = rawray::options::BARYCENTRIC_PROJECTION; }
-		| YY_TRIANGLE_TEST YY_PLUCKER						{ rawray::options::global::triangle_intersection_algorithm = rawray::options::PLUCKER; }
-		| YY_TRIANGLE_TEST YY_MOLLER						{ rawray::options::global::triangle_intersection_algorithm = rawray::options::MOLLER; }
+		| YY_TRIANGLE_TEST triTestExp						{ rawray::options::global::triangle_intersection_algorithm = static_cast<rawray::options::TriangleIntersection>($2); }
 		| YY_GAUSSIAN_BLUR_MAX iExp							{ rawray::options::global::gaussian_blur_max = $2; }
 		| YY_GAUSSIAN_BLUR_SIGMA iExp						{ rawray::options::global::gaussian_blur_sigma = $2; }
 		| YY_BOX_COST rExp									{ rawray::options::global::bvh_box_cost = $2; }
@@ -429,6 +431,7 @@ multimaterial_type:
 			}
 ;
 
+
 multimaterial_option:
 		  YY_AMBIENT vector3							{ g_multimaterial->SetAmbient( math::Vector3( $2[0], $2[1], $2[2] ) ); }
 		| material_type YY_RCURLY						{ }
@@ -436,32 +439,39 @@ multimaterial_option:
 
 diffuse_option:
 		  YY_COLOR vector3								{ ((rawray::Diffuse*)g_material)->SetColor( math::Vector3( $2[0], $2[1], $2[2] ) ); }
+		| YY_WEIGHT rExp								{ g_material->SetWeight( $2 ); }
 ;
 
 indirectdiffuse_option:
-		  YY_WEIGHT rExp								{ ((rawray::IndirectDiffuse*)g_material)->SetWeight( $2 ); }
+		  YY_WEIGHT rExp								{ g_material->SetWeight( $2 ); }
 ;
 
 phong_option:
 		  YY_COLOR vector3								{ ((rawray::Phong*)g_material)->SetColor( math::Vector3( $2[0], $2[1], $2[2] ) ); }
 		| YY_N rExp										{ ((rawray::Phong*)g_material)->SetN( $2 ); }
+		| YY_WEIGHT rExp								{ g_material->SetWeight( $2 ); }
+;
+
+reflective_option:
+		  YY_WEIGHT rExp								{ g_material->SetWeight( $2 ); }
+;
+
+refractive_option:
+		  YY_IOR rExp									{ ((rawray::Refractive*)g_material)->SetIOR( $2 ); }
+		| YY_WEIGHT rExp								{ g_material->SetWeight( $2 ); }
 ;
 
 stone_option:
 		  YY_COLOR_A vector3							{ ((rawray::Stone*)g_material)->SetColorA( math::Vector3( $2[0], $2[1], $2[2] ) ); }
 		| YY_COLOR_B vector3							{ ((rawray::Stone*)g_material)->SetColorB( math::Vector3( $2[0], $2[1], $2[2] ) ); }
+		| YY_WEIGHT rExp								{ g_material->SetWeight( $2 ); }
 ;
 
 stonebump_option:
 		  YY_AMPLITUDE rExp								{ ((rawray::StoneBump*)g_material)->SetAmplitude( $2 ); }
+		| YY_WEIGHT rExp								{ g_material->SetWeight( $2 ); }
 ;
 
-reflective_option:
-;
-
-refractive_option:
-		  YY_IOR rExp									{ ((rawray::Refractive*)g_material)->SetIOR( $2 ); }
-;
 
 matrix_option:
 		  YY_PUSH										{ if( g_matrixStack.size() > 0 ) g_matrixStack.push( g_matrixStack.top() ); else g_matrixStack.push( math::Matrix4x4() ); }
@@ -693,6 +703,20 @@ constantExp:
           YY_MATH_E						{ $$ = 2.718281828459f; }
         | YY_MATH_PI					{ $$ = 3.141592653589793f; }
 ;
+
+boolExp:
+		  YY_TRUE							{ $$ = true; }
+		| YY_FALSE							{ $$ = false; }
+;
+
+triTestExp:
+		  YY_BARYCENTRIC					{ $$ = rawray::options::BARYCENTRIC; }
+		| YY_BARYCENTRIC YY_PROJECTION		{ $$ = rawray::options::BARYCENTRIC_PROJECTION; }
+		| YY_PLUCKER						{ $$ = rawray::options::PLUCKER; }
+		| YY_MOLLER							{ $$ = rawray::options::MOLLER; }
+;
+
+
 
 // End of grammar
 %%

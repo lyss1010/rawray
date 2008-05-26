@@ -95,15 +95,19 @@ void Scene::PostProcess(Image& img) {
 	UNREFERENCED_PARAMETER(img);
 }
 
-float Scene::GetLightIntensity(const Light& light, const HitInfo& hit ) const {
-	int numLit = 0;
+float Scene::GetLightIntensity(const Light& light, const HitInfo& hit ) {
+	float numLit = 0.0f;
+	HitInfo tempHit = hit;
+
 	for( int i=0; i<light.GetNumSamples(); ++i ) {
-		Vector3 direction = light.GetRandPosition() - hit.point;
-		const float length = direction.NormalizeGetLength();
+		tempHit.eyeRay.direction = light.GetRandPosition() - hit.point;
+		const float length = tempHit.eyeRay.direction.NormalizeGetLength();
 
 		// See if we are in shadow or not
-		if( !Hit( Ray( hit.point, direction ), MIN_DISTANCE, length ) )
-			++numLit;
+		if( !Intersect( tempHit, MIN_DISTANCE, length ) )
+			numLit += 1.0f;
+		else // If we hit something, see what it was and see how much we can see through it
+			numLit += tempHit.material->GetTranslucency();
 	}
 
 	// Get the one direction we will use for falloff calculations
@@ -111,7 +115,7 @@ float Scene::GetLightIntensity(const Light& light, const HitInfo& hit ) const {
 	const float distance2 = direction.Length2();
 	const float falloff = light.Falloff(distance2);
 
-	const float litPercent = float(numLit) / float(light.GetNumSamples());
+	const float litPercent = numLit / light.GetNumSamples();
 
 	// 1/4PI is because of the sphere falloff of light
 	return litPercent * falloff * light.GetWattage() * math::INV_QUARTER_PI;

@@ -19,11 +19,11 @@ MultiMaterial::~MultiMaterial() {
 	}
 }
 
-Vector3 MultiMaterial::Shade(HitInfo& hit, Scene& scene) const {
+Vector4 MultiMaterial::Shade(HitInfo& hit, Scene& scene) const {
 	const Ray& ray = hit.eyeRay;
     const Vector3 viewDir = -ray.direction;
     const std::vector<Light*>& lights = scene.GetLights();
-    Vector3 shadedColor(0);
+    Vector4 shadedColor(0);
 
 	// Loop over all lights
     for (std::vector<Light*>::const_iterator light_it=lights.begin(); light_it != lights.end(); ++light_it) {
@@ -41,7 +41,7 @@ Vector3 MultiMaterial::Shade(HitInfo& hit, Scene& scene) const {
 	return shadedColor;
 }
 
-void MultiMaterial::ShadeLight(HitInfo& hit, Scene& scene, const Light& light, float intensity, Vector3& shadedColor) const {
+void MultiMaterial::ShadeLight(HitInfo& hit, Scene& scene, const Light& light, float intensity, Vector4& shadedColor) const {
 	// Loop over all materials to get their contribution
 	for(std::vector<Material*>::const_iterator material_it = materials_.begin(); material_it != materials_.end(); ++material_it ) {
 		Material* material = *material_it;
@@ -50,9 +50,9 @@ void MultiMaterial::ShadeLight(HitInfo& hit, Scene& scene, const Light& light, f
 }
 
 // Choose base color as base color of 1st material
-Vector3 MultiMaterial::BaseColor() const {
+Vector4 MultiMaterial::BaseColor() const {
 	if( materials_.size() < 1 )
-		return Vector3(0);
+		return Vector4(0);
 
 	return materials_[0]->BaseColor();
 }

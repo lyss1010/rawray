@@ -7,12 +7,12 @@
 
 namespace rawray {
 
-const Vector3& Background::GetBGColor( const Vector3& d ) {
+const Vector4& Background::GetBGColor( const Vector3& d ) {
 	UNREFERENCED_PARAMETER( d );
 	return bgColor_;
 }
 
-const Vector3& Background::GetHDRColor( const Vector3& d ) {
+const Vector4& Background::GetHDRColor( const Vector3& d ) {
 	// Calculate (u,v) coordinates 
 	// u = Dx*r
 	// v = Dy*r
@@ -25,7 +25,7 @@ void Background::LoadPFM( const char* filename ) {
 	std::cout << "Loading HDR File: '" << filename << "'\n";
 	hdr_.LoadPFM(filename);
 
-	// Use the HDR function for getting colors now
+	// Turn the HDR colorgetter function on
 	colorGetter_ = &Background::GetHDRColor;
 }
 

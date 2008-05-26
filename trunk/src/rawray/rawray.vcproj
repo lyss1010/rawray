@@ -294,6 +294,13 @@
 					RelativePath=".\square_light.cpp">
 				</File>
 			</Filter>
+			<Filter
+				Name="post"
+				Filter="">
+				<File
+					RelativePath=".\bloom.cpp">
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -434,6 +441,13 @@
 				</File>
 				<File
 					RelativePath=".\square_light.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="post"
+				Filter="">
+				<File
+					RelativePath=".\bloom.h">
 				</File>
 			</Filter>
 		</Filter>

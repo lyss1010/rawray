@@ -149,7 +149,7 @@ std::stack<math::Matrix4x4>             g_matrixStack;
 %token YY_ANTI_ALIAS
 %token YY_MAX_DIFFUSE_BOUNCE
 %token YY_MAX_IOR_BOUNCE
-
+%token YY_HDR_BLOOM_POWER
 
 %token YY_S_CAMERA
 %token YY_POS
@@ -295,26 +295,27 @@ object_type:
 ;
 
 global_option: 
-		  YY_HEADLESS boolExp								{ rawray::options::global::headless = $2; }
-		| YY_GL_RENDER_LIGHTS boolExp						{ rawray::options::global::gl_render_lights = $2; }
-		| YY_GL_RENDER_BBOX boolExp							{ rawray::options::global::gl_render_bbox = $2; }
-		| YY_SIZE iExp YY_X iExp							{ g_image->Resize( rawray::options::global::win_width = $2, rawray::options::global::win_height = $4 ); }
-		| YY_IMG_BGCOLOR vector3							{ rawray::options::global::img_bg_color = math::Vector3( $2[0], $2[1], $2[2] ); }
-		| YY_IMG_FGCOLOR vector3							{ rawray::options::global::img_fg_color = math::Vector3( $2[0], $2[1], $2[2] ); }
-		| YY_GL_BGCOLOR	vector3								{ rawray::options::global::gl_bg_color = math::Vector3( $2[0], $2[1], $2[2] ); g_scene->GetBackground().SetBGColor(rawray::options::global::gl_bg_color); }
-		| YY_GL_SPHERE_SECTIONS iExp						{ rawray::options::global::gl_sphere_sections = $2; }
-		| YY_NUM_THREADS iExp								{ rawray::options::global::num_threads = $2; }
-		| YY_RENDER_HANDLER_SLEEP iExp						{ rawray::options::global::render_handler_sleep = $2; }
-		| YY_RENDER_THREAD_SLEEP iExp 						{ rawray::options::global::render_thread_sleep = $2; }
-		| YY_RENDER_SPINLOCK_SLEEP iExp						{ rawray::options::global::render_spinlock_sleep = $2; }
-		| YY_THREAD_JOB_SIZE iExp YY_X iExp					{ rawray::options::global::thread_job_size_x = $2; rawray::options::global::thread_job_size_y = $4; }
-		| YY_TRIANGLE_TEST triTestExp						{ rawray::options::global::triangle_intersection_algorithm = static_cast<rawray::options::TriangleIntersection>($2); }
-		| YY_GAUSSIAN_BLUR_MAX iExp							{ rawray::options::global::gaussian_blur_max = $2; }
-		| YY_GAUSSIAN_BLUR_SIGMA iExp						{ rawray::options::global::gaussian_blur_sigma = $2; }
-		| YY_BOX_COST rExp									{ rawray::options::global::bvh_box_cost = $2; }
-		| YY_OBJECT_COST rExp								{ rawray::options::global::bvh_obj_cost = $2; }
-		| YY_PFM YY_STRING									{ $2[strlen($2)-1] = 0; g_scene->GetBackground().LoadPFM( $2+1 ); }
-		| YY_ANTI_ALIAS iExp YY_X iExp						{ rawray::options::global::aax = $2; rawray::options::global::aay = $4; }
+		  YY_HEADLESS boolExp					{ rawray::options::global::headless = $2; }
+		| YY_GL_RENDER_LIGHTS boolExp			{ rawray::options::global::gl_render_lights = $2; }
+		| YY_GL_RENDER_BBOX boolExp				{ rawray::options::global::gl_render_bbox = $2; }
+		| YY_SIZE iExp YY_X iExp				{ g_image->Resize( rawray::options::global::win_width = $2, rawray::options::global::win_height = $4 ); }
+		| YY_IMG_BGCOLOR vector4				{ rawray::options::global::img_bg_color = math::Vector4( $2[0], $2[1], $2[2], $2[3] ); g_scene->GetBackground().SetBGColor(rawray::options::global::img_bg_color); }
+		| YY_IMG_FGCOLOR vector4				{ rawray::options::global::img_fg_color = math::Vector4( $2[0], $2[1], $2[2], $2[3] ); }
+		| YY_GL_BGCOLOR	vector4					{ rawray::options::global::gl_bg_color = math::Vector4( $2[0], $2[1], $2[2], $2[3] ); }
+		| YY_GL_SPHERE_SECTIONS iExp			{ rawray::options::global::gl_sphere_sections = $2; }
+		| YY_NUM_THREADS iExp					{ rawray::options::global::num_threads = $2; }
+		| YY_RENDER_HANDLER_SLEEP iExp			{ rawray::options::global::render_handler_sleep = $2; }
+		| YY_RENDER_THREAD_SLEEP iExp 			{ rawray::options::global::render_thread_sleep = $2; }
+		| YY_RENDER_SPINLOCK_SLEEP iExp			{ rawray::options::global::render_spinlock_sleep = $2; }
+		| YY_THREAD_JOB_SIZE iExp YY_X iExp		{ rawray::options::global::thread_job_size_x = $2; rawray::options::global::thread_job_size_y = $4; }
+		| YY_TRIANGLE_TEST triTestExp			{ rawray::options::global::triangle_intersection_algorithm = static_cast<rawray::options::TriangleIntersection>($2); }
+		| YY_GAUSSIAN_BLUR_MAX iExp				{ rawray::options::global::gaussian_blur_max = $2; }
+		| YY_GAUSSIAN_BLUR_SIGMA iExp			{ rawray::options::global::gaussian_blur_sigma = $2; }
+		| YY_BOX_COST rExp						{ rawray::options::global::bvh_box_cost = $2; }
+		| YY_OBJECT_COST rExp					{ rawray::options::global::bvh_obj_cost = $2; }
+		| YY_PFM YY_STRING						{ $2[strlen($2)-1] = 0; g_scene->GetBackground().LoadPFM( $2+1 ); }
+		| YY_ANTI_ALIAS iExp YY_X iExp			{ rawray::options::global::aax = $2; rawray::options::global::aay = $4; }
+		| YY_HDR_BLOOM_POWER rExp				{ rawray::options::global::hdr_bloom_power = $2; }
 ;
 
 camera_option:
@@ -350,27 +351,27 @@ light_type:
 ;
 
 pointlight_option:
-		  YY_POS vector3		{ g_light->SetPosition( math::Vector3( $2[0], $2[1], $2[2] ) ); }
-		| YY_WATTAGE rExp		{ g_light->SetWattage( $2 ); }
-		| YY_COLOR vector3		{ g_light->SetColor( math::Vector3( $2[0], $2[1], $2[2] ) ); }
-		| YY_NUM_SAMPLES iExp	{ g_light->SetNumSamples( $2 ); }
+		  YY_POS vector3			{ g_light->SetPosition( math::Vector3( $2[0], $2[1], $2[2] ) ); }
+		| YY_WATTAGE rExp			{ g_light->SetWattage( $2 ); }
+		| YY_COLOR vector4	{ g_light->SetColor( math::Vector4( $2[0], $2[1], $2[2], $2[3] ) ); }
+		| YY_NUM_SAMPLES iExp		{ g_light->SetNumSamples( $2 ); }
 ;
 
 squarelight_option:
-		  YY_POS vector3		{ g_light->SetPosition( math::Vector3( $2[0], $2[1], $2[2] ) ); }
-		| YY_WATTAGE rExp		{ g_light->SetWattage( $2 ); }
-		| YY_COLOR vector3		{ g_light->SetColor( math::Vector3( $2[0], $2[1], $2[2] ) ); }
-		| YY_NUM_SAMPLES iExp	{ g_light->SetNumSamples( $2 ); }
-		| YY_P1 vector3			{ ((rawray::SquareLight*)g_light)->SetP1( math::Vector3( $2[0], $2[1], $2[2] ) ); }
-		| YY_P2 vector3			{ ((rawray::SquareLight*)g_light)->SetP2( math::Vector3( $2[0], $2[1], $2[2] ) ); }
+		  YY_POS vector3			{ g_light->SetPosition( math::Vector3( $2[0], $2[1], $2[2] ) ); }
+		| YY_WATTAGE rExp			{ g_light->SetWattage( $2 ); }
+		| YY_COLOR vector4	{ g_light->SetColor( math::Vector4( $2[0], $2[1], $2[2], $2[3] ) ); }
+		| YY_NUM_SAMPLES iExp		{ g_light->SetNumSamples( $2 ); }
+		| YY_P1 vector3				{ ((rawray::SquareLight*)g_light)->SetP1( math::Vector3( $2[0], $2[1], $2[2] ) ); }
+		| YY_P2 vector3				{ ((rawray::SquareLight*)g_light)->SetP2( math::Vector3( $2[0], $2[1], $2[2] ) ); }
 ;
 
 spherelight_option:
-		  YY_POS vector3		{ g_light->SetPosition( math::Vector3( $2[0], $2[1], $2[2] ) ); }
-		| YY_WATTAGE rExp		{ g_light->SetWattage( $2 ); }
-		| YY_COLOR vector3		{ g_light->SetColor( math::Vector3( $2[0], $2[1], $2[2] ) ); }
-		| YY_NUM_SAMPLES iExp	{ g_light->SetNumSamples( $2 ); }
-		| YY_RADIUS rExp		{ ((rawray::SphereLight*)g_light)->SetRadius( $2 ); }
+		  YY_POS vector3			{ g_light->SetPosition( math::Vector3( $2[0], $2[1], $2[2] ) ); }
+		| YY_WATTAGE rExp			{ g_light->SetWattage( $2 ); }
+		| YY_COLOR vector4	{ g_light->SetColor( math::Vector4( $2[0], $2[1], $2[2], $2[3] ) ); }
+		| YY_NUM_SAMPLES iExp		{ g_light->SetNumSamples( $2 ); }
+		| YY_RADIUS rExp			{ ((rawray::SphereLight*)g_light)->SetRadius( $2 ); }
 ;
 
 material_type:
@@ -433,12 +434,12 @@ multimaterial_type:
 
 
 multimaterial_option:
-		  YY_AMBIENT vector3							{ g_multimaterial->SetAmbient( math::Vector3( $2[0], $2[1], $2[2] ) ); }
+		  YY_AMBIENT vector4					{ g_multimaterial->SetAmbient( math::Vector4( $2[0], $2[1], $2[2], $2[3] ) ); }
 		| material_type YY_RCURLY						{ }
 ;
 
 diffuse_option:
-		  YY_COLOR vector3								{ ((rawray::Diffuse*)g_material)->SetColor( math::Vector3( $2[0], $2[1], $2[2] ) ); }
+		  YY_COLOR vector4						{ ((rawray::Diffuse*)g_material)->SetColor( math::Vector4( $2[0], $2[1], $2[2], $2[3] ) ); }
 		| YY_WEIGHT rExp								{ g_material->SetWeight( $2 ); }
 ;
 
@@ -447,7 +448,7 @@ indirectdiffuse_option:
 ;
 
 phong_option:
-		  YY_COLOR vector3								{ ((rawray::Phong*)g_material)->SetColor( math::Vector3( $2[0], $2[1], $2[2] ) ); }
+		  YY_COLOR vector4						{ ((rawray::Phong*)g_material)->SetColor( math::Vector4( $2[0], $2[1], $2[2], $2[3] ) ); }
 		| YY_N rExp										{ ((rawray::Phong*)g_material)->SetN( $2 ); }
 		| YY_WEIGHT rExp								{ g_material->SetWeight( $2 ); }
 ;
@@ -462,8 +463,8 @@ refractive_option:
 ;
 
 stone_option:
-		  YY_COLOR_A vector3							{ ((rawray::Stone*)g_material)->SetColorA( math::Vector3( $2[0], $2[1], $2[2] ) ); }
-		| YY_COLOR_B vector3							{ ((rawray::Stone*)g_material)->SetColorB( math::Vector3( $2[0], $2[1], $2[2] ) ); }
+		  YY_COLOR_A vector4					{ ((rawray::Stone*)g_material)->SetColorA( math::Vector4( $2[0], $2[1], $2[2], $2[3] ) ); }
+		| YY_COLOR_B vector4					{ ((rawray::Stone*)g_material)->SetColorB( math::Vector4( $2[0], $2[1], $2[2], $2[3] ) ); }
 		| YY_WEIGHT rExp								{ g_material->SetWeight( $2 ); }
 ;
 
@@ -649,8 +650,8 @@ vector4:
 		| YY_LT iExp YY_COMMA iExp YY_COMMA rExp YY_COMMA iExp YY_GT	{ $$[0] = $2; $$[1] = $4; $$[2] = $6; $$[3] = $8; }
 		| YY_LT iExp YY_COMMA iExp YY_COMMA iExp YY_COMMA rExp YY_GT	{ $$[0] = $2; $$[1] = $4; $$[2] = $6; $$[3] = $8; }
 		| YY_LT iExp YY_COMMA iExp YY_COMMA iExp YY_COMMA iExp YY_GT	{ $$[0] = $2; $$[1] = $4; $$[2] = $6; $$[3] = $8; }
-		| YY_LT rExp YY_GT												{ $$[0] = $2; $$[1] = $2; $$[2] = $2; $$[3] = $2; }
-		| YY_LT iExp YY_GT												{ $$[0] = $2; $$[1] = $2; $$[2] = $2; $$[3] = $2; }
+		| YY_LT rExp YY_GT												{ $$[0] = $2; $$[1] = $2; $$[2] = $2; $$[3] = 0.0f; }
+		| YY_LT iExp YY_GT												{ $$[0] = $2; $$[1] = $2; $$[2] = $2; $$[3] = 0.0f; }
 
 rExp:
 		  YY_REAL							{ $$ = $1; }
@@ -715,8 +716,6 @@ triTestExp:
 		| YY_PLUCKER						{ $$ = rawray::options::PLUCKER; }
 		| YY_MOLLER							{ $$ = rawray::options::MOLLER; }
 ;
-
-
 
 // End of grammar
 %%

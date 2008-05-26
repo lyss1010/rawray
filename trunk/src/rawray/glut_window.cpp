@@ -137,6 +137,11 @@ void GlutWindow::Keyboard(uint8 key, int x, int y) {
         img_.WritePPM();
         break;
 
+	case 'o':
+	case 'O':
+		WriteAlphaImage();
+		break;
+
     case 'r':
     case 'R':
         ToggleRenderGL();
@@ -316,7 +321,7 @@ void GlutWindow::ToggleRenderGL() {
         //img_.GaussianBlur(options::global::gaussian_blur_sigma);
 
 		// We have to black out the image before raytracing so we can use addition for anti aliasing
-		img_.Clear( Vector3(0) );
+		img_.Clear( Vector4(0) );
 
 		if( scene_.GetObjects().size() > 0 ) {
 			render_ = new RenderJob( options::global::num_threads, 
@@ -329,6 +334,12 @@ void GlutWindow::ToggleRenderGL() {
 	
     if( !options::global::headless )
         glutPostRedisplay();
+}
+
+void GlutWindow::WriteAlphaImage() {
+	Image* alpha = img_.CreateAlphaImage();
+	alpha->WritePPM();
+	delete alpha;
 }
 
 } // namespace rawray

@@ -9,7 +9,8 @@
 namespace rawray {
 
 void BLPatch::RenderGL() {
-    const Vector3& color = material_ ? material_->BaseColor() : Vector3(1);
+    const Vector4& color4 = material_ ? material_->BaseColor() : Vector4(1);
+	const Vector3 color( color4.x, color4.y, color4.z );
 
     // Draw the lines around the perimeter 
     glBegin(GL_LINE_STRIP);

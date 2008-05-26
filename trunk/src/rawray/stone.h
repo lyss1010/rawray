@@ -17,21 +17,24 @@ namespace rawray {
 class DllExport Stone : public Material
 {
 public:
-	Stone(const Vector3& colorA = Vector3(1), const Vector3& colorB = Vector3(0.5f)) : Material(), colorA_(colorA), colorB_(colorB) { }
+	Stone(const Vector4& colorA = Vector4(1), 
+		  const Vector4& colorB = Vector4(0) ) 
+		: Material(), colorA_(colorA), colorB_(colorB) { }
+
     virtual ~Stone() { }
 
     virtual void PreCalc() { }
     
-    //virtual Vector3 Shade(HitInfo& hit, Scene& scene) const;
-	virtual void ShadeLight(HitInfo& hit, Scene& scene, const Light& light, float intensity, Vector3& shadedColor) const;
-	virtual Vector3 BaseColor() const { return Vector3(1); }
+    //virtual Vector4 Shade(HitInfo& hit, Scene& scene) const;
+	virtual void ShadeLight(HitInfo& hit, Scene& scene, const Light& light, float intensity, Vector4& shadedColor) const;
+	virtual Vector4 BaseColor() const { return Vector4(1); }
 	virtual float GetTranslucency() const { return 0.0f; }
 
-	void SetColorA(const Vector3& colorA) { colorA_ = colorA; }
-	void SetColorB(const Vector3& colorB) { colorB_ = colorB; }
+	void SetColorA(const Vector4& colorA) { colorA_ = colorA; }
+	void SetColorB(const Vector4& colorB) { colorB_ = colorB; }
 
 protected:
-	Vector3 colorA_, colorB_;
+	Vector4 colorA_, colorB_;
 
 private:
     DISALLOW_COPY_CONSTRUCTORS(Stone);

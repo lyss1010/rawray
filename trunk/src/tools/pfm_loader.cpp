@@ -8,10 +8,10 @@
 
 namespace tools {
 
-Vector3* PFMLoader::ReadPFMImage(const char* filename, int* width, int* height) {
+Vector4* PFMLoader::ReadPFMImage(const char* filename, int* width, int* height) {
     FILE *infile = 0;
     float *lineBuffer = 0;
-    Vector3 *img = 0;
+    Vector4 *img = 0;
     char junk;
 
     try
@@ -36,13 +36,13 @@ Vector3* PFMLoader::ReadPFMImage(const char* filename, int* width, int* height) 
         float scaleFactor;
         fscanf(infile, "%f%c", &scaleFactor, &junk);
 
-        img = new Vector3[*width * *height];
+        img = new Vector4[*width * *height];
 
         a = *width * (b ? 3 : 1);
         lineBuffer = new float[a];
         for (int y = 0; y < *height; ++y)
         {
-            Vector3 *cur = &img[y * *width];
+            Vector4 *cur = &img[y * *width];
             if (fread(lineBuffer, sizeof(float), a, infile) != (size_t) a)
                 throw std::runtime_error("cannot read pixel data.");
 
@@ -51,21 +51,24 @@ Vector3* PFMLoader::ReadPFMImage(const char* filename, int* width, int* height) 
             {
                 if (b)
                 {   // color
-                    (*cur)[0] = *temp++;
-                    (*cur)[1] = *temp++;
-                    (*cur)[2] = *temp++;
+                    cur->x = *temp++;
+                    cur->y = *temp++;
+                    cur->z = *temp++;
+					cur->w = 0.0f;
 
                     if (scaleFactor > 0.0)
                     {
-                        base::BigEndianFloat((*cur)[0]);
-                        base::BigEndianFloat((*cur)[1]);
-                        base::BigEndianFloat((*cur)[2]);
+                        base::BigEndianFloat( cur->x );
+                        base::BigEndianFloat( cur->y );
+                        base::BigEndianFloat( cur->z );
+						base::BigEndianFloat( cur->w );
                     }
                     else
                     {
-                        base::LittleEndianFloat((*cur)[0]);
-                        base::LittleEndianFloat((*cur)[1]);
-                        base::LittleEndianFloat((*cur)[2]);
+                        base::LittleEndianFloat( cur->x );
+						base::LittleEndianFloat( cur->y );
+						base::LittleEndianFloat( cur->z );
+						base::LittleEndianFloat( cur->w );
                     }
                 }
                 else
@@ -73,11 +76,12 @@ Vector3* PFMLoader::ReadPFMImage(const char* filename, int* width, int* height) 
                     float c = *temp++;
 
                     if (scaleFactor > 0.0)
-                        base::BigEndianFloat (c);
+                        base::BigEndianFloat(c);
                     else
-                        base::LittleEndianFloat (c);
+                        base::LittleEndianFloat(c);
 
-                    (*cur)[0] = (*cur)[1] = (*cur)[2] = c;
+					cur->x = cur->y = cur->z = c;
+					cur->w = 0.0f;
                 }
                 cur++;
             }

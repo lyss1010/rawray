@@ -10,7 +10,7 @@
 
 namespace rawray {
 
-void IndirectDiffuse::ShadeLight(HitInfo& hit, Scene& scene, const Light& light, float intensity, Vector3& shadedColor) const {
+void IndirectDiffuse::ShadeLight(HitInfo& hit, Scene& scene, const Light& light, float intensity, Vector4& shadedColor) const {
 	UNREFERENCED_PARAMETER(light);
 	UNREFERENCED_PARAMETER(intensity);
 

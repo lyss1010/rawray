@@ -17,23 +17,26 @@ namespace rawray {
 class DllExport Phong : public Material
 {
 public:
-    Phong(const Vector3& color = Vector3(1.0f), float n=1.0f) : Material(), color_(color), n_(n) { }
+    Phong(const Vector4& color = Vector4(1), 
+			float n=1.0f) 
+		: Material(), color_(color), n_(n) { }
+
     virtual ~Phong() { }
 
-    void SetColor(const Vector3& color) { color_=color; }
+    void SetColor(const Vector4& color) { color_=color; }
 	void SetN(float n) { n_=n; }
-    const Vector3& GetColor() const { return color_; }
+    const Vector4& GetColor() const { return color_; }
 	float GetN() const { return n_; }
 
     virtual void PreCalc() { }
     
-    //virtual Vector3 Shade(HitInfo& hit, Scene& scene) const;
-	virtual void ShadeLight(HitInfo& hit, Scene& scene, const Light& light, float intensity, Vector3& shadedColor) const;
-	virtual Vector3 BaseColor() const { return color_; }
+    //virtual Vector4 Shade(HitInfo& hit, Scene& scene) const;
+	virtual void ShadeLight(HitInfo& hit, Scene& scene, const Light& light, float intensity, Vector4& shadedColor) const;
+	virtual Vector4 BaseColor() const { return color_; }
 	virtual float GetTranslucency() const { return 0.0f; }
 
 protected:
-    Vector3 color_;
+    Vector4 color_;
 	float n_;
 
 private:

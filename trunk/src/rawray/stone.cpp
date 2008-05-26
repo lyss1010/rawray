@@ -11,7 +11,7 @@
 
 namespace rawray {
 
-void Stone::ShadeLight(HitInfo& hit, Scene& scene, const Light& light, float intensity, Vector3& shadedColor) const {
+void Stone::ShadeLight(HitInfo& hit, Scene& scene, const Light& light, float intensity, Vector4& shadedColor) const {
 	UNREFERENCED_PARAMETER(scene);
 
 	static const int MAX_ORDER = 3;
@@ -27,7 +27,7 @@ void Stone::ShadeLight(HitInfo& hit, Scene& scene, const Light& light, float int
 	//invCoord *= invCoord; // 2nd power
 	//invCoord *= invCoord; // 4th power
 
-	Vector3 color( sqrtf(coord) );
+	Vector4 color( sqrtf(coord) );
 	color *= colorA_;
 
 	//Vector3 invColor( invCoord );

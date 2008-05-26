@@ -147,6 +147,7 @@ STRING      '([^']*)'|\"([^\"]*)\"
 <s_global>anti{WS}alias					{ return YY_ANTI_ALIAS; }
 <s_global>max{WS}diffuse{WS}bounce{WS}	{ return YY_MAX_DIFFUSE_BOUNCE; }
 <s_global>max{WS}ior{WS}bounce{WS}		{ return YY_MAX_IOR_BOUNCE; }
+<s_global>hdr{WS}bloom{WS}power{WS}		{ return YY_HDR_BLOOM_POWER; }
 
 <INITIAL>camera{WS}						{ yy_push_state(s_camera); return YY_S_CAMERA; }
 <s_camera>pos{WS}						{ return YY_POS; }

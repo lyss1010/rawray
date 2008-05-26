@@ -11,7 +11,7 @@
 
 namespace rawray {
 
-void StoneBump::ShadeLight(HitInfo& hit, Scene& scene, const Light& light, float intensity, Vector3& shadedColor) const {
+void StoneBump::ShadeLight(HitInfo& hit, Scene& scene, const Light& light, float intensity, Vector4& shadedColor) const {
 	UNREFERENCED_PARAMETER(scene);
 	UNREFERENCED_PARAMETER(shadedColor);
 	UNREFERENCED_PARAMETER(intensity);

@@ -46,6 +46,7 @@ private:
     void MakeScene(int* argc, char* argv[]);
     void MakeSpiralScene();
     void MakeLorenzScene();
+	void WriteAlphaImage();
     
     Scene scene_;
     Camera cam_;

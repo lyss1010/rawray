@@ -12,19 +12,6 @@ namespace rawray {
 
 Image::Image() : pixels_(NULL), width_(0), height_(0) { }
 
-Image::Image(const Image& i) {
-    register int numPixels = Resize(i.width_, i.height_);
-
-    if( numPixels > 0 ) {
-        memcpy( static_cast<void*>(pixels_), 
-                static_cast<void*>(i.pixels_), 
-                numPixels*sizeof( *pixels_ ) );
-    } else {
-        pixels_ = NULL;
-        width_ = height_ = 0;
-    }
-}
-
 Image::~Image() {
     DeleteBuffer();
 }
@@ -33,7 +20,7 @@ void Image::DeleteBuffer( ) {
     SAFE_DELETE_ARRAY( pixels_ );
 }
 
-Vector3& Image::GetBoundPixel(int x, int y) {
+Vector4& Image::GetBoundPixel(int x, int y) {
 	if( x < 0 ) x = 0;
 	if( y < 0 ) y = 0;
 	if( x >= width_ ) x = width_ - 1;
@@ -42,13 +29,13 @@ Vector3& Image::GetBoundPixel(int x, int y) {
 	return GetPixel(x, y);
 }
 
-Vector3& Image::GetUVPixel(float u, float v) {
+Vector4& Image::GetUVPixel(float u, float v) {
 	return GetBoundPixel( 
 		0.5f*(1.0f+u)*(width_-1),
 		0.5f*(1.0f+v)*(height_-1) );
 }
 
-Vector3& Image::Get0UVPixel(float u, float v) {
+Vector4& Image::Get0UVPixel(float u, float v) {
 	return GetBoundPixel( 
 		u*(width_-1),
 		v*(height_-1) );
@@ -66,48 +53,51 @@ int Image::Resize(int width, int height) {
     
     DeleteBuffer();
 
-    pixels_ = new Vector3[ numPixels ];
+    pixels_ = new Vector4[ numPixels ];
     memset( pixels_, 0, sizeof( *pixels_ )*numPixels );
     return numPixels;
 }
 
-void Image::SetPixel(int x, int y, const Vector3& color) {
+void Image::SetPixel(int x, int y, const Vector4& color) {
     if( x < width_ && y < height_ )
 		GetPixel(x, y) = color;
 }
 
 void Image::SetPixel(int x, int y, const math::Tuple3<uint8>& color) {
 	if( x < width_ && y < height_ ) {
-		Vector3& pixel = GetPixel(x, y);
+		Vector4& pixel = GetPixel(x, y);
 		pixel.x = base::ByteToFloat(color.x);
 		pixel.y = base::ByteToFloat(color.y);
 		pixel.z = base::ByteToFloat(color.z);
 	}
 }
 
-void Image::Clear(const Vector3 &color) {
+void Image::Clear(const Vector4 &color) {
     for(int y=0; y<height_; y++)
         for(int x=0; x<width_; x++)
             SetPixel( x, y, color );
 }
 
 void Image::Clear(const math::Tuple3<uint8> &color) {
-    Clear( Vector3(	base::ByteToFloat(color.x),
+    Clear( Vector4(	base::ByteToFloat(color.x),
 					base::ByteToFloat(color.y),
-					base::ByteToFloat(color.z) ) );
+					base::ByteToFloat(color.z),
+					0.0f) );
 }
 
-void Image::Clear(const Vector3& color, int x, int y, int width, int height) {
+void Image::Clear(const Vector4& color, int x, int y, int width, int height) {
 	for( int row=y; row<height; ++row )
 		for( int col=x; col<width; ++col )
 			SetPixel( col, row, color );
 }
 
 void Image::Clear(const math::Tuple3<uint8>& color, int x, int y, int width, int height) {
-	Clear( Vector3( 
+	Clear( Vector4( 
 				base::ByteToFloat(color.x), 
 				base::ByteToFloat(color.y), 
-				base::ByteToFloat(color.z) ), x, y, width, height );
+				base::ByteToFloat(color.z),
+				0.0f), 
+				x, y, width, height );
 }
 
 void Image::ScreenShot() {
@@ -116,11 +106,12 @@ void Image::ScreenShot() {
     // Save the current packing value for pixel storage
     glPushClientAttrib( GL_CLIENT_PIXEL_STORE_BIT );
 
-    // Vector3 is padded and is really 4 floats
+	// We will get alpha in the 4th component of our color
+	// If we don't want this, clear it out later
     glPixelStorei(GL_PACK_ALIGNMENT, 4);
     glReadPixels( 0, 0, width_, height_, GL_RGBA, GL_FLOAT, pixels_ );
 
-    // Enable the default packing
+    // Re-enable the default packing
     glPopClientAttrib();
 }
 
@@ -150,7 +141,7 @@ bool Image::GaussianBlur(float sigma) {
     // Loop over all pixels
     for( int y=0; y<height_; ++y ) {
         for( int x=0; x<width_; ++x ) {
-            Vector3 sum = Vector3(0,0,0);
+            Vector4 sum = Vector4(0);
             int left = x - half_matrix_size;
             int top = y - half_matrix_size;
 
@@ -166,12 +157,9 @@ bool Image::GaussianBlur(float sigma) {
                     if( posX < 0 || posX >= width_ )
                         continue;
 
-                    Vector3& pixel = GetPixel(posX, posY);
-                    float weight = weights[ i + matrix_size*j ];
-
-                    sum.x += pixel.x * weight;
-                    sum.y += pixel.y * weight;
-                    sum.z += pixel.z * weight;
+                    Vector4 pixel( GetPixel(posX, posY) );
+                    pixel *= weights[ i + matrix_size*j ];
+                    sum += pixel;
                 }
             }
 
@@ -191,7 +179,8 @@ void Image::RenderGL() {
 void Image::RenderScanlineGL(int y) {
     glRasterPos2f(-1, -1 + 2*y / float(height_));
 
-    // Vector3 is padded so it is in effect 4floats
+	// not using alpha, but using vector4 so just pretend we are
+	// it won't affect the output colors
     glDrawPixels(width_, 1, GL_RGBA, GL_FLOAT, &pixels_[y*width_]);
 }
 
@@ -215,12 +204,13 @@ void Image::WritePPM(const char* filename) {
 	for(int y=0; y<height_; y++) {
 		int yOffset = y*width_;
 		for(int x=0; x<width_; x++) {
-			Vector3* p = pixels_ + yOffset + x;
-			math::Tuple3<uint8>* d = data    + yOffset + x;
+			Vector4* p = pixels_ + yOffset + x;
+			math::Tuple3<uint8>* d = data + yOffset + x;
 
 			d->x = base::FloatToByte( p->x );
 			d->y = base::FloatToByte( p->y );
 			d->z = base::FloatToByte( p->z );
+			// Ignore 4th component when dealing with simple color 3tuples
 		}
 	}
 
@@ -250,8 +240,72 @@ void Image::WritePPM(const char* filename, uint8* data, int width, int height) {
 
 void Image::LoadPFM(const char* filename) {
 	DeleteBuffer();
-
 	pixels_ = tools::PFMLoader::ReadPFMImage( filename, &width_, &height_ );
+
+	int numpixels = width_ * height_;
+	float* pixelMagnitudes = new float[ numpixels ];
+	float avgRGB = 0.0f;
+
+	// Find the "average" color of the entire image by looping over all pixels and doing some stuff
+	for( int i=0; i<numpixels; ++i ) {
+		Vector4& pixel = pixels_[i];
+		pixelMagnitudes[i] = pow( (pixel.x + pixel.y + pixel.z), options::global::hdr_bloom_power );
+		avgRGB += pixelMagnitudes[i];
+	}
+	avgRGB /= numpixels;
+
+	// Now that we have the average value, assign bloom component based on difference
+	for( int i=0; i<numpixels; ++i ) {
+		float magDiff = pixelMagnitudes[i] - avgRGB;
+		pixels_[i].w = std::max( 0.0f, magDiff );
+	}
+
+	delete [] pixelMagnitudes;
+}
+
+const Image& Image::operator+=(const Image& i) {
+	int width = std::min( width_, i.width_ );
+	int height = std::min( height_, i.height_ );
+
+	for( int col=0; col<width; ++col )
+		for( int row=0; row<height; ++row)
+			this->GetPixel(col, row) += i.GetPixel(col, row);
+
+	return *this;
+}
+
+
+Image* Image::CreateAlphaImage() {
+	int numpixels = width_ * height_;
+	Image* alpha = new Image();
+	alpha->Resize( width_, height_ );
+
+	for( int i=0; i<numpixels; ++i ) {
+		Vector4& srcpixel  = pixels_[i];
+		Vector4& destpixel = alpha->pixels_[i];
+
+		destpixel.x = destpixel.y = destpixel.z = destpixel.w = srcpixel.w;
+	}
+
+	return alpha;
+}
+
+Image* Image::CreateAlphaMixImage() {
+	int numpixels = width_ * height_;
+	Image* alpha = new Image();
+	alpha->Resize( width_, height_ );
+
+	for( int i=0; i<numpixels; ++i ) {
+		Vector4& srcpixel  = pixels_[i];
+		Vector4& destpixel = alpha->pixels_[i];
+
+		destpixel.x = srcpixel.x * srcpixel.w;
+		destpixel.y = srcpixel.y * srcpixel.w;
+		destpixel.z = srcpixel.z * srcpixel.w;
+		destpixel.w = srcpixel.w * srcpixel.w;
+	}
+
+	return alpha;
 }
 
 } // namespace rawray

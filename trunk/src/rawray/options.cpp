@@ -18,9 +18,9 @@ namespace global {
 	int max_ior_bounce;
 	int max_diffuse_bounce;
 
-    math::Vector3 img_fg_color;
-    math::Vector3 img_bg_color;
-    math::Vector3 gl_bg_color;
+    math::Vector4 img_fg_color;
+    math::Vector4 img_bg_color;
+    math::Vector4 gl_bg_color;
     int  gl_sphere_sections;
 	bool gl_render_lights;
     bool gl_render_bbox;
@@ -41,6 +41,7 @@ namespace global {
 
     float bvh_box_cost;
     float bvh_obj_cost;
+	float hdr_bloom_power;
 
 } // namespace global
 
@@ -81,9 +82,9 @@ void init() {
     epsilon = 0.00001f;
 
 	global::triangle_intersection_algorithm = BARYCENTRIC;
-    global::img_fg_color = Vector3(1);
-    global::img_bg_color = Vector3(0);
-    global::gl_bg_color = Vector3(0);
+    global::img_fg_color = Vector4(1);
+    global::img_bg_color = Vector4(0);
+    global::gl_bg_color = Vector4(0);
     global::win_width  = 800;
     global::win_height = 800;
     global::win_posX   = 100;
@@ -102,6 +103,7 @@ void init() {
 
     global::bvh_box_cost = 1.0f;
     global::bvh_obj_cost = 640.0f;
+	global::hdr_bloom_power = 0.5f;
 
     global::gaussian_blur_max = 2.0f;
 	global::gaussian_blur_sigma = 1.0f;

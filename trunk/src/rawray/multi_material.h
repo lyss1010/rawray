@@ -16,23 +16,23 @@ namespace rawray {
 class DllExport MultiMaterial : public Material
 {
 public:
-	MultiMaterial(const Vector3& ambient = Vector3(0.0f)) : ambient_(ambient) { }
+	MultiMaterial(const Vector4& ambient = Vector4(0)) : ambient_(ambient) { }
 	virtual ~MultiMaterial();
 
 	virtual void PreCalc() {}
-    virtual Vector3 Shade(HitInfo& hit, Scene& scene) const;
-	virtual void ShadeLight(HitInfo& hit, Scene& scene, const Light& light, float intensity, Vector3& shadedColor) const;
-	virtual Vector3 BaseColor() const;
+    virtual Vector4 Shade(HitInfo& hit, Scene& scene) const;
+	virtual void ShadeLight(HitInfo& hit, Scene& scene, const Light& light, float intensity, Vector4& shadedColor) const;
+	virtual Vector4 BaseColor() const;
 	virtual float GetTranslucency() const;
 
 	void AddMaterial(Material* material) { materials_.push_back( material ); }
-	void SetAmbient(const Vector3& ambient) { ambient_ = ambient; }
-	const Vector3& GetAmbient() const { return ambient_; }
+	void SetAmbient(const Vector4& ambient) { ambient_ = ambient; }
+	const Vector4& GetAmbient() const { return ambient_; }
 	
 
 private:
 	std::vector<Material*> materials_;
-	Vector3 ambient_;
+	Vector4 ambient_;
 
 	DISALLOW_COPY_CONSTRUCTORS(MultiMaterial);
 

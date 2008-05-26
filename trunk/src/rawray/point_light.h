@@ -19,7 +19,7 @@ public:
     PointLight() 
 		: Light() { }
 
-    PointLight(const Vector3& position, const Vector3& color, float wattage, int samples) 
+    PointLight(const Vector3& position, const Vector4& color, float wattage, int samples) 
 		: Light(position, color, wattage, samples) { }
 
     virtual void RenderGL();

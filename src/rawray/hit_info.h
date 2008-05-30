@@ -32,13 +32,13 @@ public:
 	int diffuse_bounce;
 	float weight;
 
-    HitInfo() : material(NULL), ior(IOR_AIR), ior_bounce(0), diffuse_bounce(0) { }
+    HitInfo() : material(NULL), ior(IOR_AIR), ior_bounce(0), diffuse_bounce(0), weight(1) { }
 
     HitInfo(const HitInfo& hit)
         : eyeRay(hit.eyeRay), point(hit.point), normal(hit.normal),
         texCoord(hit.texCoord), imgCoord(hit.imgCoord), distance(hit.distance),
 		material(hit.material), ior(hit.ior), ior_bounce(hit.ior_bounce),
-		diffuse_bounce(hit.diffuse_bounce) { }
+        diffuse_bounce(hit.diffuse_bounce), weight(hit.weight) { }
 
 }; // class HitInfo
 

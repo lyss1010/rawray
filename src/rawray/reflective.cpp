@@ -27,6 +27,7 @@ void Reflective::ShadeLight(HitInfo& hit, Scene& scene, const Light& light, floa
 		reflectiveHit.eyeRay = Ray( hit.point + math::EPSILON * reflect, reflect );
 		reflectiveHit.ior = hit.ior;
 		reflectiveHit.distance = MAX_DISTANCE;
+        reflectiveHit.weight = hit.weight;
 
 		if( scene.Intersect( reflectiveHit ) )
 			shadedColor += reflectiveHit.material->Shade(reflectiveHit, scene);

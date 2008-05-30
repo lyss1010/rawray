@@ -42,11 +42,12 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="libfftw3f-3.lib"
 				ShowProgress="0"
 				OutputFile="$(OutDir)rawray_console.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="$(SolutionDir)lib"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)lib&quot;;&quot;$(SolutionDir)inc&quot;"
 				GenerateDebugInformation="TRUE"
 				AssemblyDebug="1"
 				ProgramDatabaseFile="$(OutDir)/rawray_console.pdb"
@@ -69,7 +70,7 @@ copy &quot;$(SolutionDir)lib\d_geometry.dll&quot; &quot;$(OutDir)&quot;
 copy &quot;$(SolutionDir)lib\d_math.dll&quot; &quot;$(OutDir)&quot;
 copy &quot;$(SolutionDir)lib\d_rawray.dll&quot; &quot;$(OutDir)&quot;
 copy &quot;$(SolutionDir)lib\d_tools.dll&quot; &quot;$(OutDir)&quot;
-"/>
+copy &quot;$(SolutionDir)inc\libfftw3f-3.dll&quot; &quot;$(OutDir)&quot;"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -121,11 +122,12 @@ copy &quot;$(SolutionDir)lib\d_tools.dll&quot; &quot;$(OutDir)&quot;
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="libfftw3f-3.lib"
 				ShowProgress="0"
 				OutputFile="$(OutDir)rawray_console.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="$(SolutionDir)lib"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)lib&quot;;&quot;$(SolutionDir)inc&quot;"
 				GenerateDebugInformation="FALSE"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -142,7 +144,7 @@ copy &quot;$(SolutionDir)lib\geometry.dll&quot; &quot;$(OutDir)&quot;
 copy &quot;$(SolutionDir)lib\math.dll&quot; &quot;$(OutDir)&quot;
 copy &quot;$(SolutionDir)lib\rawray.dll&quot; &quot;$(OutDir)&quot;
 copy &quot;$(SolutionDir)lib\tools.dll&quot; &quot;$(OutDir)&quot;
-"/>
+copy &quot;$(SolutionDir)inc\libfftw3f-3.dll&quot; &quot;$(OutDir)&quot;"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool

@@ -8,16 +8,14 @@ namespace rawray {
 
 void Bloom::Process(Image& image) {
 	// Create a copy of the image where the colors are multiplied by the 4th component
-	Image* bloom = image.CreateAlphaMixImage();
-
-	bloom->WritePPM("alpha_mix.ppm");
+	Image* alphaMix = image.CreateAlphaMixImage();
+	Image bloom; bloom.Resize( image.GetWidth(), image.GetHeight() );
 
 	// Gaussian blur this mixed image and overlay it with the original
-	bloom->GaussianBlur( 4.0f );
-	bloom->WritePPM("alpha_mix_blur.ppm");
+	alphaMix->GaussianBlur( options::global::hdr_bloom_radius, bloom );
+	delete alphaMix;
 
-	image += *bloom;
-	delete bloom;
+	image += bloom;
 }
 
 } // namespace rawray

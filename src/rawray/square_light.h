@@ -27,6 +27,7 @@ public:
 	virtual float Falloff(float distance2) const;
 	virtual Vector3 GetRandPosition() const;
 	virtual int GetNumSamples() const { return samples_; }
+	virtual int ThisFunctionShouldNotBeHere() const { return 2; }
 
 	void SetP1(const Vector3& p1) { d1_ = p1-position_; }
 	void SetP2(const Vector3& p2) { d2_ = p2-position_; }

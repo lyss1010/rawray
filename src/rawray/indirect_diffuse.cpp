@@ -30,6 +30,7 @@ void IndirectDiffuse::ShadeLight(HitInfo& hit, Scene& scene, const Light& light,
 		indirectHit.eyeRay = Ray( hit.point + math::EPSILON * indirectRay, indirectRay );
 		indirectHit.ior = hit.ior;
 		indirectHit.distance = MAX_DISTANCE;
+		indirectHit.weight = hit.weight;
 
 		if( scene.Intersect( indirectHit ) )
 			shadedColor += weight_ * indirectHit.material->Shade(indirectHit, scene);

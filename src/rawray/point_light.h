@@ -27,6 +27,7 @@ public:
 	virtual float Falloff(float distance2) const;
 	virtual Vector3 GetRandPosition() const { return position_; }
 	virtual int GetNumSamples() const { return 1; }
+	virtual int ThisFunctionShouldNotBeHere() const { return 0; }
 
 private:
     DISALLOW_COPY_CONSTRUCTORS(PointLight);

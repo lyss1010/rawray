@@ -115,7 +115,7 @@ void Image::ScreenShot() {
     glPopClientAttrib();
 }
 
-bool Image::GaussianBlur(float sigma) {
+bool Image::GaussianBlur(float sigma, Image& dest) const {
     if( sigma < 0.0f ) return false;
     // See: http://en.wikipedia.org/wiki/Gaussian_blur
 
@@ -143,7 +143,7 @@ bool Image::GaussianBlur(float sigma) {
         for( int x=0; x<width_; ++x ) {
             Vector4 sum = Vector4(0);
             int left = x - half_matrix_size;
-            int top = y - half_matrix_size;
+            int top =  y - half_matrix_size;
 
             // Loop over our weight matrix and add up values of pixels*weight
             // Ensure we are not trying to compute values of out of bounds pixels
@@ -163,7 +163,7 @@ bool Image::GaussianBlur(float sigma) {
                 }
             }
 
-            SetPixel( x, y, sum );
+            dest.SetPixel( x, y, sum );
         }
     }
 

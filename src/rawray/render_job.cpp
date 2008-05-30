@@ -197,6 +197,7 @@ DWORD RenderJob::ThreadRoutine() {
     std::list<RenderThread*>::iterator toDelete;
     const int sleepDuration = options::global::render_handler_sleep;
 
+	isRendering_ = true;
     clock_t startTime = clock();
     while( !threads_.empty() ) {
         Sleep( sleepDuration );
@@ -225,11 +226,14 @@ DWORD RenderJob::ThreadRoutine() {
                 threadIter++;
         }
     }
+	isRendering_ = false;
 
     if( !abort_ ) {
-        scene_.PostProcess(img_);
-        clock_t endTime = clock();
+		clock_t endTime = clock();
         img_.WritePPM(endTime-startTime);
+
+        scene_.PostProcess(img_);
+		img_.WritePPM(endTime-startTime+1);
 
         std::cout << "Raytrace job of " << img_.GetWidth() << "x" << img_.GetHeight();
         std::cout << " done in " << float(endTime-startTime)/CLOCKS_PER_SEC << " seconds" << std::endl;

@@ -52,6 +52,10 @@ namespace global {
     extern float bvh_box_cost;
     extern float bvh_obj_cost;
 	extern float hdr_bloom_power;
+	extern float hdr_bloom_radius;
+
+	extern float bcspline_b;
+	extern float bcspline_c;
 
 } // namespace global
 

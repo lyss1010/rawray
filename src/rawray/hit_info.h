@@ -30,6 +30,7 @@ public:
 	float ior;
 	int ior_bounce;
 	int diffuse_bounce;
+	float weight;
 
     HitInfo() : material(NULL), ior(IOR_AIR), ior_bounce(0), diffuse_bounce(0) { }
 

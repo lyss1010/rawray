@@ -229,6 +229,9 @@
 					RelativePath=".\diffuse.cpp">
 				</File>
 				<File
+					RelativePath=".\emitter.cpp">
+				</File>
+				<File
 					RelativePath=".\indirect_diffuse.cpp">
 				</File>
 				<File
@@ -401,6 +404,9 @@
 				Filter="">
 				<File
 					RelativePath=".\diffuse.h">
+				</File>
+				<File
+					RelativePath=".\emitter.h">
 				</File>
 				<File
 					RelativePath=".\indirect_diffuse.h">

@@ -27,6 +27,7 @@ public:
 	virtual float Falloff(float distance2) const;
 	virtual Vector3 GetRandPosition() const;
 	virtual int GetNumSamples() const { return samples_; }
+	virtual int ThisFunctionShouldNotBeHere() const { return 1; }
 
 	void SetRadius(float radius) { radius_ = radius; }
 	float GetRadius() { return radius_; }

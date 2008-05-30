@@ -42,6 +42,10 @@ namespace global {
     float bvh_box_cost;
     float bvh_obj_cost;
 	float hdr_bloom_power;
+	float hdr_bloom_radius;
+
+	float bcspline_b;
+	float bcspline_c;
 
 } // namespace global
 
@@ -104,6 +108,10 @@ void init() {
     global::bvh_box_cost = 1.0f;
     global::bvh_obj_cost = 640.0f;
 	global::hdr_bloom_power = 0.5f;
+	global::hdr_bloom_radius = 6.0f;
+
+	global::bcspline_b = 0.35f;
+	global::bcspline_c = 0.35f;
 
     global::gaussian_blur_max = 2.0f;
 	global::gaussian_blur_sigma = 1.0f;

@@ -171,4 +171,37 @@ void TriangleMesh::GetIndices(char* word, int* vIndex, int* tIndex, int* nIndex)
     *nIndex = atoi(normal);
 }
 
+
+void TriangleMesh::CreateSingleTriangle()
+{
+    normals_ = new Vector3[3];
+    vertices_ = new Vector3[3];
+    texCoords_ = new Vector2[3];
+
+    texCoords_[0].x = 0.0f;
+    texCoords_[0].y = 0.0f;
+    texCoords_[1].x = 1.0f;
+    texCoords_[1].y = 0.0f;
+    texCoords_[2].x = 0.0f;
+    texCoords_[2].y = 1.0f;
+
+    normalIndices_   = new Tuple3I[1];
+    vertexIndices_   = new Tuple3I[1];
+    texCoordIndices_ = new Tuple3I[1];
+
+    vertexIndices_[0].x = 0;
+    vertexIndices_[0].y = 1;
+	vertexIndices_[0].z = 2;
+
+    normalIndices_[0].x = 0;
+    normalIndices_[0].y = 1;
+    normalIndices_[0].z = 2;
+
+    texCoordIndices_[0].x = 0;
+    texCoordIndices_[0].y = 1;
+    texCoordIndices_[0].z = 2;
+
+    numTriangles_ = 1;
+}
+
 } // namespace rawray

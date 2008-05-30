@@ -13,12 +13,12 @@
 #include <vector>
 
 // Exit point
-void exit_cleanup(void) {
+static void exit_cleanup(void) {
 	rawray::GlutWindow::Destroy();
     _CrtDumpMemoryLeaks();
 }
 
-bool SSETest() {
+static bool SSETest() {
 #ifdef SSE
     std::cout << "Testing SSE Version... ";
     int version = tools::sse::GetVersion();

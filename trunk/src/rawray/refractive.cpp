@@ -33,6 +33,7 @@ void Refractive::ShadeLight(HitInfo& hit, Scene& scene, const Light& light, floa
 		refractiveHit.eyeRay = Ray( hit.point + math::EPSILON * refract, refract );
 		refractiveHit.ior = ior_;
 		refractiveHit.distance = MAX_DISTANCE;
+        refractiveHit.weight = hit.weight;
 
 		if( scene.Intersect( refractiveHit ) )
 			shadedColor += refractiveHit.material->Shade( refractiveHit, scene );

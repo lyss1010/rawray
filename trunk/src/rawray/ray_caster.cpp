@@ -24,10 +24,10 @@ void RayCaster::GenerateRays(const Camera& cam, int xmin, int xmax, int ymin, in
 	int y = ymin;
     int packsize, packnum;
     packnum = packsize = 0;
-
+    
     while( packnum < numpacks_ ) {
         HitPack* pack = hitpacks_ + packnum;
-
+        
         // Cast multiple rays per pixel in a uniform grid
         float ypos = deltaY;
         for( int dy=0; dy<aay_; ++dy ) {
@@ -35,20 +35,20 @@ void RayCaster::GenerateRays(const Camera& cam, int xmin, int xmax, int ymin, in
             float xpos = deltaX;
             for( int dx=0; dx<aax_; ++dx ) {
                 assert( packnum < numpacks_ );
-
+                
 				// Jitter the grid sampling
-				xpos += (deltaX * rand()) / RAND_MAX;
-				ypos += (deltaY * rand()) / RAND_MAX;
-
+				//xpos += (deltaX * rand()) / RAND_MAX;
+				//ypos += (deltaY * rand()) / RAND_MAX;
+                
 				// Compute the weighting on this pixel (Mitchell and Netravali)
-				const float xPixelDist = xpos - 0.5f;
-				const float yPixelDist = ypos - 0.5f;
+				//const float xPixelDist = xpos - 0.5f;
+				//const float yPixelDist = ypos - 0.5f;
 				//pack->hits[packsize].weight = tools::filters::Reconstruction( 
 				//										sqrtf( xPixelDist*xPixelDist + yPixelDist*yPixelDist ),  
 				//										options::global::bcspline_b,
 				//										options::global::bcspline_c );
-				pack->hits[packsize].weight = 1.0f / (aax_*aay_;)
-
+				pack->hits[packsize].weight = 1.0f / float(aax_*aay_);
+                
 				// Compute eye ray to this point and setup various bookkeeping data
                 pack->hits[packsize].eyeRay = cam.EyeRay( x, y, xpos, ypos, imgWidth, imgHeight );
                 pack->hits[packsize].distance = MAX_DISTANCE;

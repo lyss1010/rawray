@@ -48,12 +48,16 @@ GlutWindow::GlutWindow(int* argc, char* argv[]) : cam_(), img_(), scene_(),
         if( !render_ )
             std::cout << "ERROR: Could not create render job" << std::endl;
         else {
-            while( render_->IsDone() ) {
+            // Wait for render to finish, printing out current progress along the way
+            while( render_->IsRendering() ) {
                 std::cout << "Progress: " << render_->Progress() << "\r";
-                Sleep( 1000 );
+                Sleep( 100 );
             }
 
-			std::cout << std::endl << std::endl;
+            // Wait for post processing to finish
+            while( !render_->IsDone() ) {
+                Sleep( 100 );
+            }
         }
 
     } else {

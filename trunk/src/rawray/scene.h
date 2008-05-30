@@ -31,10 +31,11 @@ public:
 	const std::vector<Material*>& GetMaterials() const { return materials_; }
 
 	// TODO: Add lights as objects in the world so we can intersect directly w/ them and get their color + bloom
-    Object* AddObject(Object* object) { objects_.push_back(object); return object; }
+	Object* AddObject(Object* object) { if( object->GetMaterial() ) objects_.push_back(object); else std::cout << "ERROR: Object w/o material\n"; return object; }
     Light* AddLight(Light* light) { lights_.push_back(light); return light; }
 	Material* AddMaterial(Material* mat) { materials_.push_back(mat); return mat; }
 	TriangleMesh* AddMesh(TriangleMesh* mesh) { meshes_.push_back(mesh); return mesh; }
+	void AddLightAsObject(Light* light);
 
     virtual void RenderGL();
     virtual void PreCalc();
@@ -62,8 +63,10 @@ private:
     BVH bvh_;
 	Background background_;
 
-    void ShadePack( HitPack& hitpack, Image& image, float increment );
-
+    void ShadePack( HitPack& hitpack, Image& image );
+	void AddSquareLightAsObject(Light* light);
+	void AddSphereLightAsObject(Light* light);
+	
     DISALLOW_COPY_CONSTRUCTORS(Scene);
 
 }; // class Scene

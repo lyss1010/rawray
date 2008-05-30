@@ -12,6 +12,8 @@
 /////////////////////////////////////////////////////////////////////////////
 namespace rawray {
 
+class Object;
+
 class DllExport Light
 {
 public:
@@ -33,6 +35,7 @@ public:
 	virtual float Falloff(float distance2) const=0;
 	virtual Vector3 GetRandPosition() const=0;
 	virtual int GetNumSamples() const=0;
+	virtual int ThisFunctionShouldNotBeHere() const=0;
 
 protected:
     Vector3 position_;

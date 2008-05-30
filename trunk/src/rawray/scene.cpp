@@ -4,9 +4,14 @@
 /////////////////////////////////////////////////////////////////////////////
 #include "scene.h"
 #include "light.h"
+#include "sphere_light.h"
+#include "square_light.h"
 #include "material.h"
+#include "emitter.h"
 #include "triangle_mesh.h"
+#include "triangle_factory.h"
 #include "bloom.h"
+#include "sphere.h"
 
 namespace rawray {
 
@@ -68,32 +73,36 @@ bool Scene::Hit(const Ray& ray, float minDistance, float maxDistance) const {
 void Scene::Raytrace(Image& image, RayCaster& caster, float& progress ) {
 	HitPack* hitpacks = caster.GetHitPacks();
 	const int numpacks = caster.GetNumPacks();
-	const float increment = caster.GetIncrement();
 	const float deltaProgress = 1.0f / numpacks;
 
 	for( int i=0; i<numpacks; ++i ) {
 		HitPack& pack = *hitpacks++;
 
 		IntersectPack( pack );
-        ShadePack( pack, image, increment );
+        ShadePack( pack, image );
 
 		progress += deltaProgress;
 	}
 }
 
-void Scene::ShadePack( HitPack& hitpack, Image& image, float increment ) {
+void Scene::ShadePack( HitPack& hitpack, Image& image ) {
     for( int pack=0; pack<4; ++pack ) {
 		Vector4& pixel = image.GetPixel(hitpack.hits[pack].imgCoord.x, hitpack.hits[pack].imgCoord.y );
 
         if( hitpack.hit_result[pack] != 0.0f )
-			pixel += increment * hitpack.hits[pack].material->Shade(hitpack.hits[pack], *this);
+			pixel += hitpack.hits[pack].weight * hitpack.hits[pack].material->Shade(hitpack.hits[pack], *this);
         else
-            pixel += increment * background_.GetColor(hitpack.hits[pack].eyeRay.direction);
+            pixel += hitpack.hits[pack].weight * background_.GetColor(hitpack.hits[pack].eyeRay.direction);
     }
 }
 
 void Scene::PostProcess(Image& img) {
+	std::cout << std::endl << "\nPerforming post processing...";
+
+	std::cout << " Bloom...";
 	Bloom::Process(img);
+
+	std::cout << std::endl;
 }
 
 float Scene::GetLightIntensity(const Light& light, const HitInfo& hit ) {
@@ -120,6 +129,61 @@ float Scene::GetLightIntensity(const Light& light, const HitInfo& hit ) {
 
 	// 1/4PI is because of the sphere falloff of light
 	return litPercent * falloff * light.GetWattage() * math::INV_QUARTER_PI;
+}
+
+// This should not be here
+void Scene::AddSphereLightAsObject(Light* light) {
+	Material* mat = new Emitter( light->GetColor() );
+	AddMaterial( mat );
+
+	SphereLight* slight = dynamic_cast<SphereLight*>(light);
+	AddObject( new Sphere(light->GetPosition(), slight->GetRadius(), mat) );
+}
+
+// This should not be here
+void Scene::AddSquareLightAsObject(Light* light) {
+	Material* mat = new Emitter( light->GetColor() );
+	AddMaterial( mat );
+	
+	SquareLight* slight = dynamic_cast<SquareLight*>(light);
+	const Vector3 p0 = slight->GetPosition();
+	const Vector3 p1 = p0 + slight->GetD1();
+	const Vector3 p2 = p0 + slight->GetD2();
+	const Vector3 p3 = p0 + slight->GetD1() + slight->GetD2();
+
+	Vector3 normal; math::Cross( slight->GetD1(), slight->GetD2(), normal );
+
+	TriangleMesh* triA = new TriangleMesh();
+	TriangleMesh* triB = new TriangleMesh();
+	AddMesh( triA );
+	AddMesh( triB );
+
+	triA->CreateSingleTriangle();
+	triA->SetV1( p2 ); triA->SetN1( normal );
+	triA->SetV2( p1 ); triA->SetN2( normal );
+	triA->SetV3( p0 ); triA->SetN3( normal );
+	AddObject( TriangleFactory::NewTriangle( triB, 0, mat ) );
+
+	triB->CreateSingleTriangle();
+	triB->SetV1( p3 ); triB->SetN1( normal );
+	triB->SetV2( p1 ); triB->SetN2( normal );
+	triB->SetV3( p2 ); triB->SetN3( normal );
+	AddObject( TriangleFactory::NewTriangle( triA, 0, mat ) );
+}
+
+void Scene::AddLightAsObject(Light* light) {
+	switch( light->ThisFunctionShouldNotBeHere() ) {
+		case 0: // point light
+			break;
+
+		case 1: // square light
+			AddSphereLightAsObject( light );
+			break;
+
+		case 2: // sphere light
+			AddSquareLightAsObject( light );
+			break;
+	}
 }
 
 } // namespace rawray

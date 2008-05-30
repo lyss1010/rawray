@@ -68,13 +68,14 @@ class DllExport RenderJob
 public:
     RenderJob(int numThreads, Scene& scene, const Camera& cam, Image& img, int aax, int aay) :
             numThreads_(numThreads), scene_(scene), cam_(cam), img_(img), caster_(aax, aay),
-            threadID_(NULL), threadHandle_(NULL), abort_(false), isDone_(false) { }
+            threadID_(NULL), threadHandle_(NULL), abort_(false), isDone_(false), isRendering_(false) { }
 
     ~RenderJob();
 
     float Progress();
     bool Run();
     bool IsDone() { return isDone_; }
+	bool IsRendering() { return isRendering_; }
     void Abort();
     void DisplayStats();
 
@@ -92,6 +93,7 @@ private:
     DWORD threadID_;
     bool abort_;
     bool isDone_;
+	bool isRendering_;
     
     std::stack<RenderTask*> assignedTasks_;
     std::stack<RenderTask*> tasks_;

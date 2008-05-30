@@ -150,6 +150,9 @@ std::stack<math::Matrix4x4>             g_matrixStack;
 %token YY_MAX_DIFFUSE_BOUNCE
 %token YY_MAX_IOR_BOUNCE
 %token YY_HDR_BLOOM_POWER
+%token YY_HDR_BLOOM_RADIUS
+%token YY_BCSPLINE_B
+%token YY_BCSPLINE_C
 
 %token YY_S_CAMERA
 %token YY_POS
@@ -316,6 +319,9 @@ global_option:
 		| YY_PFM YY_STRING						{ $2[strlen($2)-1] = 0; g_scene->GetBackground().LoadPFM( $2+1 ); }
 		| YY_ANTI_ALIAS iExp YY_X iExp			{ rawray::options::global::aax = $2; rawray::options::global::aay = $4; }
 		| YY_HDR_BLOOM_POWER rExp				{ rawray::options::global::hdr_bloom_power = $2; }
+		| YY_HDR_BLOOM_RADIUS rExp				{ rawray::options::global::hdr_bloom_radius = $2; }
+		| YY_BCSPLINE_B rExp					{ rawray::options::global::bcspline_b = $2; }
+		| YY_BCSPLINE_C rExp					{ rawray::options::global::bcspline_c = $2; }
 ;
 
 camera_option:
@@ -342,25 +348,31 @@ light_type:
 				g_scene->AddLight( g_light );
 			}
 			squarelight_stuff
+			{
+				g_scene->AddLightAsObject( g_light );
+			}
 		| YY_S_SPHERELIGHT YY_LCURLY
 			{
 				g_light = new rawray::SphereLight();
 				g_scene->AddLight( g_light );
 			}
 			spherelight_stuff
+			{
+				g_scene->AddLightAsObject( g_light );
+			}
 ;
 
 pointlight_option:
 		  YY_POS vector3			{ g_light->SetPosition( math::Vector3( $2[0], $2[1], $2[2] ) ); }
 		| YY_WATTAGE rExp			{ g_light->SetWattage( $2 ); }
-		| YY_COLOR vector4	{ g_light->SetColor( math::Vector4( $2[0], $2[1], $2[2], $2[3] ) ); }
+		| YY_COLOR vector4			{ g_light->SetColor( math::Vector4( $2[0], $2[1], $2[2], $2[3] ) ); }
 		| YY_NUM_SAMPLES iExp		{ g_light->SetNumSamples( $2 ); }
 ;
 
 squarelight_option:
 		  YY_POS vector3			{ g_light->SetPosition( math::Vector3( $2[0], $2[1], $2[2] ) ); }
 		| YY_WATTAGE rExp			{ g_light->SetWattage( $2 ); }
-		| YY_COLOR vector4	{ g_light->SetColor( math::Vector4( $2[0], $2[1], $2[2], $2[3] ) ); }
+		| YY_COLOR vector4			{ g_light->SetColor( math::Vector4( $2[0], $2[1], $2[2], $2[3] ) ); }
 		| YY_NUM_SAMPLES iExp		{ g_light->SetNumSamples( $2 ); }
 		| YY_P1 vector3				{ ((rawray::SquareLight*)g_light)->SetP1( math::Vector3( $2[0], $2[1], $2[2] ) ); }
 		| YY_P2 vector3				{ ((rawray::SquareLight*)g_light)->SetP2( math::Vector3( $2[0], $2[1], $2[2] ) ); }
@@ -369,7 +381,7 @@ squarelight_option:
 spherelight_option:
 		  YY_POS vector3			{ g_light->SetPosition( math::Vector3( $2[0], $2[1], $2[2] ) ); }
 		| YY_WATTAGE rExp			{ g_light->SetWattage( $2 ); }
-		| YY_COLOR vector4	{ g_light->SetColor( math::Vector4( $2[0], $2[1], $2[2], $2[3] ) ); }
+		| YY_COLOR vector4			{ g_light->SetColor( math::Vector4( $2[0], $2[1], $2[2], $2[3] ) ); }
 		| YY_NUM_SAMPLES iExp		{ g_light->SetNumSamples( $2 ); }
 		| YY_RADIUS rExp			{ ((rawray::SphereLight*)g_light)->SetRadius( $2 ); }
 ;

@@ -36,6 +36,15 @@ public:
 
     bool LoadOBJ(const char* filename, const Matrix4x4& ctm = Matrix4x4());
 
+	// for single triangles
+    void CreateSingleTriangle();
+    inline void SetV1(const Vector3& v) { vertices_[0] = v;}
+    inline void SetV2(const Vector3& v) { vertices_[1] = v;}
+    inline void SetV3(const Vector3& v) { vertices_[2] = v;}
+    inline void SetN1(const Vector3& n) { normals_[0] = n;}
+    inline void SetN2(const Vector3& n) { normals_[1] = n;}
+    inline void SetN3(const Vector3& n) { normals_[2] = n;}
+
 protected:
     void LoadOBJFile(FILE* fp, const Matrix4x4& ctm);
     void GetIndices(char* word, int* vIndex, int* tIndex, int* nIndex);

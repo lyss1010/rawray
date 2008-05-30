@@ -3,6 +3,9 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 #include "square_light.h"
+#include "material.h"
+#include "emitter.h"
+#include "triangle_mesh.h"
 
 namespace rawray {
 

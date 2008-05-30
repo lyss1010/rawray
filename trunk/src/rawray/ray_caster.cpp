@@ -4,6 +4,7 @@
 /////////////////////////////////////////////////////////////////////////////
 #include "ray_caster.h"
 #include "hit_info.h"
+#include "tools/filters.h"
 
 namespace rawray {
 
@@ -35,6 +36,20 @@ void RayCaster::GenerateRays(const Camera& cam, int xmin, int xmax, int ymin, in
             for( int dx=0; dx<aax_; ++dx ) {
                 assert( packnum < numpacks_ );
 
+				// Jitter the grid sampling
+				xpos += (deltaX * rand()) / RAND_MAX;
+				ypos += (deltaY * rand()) / RAND_MAX;
+
+				// Compute the weighting on this pixel (Mitchell and Netravali)
+				const float xPixelDist = xpos - 0.5f;
+				const float yPixelDist = ypos - 0.5f;
+				//pack->hits[packsize].weight = tools::filters::Reconstruction( 
+				//										sqrtf( xPixelDist*xPixelDist + yPixelDist*yPixelDist ),  
+				//										options::global::bcspline_b,
+				//										options::global::bcspline_c );
+				pack->hits[packsize].weight = 1.0f / (aax_*aay_;)
+
+				// Compute eye ray to this point and setup various bookkeeping data
                 pack->hits[packsize].eyeRay = cam.EyeRay( x, y, xpos, ypos, imgWidth, imgHeight );
                 pack->hits[packsize].distance = MAX_DISTANCE;
                 pack->hits[packsize].imgCoord.x = x;
@@ -42,8 +57,9 @@ void RayCaster::GenerateRays(const Camera& cam, int xmin, int xmax, int ymin, in
 				pack->hits[packsize].diffuse_bounce = 0;
 				pack->hits[packsize].ior_bounce = 0;
 				pack->hits[packsize].ior = IOR_AIR;
-                ++packsize;
-                xpos += deltaX;
+                
+				xpos += deltaX;
+				++packsize;
 
                 if( packsize == 4 ) {
                     // Precompute data for this full pack
@@ -70,5 +86,4 @@ int RayCaster::GetNumDivisions(int xPixels, int yPixels) {
 	int numDivisions = xPixels * yPixels * aax_ * aay_ / maxRays_;
 	return (numDivisions<1) ? 1 : numDivisions;
 }
-
 } // namespace rawray

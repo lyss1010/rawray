@@ -29,7 +29,7 @@ public:
 	void Clear(const Vector4& color, int x, int y, int width, int height);
 	void Clear(const math::Tuple3<uint8>& color, int x, int y, int width, int height);
     void ScreenShot();
-    bool GaussianBlur(float sigma);
+    bool GaussianBlur(float sigma, Image& dest) const;
 	Image* CreateAlphaImage();
 	Image* CreateAlphaMixImage();
     

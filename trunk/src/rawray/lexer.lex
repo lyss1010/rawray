@@ -148,6 +148,9 @@ STRING      '([^']*)'|\"([^\"]*)\"
 <s_global>max{WS}diffuse{WS}bounce{WS}	{ return YY_MAX_DIFFUSE_BOUNCE; }
 <s_global>max{WS}ior{WS}bounce{WS}		{ return YY_MAX_IOR_BOUNCE; }
 <s_global>hdr{WS}bloom{WS}power{WS}		{ return YY_HDR_BLOOM_POWER; }
+<s_global>hdr{WS}bloom{WS}radius{WS}	{ return YY_HDR_BLOOM_RADIUS; }
+<s_global>bcspline{WS}b{WS}				{ return YY_BCSPLINE_B; }
+<s_global>bcspline{WS}c{WS}				{ return YY_BCSPLINE_C; }
 
 <INITIAL>camera{WS}						{ yy_push_state(s_camera); return YY_S_CAMERA; }
 <s_camera>pos{WS}						{ return YY_POS; }
